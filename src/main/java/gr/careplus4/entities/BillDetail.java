@@ -1,0 +1,40 @@
+package gr.careplus4.entities;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "BillDetail")
+public class BillDetail implements Serializable {
+
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "IDBill", nullable = false)
+    private Bill bill;
+
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "IDMedicine", nullable = false)
+    private Medicine medicine;
+
+    @Column(name = "Quantity", nullable = false)
+    @Min(value = 1, message = "Quantity must be > 0")
+    private int quantity;
+
+    @Column(name = "UnitCost", precision = 10, scale = 2, nullable = false)
+    @DecimalMin("0.01")
+    private BigDecimal unitCost;
+
+    @Column(name = "SubTotal", precision = 10, scale = 2, nullable = false)
+    private BigDecimal subTotal;
+}
