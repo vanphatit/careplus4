@@ -9,12 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserModel {
     private String phoneNumber;
-    private String name;
-    private String address;
     private String password;
-    private String gender;
-    private String email;
-    private int roleId;
-    private boolean isActive;
-    private int pointEarned;
 }

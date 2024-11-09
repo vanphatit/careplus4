@@ -6,8 +6,10 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.io.Serializable;
 
@@ -30,7 +32,7 @@ public class User implements Serializable {
     @Column(name = "Address", length = 255)
     private String address;
 
-    @Column(name = "Password", length = 32, nullable = false)
+    @Column(name = "Password", length = 255, nullable = false)
     @NotEmpty(message = "Password is required")
     private String password;
 

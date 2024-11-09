@@ -29,9 +29,9 @@
                         </div>
                     </div>
                     <div class="topbar__item topbar__item--link"><a class="topbar-link"
-                                                                    href="${URL}assets/blog-classic.html">Đăng nhập</a></div>
+                                                                    href="/au/login">Đăng nhập</a></div>
                     <div class="topbar__item topbar__item--link"><a class="topbar-link"
-                                                                    href="${URL}assets/blog-classic.html">Đăng xuất</a></div>
+                                                                    href="/au/logout">Đăng xuất</a></div>
                     <%--                        <div class="topbar__item">--%>
                     <%--                            <div class="topbar-dropdown"><button class="topbar-dropdown__btn"--%>
                     <%--                                                                 type="button">Currency: <span class="topbar__item-value">USD</span> <svg--%>
