@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.Serializable;
 
@@ -54,4 +55,5 @@ public class User implements Serializable {
     @Column(name = "PointEarned")
     @Min(value = 0, message = "Points must be >= 0")
     private int pointEarned;
+
 }
