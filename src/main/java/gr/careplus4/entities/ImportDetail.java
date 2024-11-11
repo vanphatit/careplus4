@@ -37,4 +37,10 @@ public class ImportDetail implements Serializable {
 
     @Column(name = "SubTotal", precision = 10, scale = 2, nullable = false)
     private BigDecimal subTotal;
+
+    @PrePersist
+    @PreUpdate
+    private void calculateSubTotal() {
+        this.subTotal = this.unitPrice.multiply(BigDecimal.valueOf(this.quantity));
+    }
 }
