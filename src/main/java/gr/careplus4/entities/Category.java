@@ -1,7 +1,9 @@
 package gr.careplus4.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,8 +28,13 @@ public class Category implements Serializable {
     @NotEmpty(message = "Category name is required")
     private String name;
 
+    @Column(name = "Status", columnDefinition = "bit")
+    @NotNull(message = "Category status is required")
+    private Boolean status;
+
     @ManyToOne
     @JoinColumn(name = "ParentID")
+    @JsonBackReference // Đánh dấu trường này để Jackson không chuyển đổi nó thành JSON và tránh recursion
     private Category parentCategory;
 
     @OneToMany(mappedBy = "parentCategory")
