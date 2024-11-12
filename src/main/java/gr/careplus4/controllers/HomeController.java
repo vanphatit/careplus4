@@ -34,13 +34,13 @@ public class HomeController {
             }
         }
 
-        for (Cookie cookie : cookies) {
-            if ("phoneNumber".equals(cookie.getName())) {
-                String phoneNumber = cookie.getValue();
-                System.out.println("phoneNumber: " + phoneNumber);
-                break;
-            }
-        }
+//        for (Cookie cookie : cookies) {
+//            if ("phoneNumber".equals(cookie.getName())) {
+//                String phoneNumber = cookie.getValue();
+//                System.out.println("phoneNumber: " + phoneNumber);
+//                break;
+//            }
+//        }
         return "home";
     }
 }

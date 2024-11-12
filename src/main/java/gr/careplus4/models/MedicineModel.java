@@ -22,4 +22,5 @@ public class MedicineModel {
     private String manufacturerId;
     private String categoryId;
     private String unitId;
+    private String image;
 }
