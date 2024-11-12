@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements iCategoryService {
 
     @Override
     public Optional<Category> findByCategoryName(String name) {
-        return categoryRepository.findByNameContaining(name);
+        return categoryRepository.findByNameLike(name);
     }
 
     @Override
