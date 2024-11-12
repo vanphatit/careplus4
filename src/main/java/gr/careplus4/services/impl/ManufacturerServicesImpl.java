@@ -60,4 +60,14 @@ public class ManufacturerServicesImpl implements iManufacturerServices {
     public Optional<Manufacturer> findByName(String name) {
         return (manufacturerRepository.findByName(name));
     }
+
+    @Override
+    public Manufacturer findTopByOrderByIdDesc() {
+        return manufacturerRepository.findTopByOrderByIdDesc();
+    }
+
+    @Override
+    public Boolean existsByName(String name) {
+        return manufacturerRepository.existsByName(name);
+    }
 }
