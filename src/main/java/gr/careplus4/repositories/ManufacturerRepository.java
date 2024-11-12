@@ -13,5 +13,9 @@ public interface ManufacturerRepository extends JpaRepository<Manufacturer, Stri
     List<Manufacturer> findByNameContaining(String name);
     List<Manufacturer> findByNameContaining(String name, Pageable pageable);
 
+    Boolean existsByName(String name);
+
     Optional<Manufacturer> findByName(String name);
+
+    Manufacturer findTopByOrderByIdDesc();
 }

@@ -1,11 +1,13 @@
 package gr.careplus4.services.impl;
 
+import gr.careplus4.controllers.medicines.api.MedicineSpecifications;
 import gr.careplus4.entities.Medicine;
 import gr.careplus4.repositories.MedicineRepository;
 import gr.careplus4.services.iMedicineServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -135,5 +137,39 @@ public class MedicineServicesImpl implements iMedicineServices {
     @Override
     public Boolean medicineIsExist(String name, Date expireDate, String Manufacture) {
         return medicineRepository.existsByNameAndExpiryDateAndManufacturer_Name(name, expireDate, Manufacture);
+    }
+
+    @Override
+    public List<Medicine> searchMedicineByKeyword(String keyword) {
+        Specification<Medicine> specification = MedicineSpecifications.containsKeywordInAttributes(keyword);
+        return medicineRepository.findAll(specification);
+    }
+
+    @Override
+    public List<Medicine> filterMedicineFlexible(
+            String manufacturerId, String categoryId, String unitId,
+            BigDecimal unitCostMin, BigDecimal unitCostMax,
+            Long expiryDateMin, Long expiryDateMax,
+            Integer stockQuantityMin, Integer stockQuantityMax,
+            BigDecimal ratingMin, BigDecimal ratingMax
+    ) {
+        Specification<Medicine> specification = MedicineSpecifications.buildSpecification(
+                manufacturerId, categoryId, unitId, unitCostMin, unitCostMax,
+                expiryDateMin, expiryDateMax, stockQuantityMin, stockQuantityMax,
+                ratingMin, ratingMax
+        );
+
+        return medicineRepository.findAll(specification);
+    }
+
+    @Override
+    public Medicine findTopByOrderByIdDesc() {
+        return medicineRepository.findTopByOrderByIdDesc();
+    }
+
+    @Override
+    public String generateMedicineID(String previousID) {
+//        return
+        return null;
     }
 }

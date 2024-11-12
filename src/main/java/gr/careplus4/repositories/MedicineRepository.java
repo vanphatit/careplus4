@@ -35,4 +35,5 @@ public interface MedicineRepository extends JpaRepository<Medicine, String>, Jpa
 
     Boolean existsByNameAndExpiryDateAndManufacturer_Name(String name, Date expiryDate, String manufacturerName); // Kiểm tra xem thuốc đã tồn tại chưa
 
+    Medicine findTopByOrderByIdDesc(); // Lấy ra co ID lớn nhất
 }

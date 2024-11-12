@@ -25,4 +25,8 @@ public interface iManufacturerServices {
     Page<Manufacturer> findAll(Pageable pageable);
 
     Optional<Manufacturer> findByName(String name);
+
+    Manufacturer findTopByOrderByIdDesc();
+
+    Boolean existsByName(String name);
 }
