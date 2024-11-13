@@ -5,6 +5,8 @@ import gr.careplus4.models.CategoryModel;
 import gr.careplus4.repositories.CategoryRepository;
 import gr.careplus4.services.iCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +25,11 @@ public class CategoryServiceImpl implements iCategoryService {
     @Override
     public List<Category> findAll() {
         return categoryRepository.findAll();
+    }
+
+    @Override
+    public Page<Category> fetchAllCategories(Pageable page) {
+        return categoryRepository.findAll(page);
     }
 
     @Override
