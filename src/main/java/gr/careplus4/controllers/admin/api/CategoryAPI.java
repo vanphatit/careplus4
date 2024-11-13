@@ -3,14 +3,19 @@ package gr.careplus4.controllers.admin.api;
 import gr.careplus4.entities.Category;
 import gr.careplus4.models.CategoryModel;
 import gr.careplus4.models.ErrorResponse;
+import gr.careplus4.models.MyResponse;
 import gr.careplus4.models.Response;
 import gr.careplus4.services.impl.CategoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -20,9 +25,21 @@ public class CategoryAPI {
     CategoryServiceImpl categoryService;
 
     @GetMapping
-    public ResponseEntity<?> getAllCategory() {
-        return new ResponseEntity<Response>(new Response(true, "Thành công",
-                categoryService.findAll()), HttpStatus.OK);
+    public ResponseEntity<?> getAllCategory(@RequestParam("page") Optional<String> page) {
+        int pageNumber = 1;
+        try {
+            if (page.isPresent()) {
+                pageNumber = Integer.parseInt(page.get());
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        Pageable pageable = PageRequest.of(pageNumber - 1, 5);
+        Page<Category> prs = this.categoryService.fetchAllCategories(pageable);
+        List<Category> categories = prs.getContent();
+
+        return new ResponseEntity<MyResponse>(new MyResponse(true, "Thành công", prs.getTotalPages(),
+                categories), HttpStatus.OK);
     }
 
     @GetMapping("/getCategoryByName")
