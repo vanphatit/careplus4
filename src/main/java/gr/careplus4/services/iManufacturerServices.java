@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface iManufacturerServices {
     List<Manufacturer> findByNameContaining(String name);
 
-    List<Manufacturer> findByNameContaining(String name, Pageable pageable);
+    Page<Manufacturer> findByNameContaining(String name, Pageable pageable);
 
     List<Manufacturer> findAll();
 
@@ -29,4 +29,6 @@ public interface iManufacturerServices {
     Manufacturer findTopByOrderByIdDesc();
 
     Boolean existsByName(String name);
+
+    String generateManufacturerId(String previousId);
 }

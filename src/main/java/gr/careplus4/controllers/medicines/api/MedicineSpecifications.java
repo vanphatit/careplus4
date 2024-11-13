@@ -30,7 +30,7 @@ public class MedicineSpecifications {
     }
 
     public static Specification<Medicine> buildSpecification (
-            String manufacturerId, String categoryId, String unitId,
+            String manufacturerName, String categoryName, String unitName,
             BigDecimal unitCostMin, BigDecimal unitCostMax,
             Long expiryDateMin, Long expiryDateMax,
             Integer stockQuantityMin, Integer stockQuantityMax,
@@ -39,16 +39,16 @@ public class MedicineSpecifications {
         return (root, query, criteriaBuilder) -> {
             var predicate = criteriaBuilder.conjunction();
 
-            if (manufacturerId != null) {
-                predicate.getExpressions().add(criteriaBuilder.equal(root.join("manufacturer").get("id"), manufacturerId));
+            if (manufacturerName != null) {
+                predicate.getExpressions().add(criteriaBuilder.equal(root.join("manufacturer").get("name"), manufacturerName));
             }
 
-            if (categoryId != null) {
-                predicate.getExpressions().add(criteriaBuilder.equal(root.join("category").get("id"), categoryId));
+            if (categoryName != null) {
+                predicate.getExpressions().add(criteriaBuilder.equal(root.join("category").get("name"), categoryName));
             }
 
-            if (unitId != null) {
-                predicate.getExpressions().add(criteriaBuilder.equal(root.join("unit").get("id"), unitId));
+            if (unitName != null) {
+                predicate.getExpressions().add(criteriaBuilder.equal(root.join("unit").get("name"), unitName));
             }
 
             if (unitCostMin != null && unitCostMax != null) {

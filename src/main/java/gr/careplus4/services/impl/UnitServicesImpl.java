@@ -2,6 +2,7 @@ package gr.careplus4.services.impl;
 
 import gr.careplus4.entities.Unit;
 import gr.careplus4.repositories.UnitRepository;
+import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iUnitServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,11 @@ public class UnitServicesImpl implements iUnitServices {
 
     @Override
     public <S extends Unit> S save(S entity) {
+        if (entity.getId() == null) {
+            Unit lastUnit = findTopByOrderByIdDesc();
+            String previousUnitId = (lastUnit == null) ? "UNI0000" : lastUnit.getId();
+            entity.setId(GeneratedId.getGeneratedId(previousUnitId));
+        }
         return unitRepository.save(entity);
     }
 
@@ -58,5 +64,25 @@ public class UnitServicesImpl implements iUnitServices {
     @Override
     public Optional<Unit> findByName(String name) {
         return unitRepository.findByName(name);
+    }
+
+    @Override
+    public Unit findTopByOrderByIdDesc() {
+        return unitRepository.findTopByOrderByIdDesc();
+    }
+
+    @Override
+    public List<Unit> findByNameContaining(String name) {
+        return unitRepository.findByNameContaining(name);
+    }
+
+    @Override
+    public Page<Unit> findByNameContaining(String name, Pageable pageable) {
+        return unitRepository.findByNameContaining(name, pageable);
+    }
+
+    @Override
+    public Boolean existsByName(String name) {
+        return unitRepository.existsByName(name);
     }
 }
