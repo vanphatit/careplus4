@@ -14,26 +14,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
     @GetMapping("/")
     public String index(HttpServletRequest request, HttpServletResponse response) {
-//        HttpSession session = request.getSession(false);
-//        Cookie[] cookies = request.getCookies();
-//
-//        // Kiểm tra xem đã có session chưa
-//        if (session == null || session.getAttribute("phoneNumber") == null) {
-//            // Nếu chưa có session, kiểm tra cookie "phoneNumber"
-//            if (cookies != null) {
-//                for (Cookie cookie : cookies) {
-//                    if ("phoneNumber".equals(cookie.getName())) {
-//                        // Lấy số điện thoại từ cookie và tự động đăng nhập
-//                        String phoneNumber = cookie.getValue();
-//                        session = request.getSession(true);
-//                        session.setAttribute("phoneNumber", phoneNumber);
-//
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//
+        HttpSession session = request.getSession(false);
+        Cookie[] cookies = request.getCookies();
+
+        // Kiểm tra xem đã có session chưa
+        if (session == null || session.getAttribute("phoneNumber") == null) {
+            // Nếu chưa có session, kiểm tra cookie "phoneNumber"
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("phoneNumber".equals(cookie.getName())) {
+                        // Lấy số điện thoại từ cookie và tự động đăng nhập
+                        String phoneNumber = cookie.getValue();
+                        session = request.getSession(true);
+                        session.setAttribute("phoneNumber", phoneNumber);
+
+                        break;
+                    }
+                }
+            }
+        }
+
 //        for (Cookie cookie : cookies) {
 //            if ("phoneNumber".equals(cookie.getName())) {
 //                String phoneNumber = cookie.getValue();
