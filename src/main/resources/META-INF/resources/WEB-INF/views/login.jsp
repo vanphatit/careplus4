@@ -25,7 +25,8 @@
                     </div>
                 </c:if>
 
-                <form action="/au/login/login-submit" method="POST" class="register-form" id="login-form">
+
+                <form action="/au/login/login-submit" method="post" class="register-form" id="login-form">
                     <div class="form-group">
                         <label for="phone"><i class="zmdi zmdi-account material-icons-name"></i></label>
                         <input type="text" name="phoneNumber" id="phone" placeholder="Số điện thoại" required pattern="^\d{10}$" title="Số điện thoại phải gồm 10 chữ số." />
@@ -41,7 +42,8 @@
                         </label>
                     </div>
                     <div class="form-group form-button">
-                        <input type="submit" name="signin" id="signin" class="form-submit" value="Đăng nhập" />
+                        <input type="submit" name="signin" id="signin"
+                               class="form-submit" value="Đăng nhập" />
                     </div>
                 </form>
                 <div class="social-login">

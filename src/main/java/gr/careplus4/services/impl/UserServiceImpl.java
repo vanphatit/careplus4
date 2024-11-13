@@ -19,45 +19,16 @@ public class UserServiceImpl implements iUserService {
     @Autowired
     UserRepository userRepository;
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Autowired
     iRoleService roleService;
-
-    
-    @Override
-    public boolean checkLogin(String phone, String password) {
-        // Tìm kiếm người dùng bằng email
-        Optional<User> optionalUser = userRepository.findByPhoneNumber(phone);
-
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            boolean matches = bCryptPasswordEncoder.matches(password, user.getPassword());
-            // So sánh mật khẩu đã mã hóa trong cơ sở dữ liệu với mật khẩu người dùng nhập vào
-            return matches;
-        }
-        return false;
-    }
-
-    // Phương thức kiểm tra xem email đã tồn tại chưa
     
     @Override
     public boolean emailExists(String email) {
         return userRepository.existsByEmail(email);
-    }
-
-    // Phương thức tạo người dùng mới
-    
-    @Override
-    public User createUser(User user) {
-        user.setRole(roleService.findById(2).get());// Mặc định là người dùng
-        user.setActive(true);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
     }
 
     @Override
@@ -81,6 +52,11 @@ public class UserServiceImpl implements iUserService {
     }
 
     @Override
+    public Page<User> findByRoleName(String roleName, Pageable pageable) {
+        return userRepository.findByRoleName(roleName, pageable);
+    }
+
+    @Override
     public long count() {
         return userRepository.count();
     }
@@ -91,8 +67,18 @@ public class UserServiceImpl implements iUserService {
     }
 
     @Override
-    public Page<User> findByUserNameContaining(String name, Pageable pageable) {
+    public Optional<User> findByName(String name) {
+        return userRepository.findByName(name);
+    }
+
+    @Override
+    public Page<User> findByNameContaining(String name, Pageable pageable) {
         return userRepository.findByNameContaining(name, pageable);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
