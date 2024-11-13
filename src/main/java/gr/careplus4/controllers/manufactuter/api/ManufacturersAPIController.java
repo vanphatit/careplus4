@@ -2,10 +2,14 @@ package gr.careplus4.controllers.manufactuter.api;
 
 import gr.careplus4.entities.Manufacturer;
 import gr.careplus4.models.Response;
+import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.impl.ManufacturerServicesImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +23,8 @@ public class ManufacturersAPIController {
     private ManufacturerServicesImpl manufacturerService;
 
     @GetMapping
-    public ResponseEntity<Response> getManufacturers() {
-        List<Manufacturer> manufacturers = manufacturerService.findAll();
+    public ResponseEntity<Response> getManufacturers(Pageable page) {
+        Page<Manufacturer> manufacturers = manufacturerService.findAll(page);
         Response Responses = new Response(true, "Lấy danh sách thành công", manufacturers);
         return new ResponseEntity<>(Responses, HttpStatus.OK);
     }
@@ -39,24 +43,13 @@ public class ManufacturersAPIController {
 
     @PostMapping("/add")
     public ResponseEntity<Response> addManufacturer(@Validated @RequestParam ("manufactureName") String manufactureName) {
-        // Kiem tra xem co ton tai thuoc nao trong database chua
-        long count = manufacturerService.count();
-        String manufacturerId;
-        if (count == 0) {
-            manufacturerId = "MAN0001";
-        } else {
-            Manufacturer lastManufacturer = manufacturerService.findTopByOrderByIdDesc();
-            String previousManufacturerId = lastManufacturer.getId();
-//            manufacturerId = GenerateID.generateID(previousManufacturerId);
-        }
-
+        // Kiem tra xem co ton tai nhà sản xuất nao trong database chua
         Boolean check = manufacturerService.existsByName(manufactureName);
         if (check) {
             Response Responses = new Response(false, "Nhà sản xuất đã tồn tại", null);
             return new ResponseEntity<>(Responses, HttpStatus.BAD_REQUEST);
         } else {
             Manufacturer manufacturer = new Manufacturer();
-//            manufacturer.setId(manufacturerId);
             manufacturer.setName(manufactureName);
             manufacturerService.save(manufacturer);
             Response Responses = new Response(true, "Thêm nhà sản xuất thành công", manufacturer);
@@ -92,5 +85,27 @@ public class ManufacturersAPIController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Response> searchManufacturer(@RequestParam("name") String name, Pageable page) {
+        Page<Manufacturer> manufacturers = manufacturerService.findByNameContaining(name, page);
+        if (manufacturers.isEmpty()) {
+            Response Responses = new Response(false, "Không tìm thấy nhà sản xuất", null);
+            return new ResponseEntity<>(Responses, HttpStatus.NOT_FOUND);
+        } else {
+            Response Responses = new Response(true, "Tìm thấy nhà sản xuất", manufacturers);
+            return new ResponseEntity<>(Responses, HttpStatus.OK);
+        }
+    }
 
+    @GetMapping("/exist/{name}")
+    public ResponseEntity<Response> manufacturerIsExist(@PathVariable("name") String name) {
+        Boolean check = manufacturerService.existsByName(name);
+        if (check) {
+            Response Responses = new Response(true, "Nhà sản xuất đã tồn tại", null);
+            return new ResponseEntity<>(Responses, HttpStatus.OK);
+        } else {
+            Response Responses = new Response(false, "Nhà sản xuất chưa tồn tại", null);
+            return new ResponseEntity<>(Responses, HttpStatus.NOT_FOUND);
+        }
+    }
 }

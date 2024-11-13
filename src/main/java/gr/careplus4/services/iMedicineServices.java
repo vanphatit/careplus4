@@ -55,17 +55,16 @@ public interface iMedicineServices {
 
     Boolean medicineIsExist(String name, Date expireDate, String Manufacture);
 
-    List<Medicine> searchMedicineByKeyword(String keyword);
+    Page<Medicine> searchMedicineByKeyword(String keyword, Pageable pageable);
 
-    List<Medicine> filterMedicineFlexible(
-            String manufacturerId, String categoryId, String unitId,
+    Page<Medicine> filterMedicineFlexible(
+            String manufacturerName, String categoryName, String unitName,
             BigDecimal unitCostMin, BigDecimal unitCostMax,
             Long expiryDateMin, Long expiryDateMax,
             Integer stockQuantityMin, Integer stockQuantityMax,
-            BigDecimal ratingMin, BigDecimal ratingMax
+            BigDecimal ratingMin, BigDecimal ratingMax,
+            Pageable pageable
     );
 
     Medicine findTopByOrderByIdDesc();
-
-    String generateMedicineID(String previousID);
 }

@@ -23,4 +23,12 @@ public interface iUnitServices {
     Page<Unit> findAll(Pageable pageable);
 
     Optional<Unit> findByName(String name);
+
+    Unit findTopByOrderByIdDesc();
+
+    List<Unit> findByNameContaining(String name);
+
+    Page<Unit> findByNameContaining(String name, Pageable pageable);
+
+    Boolean existsByName(String name);
 }

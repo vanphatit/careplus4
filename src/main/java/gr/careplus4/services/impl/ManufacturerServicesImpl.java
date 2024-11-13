@@ -2,6 +2,7 @@ package gr.careplus4.services.impl;
 
 import gr.careplus4.entities.Manufacturer;
 import gr.careplus4.repositories.ManufacturerRepository;
+import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iManufacturerServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,7 @@ public class ManufacturerServicesImpl implements iManufacturerServices {
     }
 
     @Override
-    public List<Manufacturer> findByNameContaining(String name, Pageable pageable) {
+    public Page<Manufacturer> findByNameContaining(String name, Pageable pageable) {
         return manufacturerRepository.findByNameContaining(name, pageable);
     }
 
@@ -33,6 +34,11 @@ public class ManufacturerServicesImpl implements iManufacturerServices {
 
     @Override
     public <S extends Manufacturer> S save(S entity) {
+        if (entity.getId() == null) {
+            Manufacturer lastManufacturer = findTopByOrderByIdDesc();
+            String previousManufacturerId = (lastManufacturer != null) ? lastManufacturer.getId() : "MAN0000";
+            entity.setId(generateManufacturerId(previousManufacturerId));
+        }
         return manufacturerRepository.save(entity);
     }
 
@@ -69,5 +75,10 @@ public class ManufacturerServicesImpl implements iManufacturerServices {
     @Override
     public Boolean existsByName(String name) {
         return manufacturerRepository.existsByName(name);
+    }
+
+    @Override
+    public String generateManufacturerId(String previousId) {
+        return GeneratedId.getGeneratedId(previousId);
     }
 }

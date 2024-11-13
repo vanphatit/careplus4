@@ -3,6 +3,7 @@ package gr.careplus4.services.impl;
 import gr.careplus4.controllers.medicines.api.MedicineSpecifications;
 import gr.careplus4.entities.Medicine;
 import gr.careplus4.repositories.MedicineRepository;
+import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iMedicineServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -99,6 +100,10 @@ public class MedicineServicesImpl implements iMedicineServices {
     @Override
     public <S extends Medicine> S save(S entity) {
         if (entity.getId() == null) {
+            // Lấy ID lớn nhất hiện có và tạo ID mới
+            Medicine medicineWithMaxId = findTopByOrderByIdDesc();
+            String previousId = (medicineWithMaxId != null) ? medicineWithMaxId.getId() : "M000000";
+            entity.setId(GeneratedId.getGeneratedId(previousId));
             return medicineRepository.save(entity);
         } else {
             Optional<Medicine> existingMedicine = medicineRepository.findById(entity.getId());
@@ -140,36 +145,30 @@ public class MedicineServicesImpl implements iMedicineServices {
     }
 
     @Override
-    public List<Medicine> searchMedicineByKeyword(String keyword) {
+    public Page<Medicine> searchMedicineByKeyword(String keyword, Pageable pageable) {
         Specification<Medicine> specification = MedicineSpecifications.containsKeywordInAttributes(keyword);
-        return medicineRepository.findAll(specification);
+        return medicineRepository.findAll(specification, pageable);
     }
 
     @Override
-    public List<Medicine> filterMedicineFlexible(
-            String manufacturerId, String categoryId, String unitId,
+    public Page<Medicine> filterMedicineFlexible(
+            String manufacturerName, String categoryName, String unitName,
             BigDecimal unitCostMin, BigDecimal unitCostMax,
             Long expiryDateMin, Long expiryDateMax,
             Integer stockQuantityMin, Integer stockQuantityMax,
-            BigDecimal ratingMin, BigDecimal ratingMax
+            BigDecimal ratingMin, BigDecimal ratingMax,
+            Pageable pageable
     ) {
         Specification<Medicine> specification = MedicineSpecifications.buildSpecification(
-                manufacturerId, categoryId, unitId, unitCostMin, unitCostMax,
+                manufacturerName, categoryName, unitName, unitCostMin, unitCostMax,
                 expiryDateMin, expiryDateMax, stockQuantityMin, stockQuantityMax,
                 ratingMin, ratingMax
         );
-
-        return medicineRepository.findAll(specification);
+        return  medicineRepository.findAll(specification , pageable);
     }
 
     @Override
     public Medicine findTopByOrderByIdDesc() {
         return medicineRepository.findTopByOrderByIdDesc();
-    }
-
-    @Override
-    public String generateMedicineID(String previousID) {
-//        return
-        return null;
     }
 }
