@@ -67,6 +67,9 @@
                         <input type="text" name="address" id="address" placeholder="Địa chỉ (Không bắt buộc)" maxlength="255"/>
                     </div>
 
+                    <input type="text" name="role" style="visibility: hidden"
+                            value="2">
+
                     <!-- Submit button -->
                     <div class="form-group form-button">
                         <input type="submit" name="signup" id="signup" class="form-submit" value="Đăng ký"/>

@@ -10,11 +10,7 @@ import java.util.Optional;
 
 public interface iUserService {
 
-    boolean checkLogin(String phone, String password);
-
     boolean emailExists(String email);
-
-    User createUser(User user);
 
     Optional<User> findByPhoneNumber(String phone);
 
@@ -24,11 +20,17 @@ public interface iUserService {
 
     <S extends User> Page<S> findAll(Example<S> example, Pageable pageable);
 
+    Page<User> findByRoleName(String roleName, Pageable pageable);
+
     long count();
 
     <S extends User> List<S> saveAll(Iterable<S> entities);
 
-    Page<User> findByUserNameContaining(String name, Pageable pageable);
+    Optional<User> findByName(String name);
+
+    Page<User> findByNameContaining(String name, Pageable pageable);
+
+    Optional<User> findByEmail(String email);
 
     List<User> findAll();
 
