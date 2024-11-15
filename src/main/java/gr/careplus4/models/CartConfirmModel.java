@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartModel {
+public class CartConfirmModel {
     private String id;
     private String userPhoneNumber;
     private int productCount;
+    private List<CartDetailConfirmModel> cartDetails;
 }
