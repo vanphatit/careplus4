@@ -56,4 +56,7 @@ public class User implements Serializable {
     @Min(value = 0, message = "Points must be >= 0")
     private int pointEarned;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Cart cart;
+
 }

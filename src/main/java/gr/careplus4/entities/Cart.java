@@ -2,12 +2,15 @@ package gr.careplus4.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,11 +23,13 @@ public class Cart implements Serializable {
     @Column(name = "ID", length = 7)
     private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "UserPhone", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "UserPhone", nullable = false, unique = true)
     private User user;
 
-    @Column(name = "TotalAmount", precision = 10, scale = 2, nullable = false)
-    @DecimalMin("0.01")
-    private BigDecimal totalAmount;
+    @Column(name = "ProductCount", nullable = false)
+    private int productCount;
+
+    @OneToMany(mappedBy = "cart")
+    private List<CartDetail> cartDetails = new ArrayList<>();
 }
