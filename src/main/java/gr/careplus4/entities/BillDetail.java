@@ -18,11 +18,13 @@ import java.math.BigDecimal;
 public class BillDetail implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
     @ManyToOne
     @JoinColumn(name = "IDBill", nullable = false)
     private Bill bill;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "IDMedicine", nullable = false)
     private Medicine medicine;
