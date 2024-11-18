@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public interface iEventService {
 
@@ -24,5 +25,12 @@ public interface iEventService {
     Optional<Event> findById(String id);
 
     boolean existsByName(String name);
+
     boolean existsById(String id);
+
+    Page<Event> findAll(Pageable pageable);
+
+    Page<Event> findByNameContaining(String name, Pageable pageable);
+
+    Page<Event> findById(String id, Pageable pageable);
 }

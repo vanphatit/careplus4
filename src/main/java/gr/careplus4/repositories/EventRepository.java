@@ -10,6 +10,8 @@ import java.util.Optional;
 @Repository
 public interface EventRepository extends JpaRepository<Event, String> {
     Optional<Event> findByNameLike(String name);
+    Page <Event> findByNameContaining(String name, Pageable pageable);
+    Page <Event> findById(String id, Pageable pageable);
     boolean existsByName(String name);
     boolean existsById(String id);
 

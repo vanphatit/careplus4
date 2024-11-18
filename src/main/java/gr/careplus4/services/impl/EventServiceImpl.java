@@ -4,6 +4,8 @@ import gr.careplus4.entities.Event;
 import gr.careplus4.repositories.EventRepository;
 import gr.careplus4.services.iEventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,5 +54,20 @@ public class EventServiceImpl implements iEventService {
     @Override
     public boolean existsById(String id) {
         return eventRepository.existsById(id);
+    }
+
+    @Override
+    public Page<Event> findAll(Pageable pageable) {
+        return eventRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Event> findByNameContaining(String name, Pageable pageable) {
+        return eventRepository.findByNameContaining(name, pageable);
+    }
+
+    @Override
+    public Page<Event> findById(String id, Pageable pageable) {
+        return eventRepository.findById(id, pageable);
     }
 }
