@@ -19,4 +19,5 @@ public interface iCategoryService {
     Optional<Category> findByCategoryName(String name);
     boolean existsById (String id);
     boolean existsByName(String name);
+    int getNumberOfPage(int pageSize);
 }
