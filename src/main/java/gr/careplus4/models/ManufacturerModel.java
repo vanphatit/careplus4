@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class ManufacturerModel {
     private String id;
     private String name;
+    private Boolean isEdit;
 }
