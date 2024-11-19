@@ -5,6 +5,7 @@ import gr.careplus4.entities.Review;
 import gr.careplus4.entities.User;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, String> {
 
+    String findTopByIdContains(String id, Sort sort);
     List<Review> findReviewByUser(User user); // Tìm kiếm theo user
     List<Review> findReviewByUser(User user, Pageable pageable); // Tìm kiếm theo user và phân trang
 

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -25,4 +26,7 @@ public class Review implements Serializable {
     @ManyToOne
     @JoinColumn(name = "IDBill", nullable = false)
     private Bill bill;
+
+    @Column(name = "Date", nullable = false)
+    private Date date;
 }
