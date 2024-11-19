@@ -72,4 +72,14 @@ public class CategoryServiceImpl implements iCategoryService {
     public boolean existsByName(String name) {
         return categoryRepository.existsByName(name);
     }
+
+    @Override
+    public int getNumberOfPage(int pageSize) {
+        int totalCategories = (int) categoryRepository.count();
+        int countPage = (int) (totalCategories / pageSize);
+        if (totalCategories % pageSize != 0) {
+            countPage++;
+        }
+        return countPage;
+    }
 }
