@@ -31,5 +31,5 @@ public class Cart implements Serializable {
     private int productCount;
 
     @OneToMany(mappedBy = "cart")
-    private List<CartDetail> cartDetails = new ArrayList<>();
+    private List<CartDetail> cartDetails;
 }

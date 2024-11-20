@@ -17,9 +17,9 @@
     /*
     // initialize custom numbers
     */
-    $(function () {
-        $('.input-number').customNumber();
-    });
+    // $(function () {
+    //     $('.input-number').customNumber();
+    // });
 
 
     /*
@@ -835,6 +835,77 @@
 
             productsList.attr('data-layout', $(this).attr('data-layout'));
             productsList.attr('data-with-features', $(this).attr('data-with-features'));
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lấy tất cả các input và nút tăng/giảm số lượng
+        const cartTable = document.querySelector(".cart__table");
+        const quantityInputs = cartTable.querySelectorAll(".input-number__input");
+
+        function updateRowTotal(row) {
+            const priceCell = row.querySelector(".cart-table__column--price");
+            const quantityInput = row.querySelector(".input-number__input");
+            const totalCell = row.querySelector(".cart-table__column--total");
+
+            // Lấy giá trị giá đơn vị và số lượng
+            const unitPrice = parseFloat(priceCell.textContent.trim());
+            const quantity = parseInt(quantityInput.value);
+
+            // Tính tổng giá trị
+            const rowTotal = unitPrice * quantity;
+
+            // Cập nhật DOM
+            totalCell.textContent = rowTotal.toFixed(2);
+
+            // Cập nhật tổng tiền của giỏ hàng
+            updateCartTotal();
+        }
+
+        function updateCartTotal() {
+            const totalPriceHeader = document.querySelector(".cart__totals-header td");
+            const totalPriceFooter = document.querySelector(".cart__totals-footer td");
+            let totalPrice = 0;
+
+            cartTable.querySelectorAll(".cart-table__row").forEach(row => {
+                const totalCell = row.querySelector(".cart-table__column--total");
+                if (totalCell) {
+                    const rowTotal = parseFloat(totalCell.textContent.trim());
+
+                    if (!isNaN(rowTotal)) {
+                        totalPrice += rowTotal;
+                    }
+                }
+            });
+
+            // Cập nhật DOM
+            totalPriceHeader.textContent = totalPrice.toFixed(2);
+            totalPriceFooter.textContent = totalPrice.toFixed(2);
+        }
+
+        // Xử lý khi người dùng thay đổi số lượng
+        quantityInputs.forEach(input => {
+            input.addEventListener("input", function () {
+                const row = input.closest(".cart-table__row");
+                updateRowTotal(row);
+            });
+        });
+
+        // Xử lý khi bấm nút tăng/giảm
+        cartTable.querySelectorAll(".input-number__add, .input-number__sub").forEach( button=> {
+            button.addEventListener("click", function () {
+                const row = button.closest(".cart-table__row");
+                const input = row.querySelector(".input-number__input");
+                const step = parseInt(input.getAttribute("step") || 1);
+
+                if (button.classList.contains("input-number__add")) {
+                    input.value = parseInt(input.value) + step;
+                } else if (button.classList.contains("input-number__sub")) {
+                    input.value = Math.max(parseInt(input.value) - step, 1); // Không cho phép số lượng < 1
+                }
+
+                updateRowTotal(row);
+            });
         });
     });
 })(jQuery);

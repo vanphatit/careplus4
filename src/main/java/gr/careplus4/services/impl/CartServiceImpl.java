@@ -50,6 +50,12 @@ public class CartServiceImpl implements iCartService {
     }
 
     @Override
+    public Cart findCartByUser(User user) {
+        Cart cart = cartRepository.findByUser(user);
+        return cart == null ? new Cart() : cart;
+    }
+
+    @Override
     public void handleAddProductToCart(String phone, String medicineId, HttpSession session) {
        Optional<User> user = this.userRepository.findByPhoneNumber(phone);
        if (user.isPresent()) {
