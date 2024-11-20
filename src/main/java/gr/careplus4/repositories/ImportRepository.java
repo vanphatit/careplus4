@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface ImportRepository extends JpaRepository<Import, String> {
    // @EntityGraph(attributePaths = {"Provider"})
     Page<Import> findAll(Pageable pageable);
-    Page<Import> findById(String id, Pageable pageable);
+    Page<Import> findByIdContaining(String id, Pageable pageable);
     @Query("SELECT i FROM Import i WHERE i.provider.id = :providerId")
-    Page<Import> findByProviderIdCustom(@Param("providerId") String providerId, Pageable pageable);
+    Page<Import> findByProviderIdContaining(@Param("providerId") String providerId, Pageable pageable);
 }

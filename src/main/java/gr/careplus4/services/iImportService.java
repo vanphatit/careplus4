@@ -13,8 +13,8 @@ public interface iImportService {
     void deleteById (String id);
     List<Import> findAll ();
     Optional<Import> findById (String id);
-    Page<Import> findById (String id, Pageable pageable);
+    Page<Import> findByIdContaining (String id, Pageable pageable);
     <S extends Import> S save (S entity);
     Page<Import> findAll (Pageable pageable);
-    Page<Import> findByProviderId(String providerId, Pageable pageable);
+    Page<Import> findByProviderIdContaining(String providerId, Pageable pageable);
 }

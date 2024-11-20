@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImportDetailModel {
+    private Long importDetailId;
     private String importId;
     private String medicineId;
     private int quantity;
