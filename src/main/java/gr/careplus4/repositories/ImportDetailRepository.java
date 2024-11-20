@@ -20,5 +20,5 @@ public interface ImportDetailRepository extends JpaRepository<ImportDetail, Long
 
     Optional<ImportDetail> findByMedicine_Id(String medicineId);   // Tìm ImportDetail bằng medicine.id
 
-
+    void deleteByImportRecord_Id(String importId);
 }

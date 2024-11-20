@@ -5,6 +5,7 @@ import gr.careplus4.repositories.ImportDetailRepository;
 import gr.careplus4.services.iImportDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -51,6 +52,11 @@ public class ImportDetailServiceImpl implements iImportDetailService {
     @Override
     public Optional<ImportDetail> findImportDetailByMedicineId(String medicineId) {
         return importDetailRepository.findByMedicine_Id(medicineId);
+    }
+    @Transactional
+    @Override
+    public void deleteByImportId(String importId) {
+        importDetailRepository.deleteByImportRecord_Id(importId);
     }
 }
 

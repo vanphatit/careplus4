@@ -164,12 +164,7 @@ public class ImportController {
     @PostMapping("/delete/{id}")
     public String delete(ModelMap model,@PathVariable("id") String id) {
         if (importDetailService.existsImportDetailByImportId(id)) {
-            model.addAttribute("error", "Cannot delete Import because it has associated ImportDetails!");
-            Optional<Import> optionalImport = importService.findById(id);
-            optionalImport.ifPresent(imp -> model.addAttribute("imp", imp));
-            Boolean hasImportDetail = true; // Vì đã có ImportDetail
-            model.addAttribute("hasImportDetail", hasImportDetail);
-            return "vendor/import-delete"; // Quay lại trang xác nhận xóa
+           importDetailService.deleteByImportId(id);
         }
         importService.deleteById(id);
         return "redirect:/vendor/import";

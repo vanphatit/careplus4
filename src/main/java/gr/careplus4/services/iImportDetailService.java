@@ -18,4 +18,5 @@ public interface iImportDetailService {
     Optional<ImportDetail> findImportDetailByImportId(String importId);
     Optional<ImportDetail> findImportDetailByMedicineId(String medicineId);
 
+    void deleteByImportId(String importId);
 }
