@@ -30,6 +30,10 @@ public class Cart implements Serializable {
     @Column(name = "ProductCount", nullable = false)
     private int productCount;
 
+    @Column(name = "TotalAmount", precision = 10, scale = 2, nullable = false)
+    @DecimalMin("0.00")
+    private BigDecimal totalAmount;
+
     @OneToMany(mappedBy = "cart")
     private List<CartDetail> cartDetails;
 }

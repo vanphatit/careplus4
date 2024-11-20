@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -26,6 +27,14 @@ public class Bill implements Serializable {
     @ManyToOne
     @JoinColumn(name = "UserPhone", nullable = false)
     private User user;
+
+    @Column(name = "ReceiverName", length = 255, nullable = false)
+    @NotEmpty(message = "Receiver name is required")
+    private String name;
+
+    @Column(name = "Address", length = 255)
+    @NotEmpty(message = "Receiver address is required")
+    private String address;
 
     @Column(name = "Date")
     @Temporal(TemporalType.DATE)
@@ -49,4 +58,7 @@ public class Bill implements Serializable {
     @Column(name = "Status", columnDefinition = "NVARCHAR(255)", nullable = false)
     @NotEmpty(message = "Status is required")
     private String status;
+
+    @OneToMany(mappedBy = "bill")
+    private List<BillDetail> bilDetails;
 }
