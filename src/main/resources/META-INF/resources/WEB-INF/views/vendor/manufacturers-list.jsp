@@ -14,6 +14,28 @@
         h1 {
             color: #333;
         }
+        .search-bar {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-bar input {
+            padding: 8px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search-bar button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .search-bar button:hover {
+            background-color: #0056b3;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -88,6 +110,14 @@
 <body>
 <h1>Danh sách Nhà Sản Xuất</h1>
 
+<!-- Search Bar -->
+<div class="search-bar">
+    <form action="/vendor/manufacturer/search" method="get">
+        <input type="text" name="name" placeholder="Tìm kiếm theo tên..." />
+        <button type="submit">Tìm kiếm</button>
+    </form>
+</div>
+
 <c:if test="${not empty message}">
     <p style="color: red;">${message}</p>
 </c:if>
@@ -108,7 +138,8 @@
             <td class="center">
                 <a href="<c:url value='/vendor/manufacturer/${manufacturer.id}'/>">Chi tiết</a> |
                 <a href="<c:url value='/vendor/manufacturer/edit/${manufacturer.id}'/>">Sửa</a> |
-                <a href="<c:url value='/vendor/manufacturer/delete/${manufacturer.id}'/>">Xóa</a>
+                <a href="<c:url value='/vendor/manufacturer/delete/${manufacturer.id}'/>"
+                   onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
             </td>
         </tr>
     </c:forEach>

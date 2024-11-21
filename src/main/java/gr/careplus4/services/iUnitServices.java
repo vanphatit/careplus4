@@ -31,4 +31,6 @@ public interface iUnitServices {
     Page<Unit> findByNameContaining(String name, Pageable pageable);
 
     Boolean existsByName(String name);
+
+    String generateUnitId(String previousUnitId);
 }
