@@ -85,4 +85,9 @@ public class UnitServicesImpl implements iUnitServices {
     public Boolean existsByName(String name) {
         return unitRepository.existsByName(name);
     }
+
+    @Override
+    public String generateUnitId(String previousUnitId) {
+        return GeneratedId.getGeneratedId(previousUnitId);
+    }
 }
