@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -165,6 +166,12 @@ public class EventController {
         return "vendor/event-list";
     }
 
-
-
+    @GetMapping("/active")
+    public String getActiveEvents(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date inputDate, Model model) {
+        List<Event> activeEvents = eventService.getActiveEvents(inputDate);
+        model.addAttribute("inputDate", inputDate);
+        model.addAttribute("activeEvents", activeEvents);
+        return "vendor/event-active-list"; // Tên file JSP
     }
+
+}
