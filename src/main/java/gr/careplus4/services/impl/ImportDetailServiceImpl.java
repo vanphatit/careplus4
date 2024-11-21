@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,7 +46,7 @@ public class ImportDetailServiceImpl implements iImportDetailService {
     }
 
     @Override
-    public Optional<ImportDetail> findImportDetailByImportId(String importId) {
+    public List<ImportDetail> findImportDetailByImportId(String importId) {
         return importDetailRepository.findByImportRecord_Id(importId);
     }
 
@@ -53,10 +54,18 @@ public class ImportDetailServiceImpl implements iImportDetailService {
     public Optional<ImportDetail> findImportDetailByMedicineId(String medicineId) {
         return importDetailRepository.findByMedicine_Id(medicineId);
     }
+
     @Transactional
     @Override
     public void deleteByImportId(String importId) {
         importDetailRepository.deleteByImportRecord_Id(importId);
     }
+
+    @Override
+    public ImportDetail save(ImportDetail importDetail) {
+        return importDetailRepository.save(importDetail);
+    }
+
+
 }
 

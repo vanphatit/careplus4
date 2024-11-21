@@ -1,10 +1,14 @@
 package gr.careplus4.controllers.vendor;
 
 import gr.careplus4.entities.Import;
+import gr.careplus4.entities.ImportDetail;
+import gr.careplus4.entities.Medicine;
 import gr.careplus4.entities.Provider;
+import gr.careplus4.models.ImportDetailModel;
 import gr.careplus4.models.ImportModel;
 import gr.careplus4.services.impl.ImportDetailServiceImpl;
 import gr.careplus4.services.impl.ImportServiceImpl;
+import gr.careplus4.services.impl.MedicineServicesImpl;
 import gr.careplus4.services.impl.ProviderServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
@@ -213,11 +217,17 @@ public class ImportController {
     public String showImportDetails(@PathVariable("id") String id, Model model) {
         Optional<Import> optionalImport = importService.findById(id);
         if (optionalImport.isPresent()) {
-            model.addAttribute("importDetails", optionalImport.get());
+            Import importEntity = optionalImport.get();
+            List<ImportDetail> details = importDetailService.findImportDetailByImportId(id);
+
+            model.addAttribute("importDetails", details);
+            model.addAttribute("importEntity", importEntity);
             return "vendor/import-details"; // Giao diện hiển thị chi tiết Import
         }
         model.addAttribute("error", "Import not found");
         return "vendor/import-list"; // Quay lại danh sách nếu không tìm thấy Import
     }
+
+
 
 }
