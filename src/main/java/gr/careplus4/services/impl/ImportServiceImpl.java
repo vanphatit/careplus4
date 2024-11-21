@@ -32,8 +32,8 @@ public class ImportServiceImpl implements iImportService {
     }
 
     @Override
-    public Page<Import> findById(String id, Pageable pageable) {
-        return importRepository.findById(id, pageable);
+    public Page<Import> findByIdContaining(String id, Pageable pageable) {
+        return importRepository.findByIdContaining(id, pageable);
     }
 
 
@@ -48,8 +48,8 @@ public class ImportServiceImpl implements iImportService {
     }
 
     @Override
-    public Page<Import> findByProviderId(String providerId, Pageable pageable) {
-        return importRepository.findByProviderIdCustom(providerId, pageable);
+    public Page<Import> findByProviderIdContaining(String providerId, Pageable pageable) {
+        return importRepository.findByProviderIdContaining(providerId, pageable);
     }
 
 }
