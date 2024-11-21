@@ -5,12 +5,15 @@ import gr.careplus4.entities.Review;
 import gr.careplus4.entities.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface iReviewServices {
     Boolean existsByUserAndBill(User user, Bill bill);
+
+    String findTopByIdContains(String id, Sort sort);
 
     List<Review> findAll();
 

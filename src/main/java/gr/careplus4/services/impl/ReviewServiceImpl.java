@@ -4,10 +4,12 @@ import gr.careplus4.entities.Bill;
 import gr.careplus4.entities.Review;
 import gr.careplus4.entities.User;
 import gr.careplus4.repositories.ReviewRepository;
+import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iReviewServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,12 +26,21 @@ public class ReviewServiceImpl implements iReviewServices {
     }
 
     @Override
+    public String findTopByIdContains(String id, Sort sort) {
+        return reviewRepository.findTopByIdContains(id, sort);
+    }
+
+    @Override
     public List<Review> findAll() {
         return reviewRepository.findAll();
     }
 
     @Override
     public <S extends Review> S save(S entity) {
+        if(entity.getId() == null) {
+            String lastId = findTopByIdContains("RE", Sort.by(Sort.Direction.DESC, "id")) != null ? findTopByIdContains("RE", Sort.by(Sort.Direction.DESC, "id")) : "RE00000";
+            entity.setId(GeneratedId.getGeneratedId(lastId));
+        }
         return reviewRepository.save(entity);
     }
 
