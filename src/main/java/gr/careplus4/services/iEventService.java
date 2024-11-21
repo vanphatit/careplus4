@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,4 +34,5 @@ public interface iEventService {
     Page<Event> findByNameContaining(String name, Pageable pageable);
 
     Page<Event> findById(String id, Pageable pageable);
+    List<Event> getActiveEvents(Date inputDate);
 }

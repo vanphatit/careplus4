@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,4 +71,10 @@ public class EventServiceImpl implements iEventService {
     public Page<Event> findById(String id, Pageable pageable) {
         return eventRepository.findById(id, pageable);
     }
+
+    @Override
+    public List<Event> getActiveEvents(Date inputDate) {
+        return eventRepository.findActiveEvents(inputDate);
+    }
+
 }
