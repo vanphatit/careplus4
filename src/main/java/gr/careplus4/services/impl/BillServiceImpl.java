@@ -147,5 +147,15 @@ public class BillServiceImpl implements IBillService {
 
     }
 
-
+    @Override
+    public List<Bill> findBillsByUserAndDateBetween(User user, Date startDate, Date endDate) {
+        List<Bill> bills = billRepository.findBillsByUser(user);
+        List<Bill> result = new ArrayList<>();
+        for (Bill bill : bills) {
+            if (bill.getDate().after(startDate) && bill.getDate().before(endDate)) {
+                result.add(bill);
+            }
+        }
+        return result;
+    }
 }
