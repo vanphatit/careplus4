@@ -26,6 +26,10 @@ public interface iImportDetailService {
 
     void deleteByImportId(String importId);
 
+    void deleteById(Long id);
+
+    Optional<ImportDetail> findById(Long id);
+
     List<ImportDetail> findImportDetailByImportId(String importId);
 
     <S extends ImportDetail> S save(S entity);

@@ -62,6 +62,16 @@ public class ImportDetailServiceImpl implements iImportDetailService {
     }
 
     @Override
+    public void deleteById(Long id) {
+        importDetailRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<ImportDetail> findById(Long id) {
+        return importDetailRepository.findById(id);
+    }
+
+    @Override
     public ImportDetail save(ImportDetail importDetail) {
         return importDetailRepository.save(importDetail);
     }

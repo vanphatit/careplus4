@@ -48,37 +48,61 @@ public class ImportDetailController {
     }
 
     @PostMapping("/save-detail/{importId}")
-    public String saveImportDetail(@PathVariable("importId") String importId,
-                                   @Valid @ModelAttribute("detail") ImportDetailModel detailModel,
-                                   BindingResult result, Model model) {
+    public ModelAndView saveImportDetail(@PathVariable("importId") String importId,
+                                         @Valid @ModelAttribute("detail") ImportDetailModel detailModel,
+                                         BindingResult result,
+                                         ModelMap model) {
         if (result.hasErrors()) {
+            System.out.println("Errors: " + result.getAllErrors());
             model.addAttribute("importId", importId);
-            return "vendor/import-detail-add";
+            return new ModelAndView("vendor/import-detail-add", model);
         }
 
-        Optional<Import> importOptional = importService.findById(importId);
-        if (importOptional.isEmpty()) {
-            model.addAttribute("error", "Import not found!");
-            return "redirect:/vendor/import";
+        // Kiểm tra Import tồn tại
+        Import importEntity = importService.findById(importId).orElse(null);
+        if (importEntity == null) {
+            model.addAttribute("error", "Import không tồn tại!");
+            return new ModelAndView("vendor/import-detail-add", model);
         }
 
-        // Tìm kiếm Medicine
-        Optional<Medicine> medicineOptional = medicineService.findById(detailModel.getMedicineId());
-        if (medicineOptional.isEmpty()) {
-            model.addAttribute("error", "Medicine not found!");
-            return "vendor/import-detail-add";
+        // Kiểm tra Medicine tồn tại
+        Medicine medicine = medicineService.findById(detailModel.getMedicineId()).orElse(null);
+        if (medicine == null) {
+            model.addAttribute("error", "Medicine không tồn tại!");
+            return new ModelAndView("vendor/import-detail-add", model);
         }
 
-        // Tạo ImportDetail mới
-        Import importEntity = importOptional.get();
-        Medicine medicine = medicineOptional.get();
-
+        // Tạo mới ImportDetail và ánh xạ dữ liệu
         ImportDetail importDetail = new ImportDetail();
         importDetail.setImportRecord(importEntity);
         importDetail.setMedicine(medicine);
         importDetail.setQuantity(detailModel.getQuantity());
         importDetail.setUnitPrice(detailModel.getUnitPrice());
-        importDetailService.save(importDetail);
+        importDetailService.save(importDetail); // Lưu ImportDetail
+
+        // Cập nhật giá của Medicine
+        medicine.setUnitCost(detailModel.getUnitPrice());
+        medicineService.save(medicine); // Lưu Medicine với giá mới
+
+        model.addAttribute("message", "Import Detail added successfully");
+        return new ModelAndView("redirect:/vendor/import", model);
+    }
+
+    @GetMapping("/delete-detail/{id}")
+    public String deleteImportDetail(@PathVariable("id") Long id, ModelMap model) {
+        // Kiểm tra sự tồn tại của ImportDetail
+        Optional<ImportDetail> importDetailOptional = importDetailService.findById(id);
+        if (importDetailOptional.isEmpty()) {
+            model.addAttribute("error", "Import Detail không tồn tại!");
+            return "redirect:/vendor/import";
+        }
+
+        try {
+            importDetailService.deleteById(id); // Xóa ImportDetail
+            model.addAttribute("message", "Import Detail deleted successfully.");
+        } catch (Exception e) {
+            model.addAttribute("error", "Không thể xóa Import Detail: " + e.getMessage());
+        }
 
         return "redirect:/vendor/import";
     }

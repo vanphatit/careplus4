@@ -22,4 +22,5 @@ public interface ImportDetailRepository extends JpaRepository<ImportDetail, Long
     void deleteByImportRecord_Id(String importId);
 
     List<ImportDetail> findByImportRecord_Id(String importId);
+
 }
