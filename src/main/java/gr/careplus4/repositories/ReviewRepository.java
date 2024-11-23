@@ -4,6 +4,7 @@ import gr.careplus4.entities.Bill;
 import gr.careplus4.entities.Review;
 import gr.careplus4.entities.User;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,9 +16,11 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, String> {
 
-    String findTopByIdContains(String id, Sort sort);
+    Review findTopByIdContains(String id, Sort sort); // Tìm review cuối cùng theo id
     List<Review> findReviewByUser(User user); // Tìm kiếm theo user
-    List<Review> findReviewByUser(User user, Pageable pageable); // Tìm kiếm theo user và phân trang
+    Page<Review> findReviewByUser(User user, Pageable pageable); // Tìm kiếm theo user và phân trang
+
+    Review findReviewByUserAndBill(User user, Bill bill);
 
     Boolean existsByUserAndBill(User user, Bill bill); // Kiểm tra xem review đã tồn tại chưa
 

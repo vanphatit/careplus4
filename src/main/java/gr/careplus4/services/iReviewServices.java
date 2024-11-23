@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface iReviewServices {
     Boolean existsByUserAndBill(User user, Bill bill);
 
-    String findTopByIdContains(String id, Sort sort);
+    Review findTopByIdContains(String id, Sort sort);
 
     List<Review> findAll();
 
@@ -21,7 +21,9 @@ public interface iReviewServices {
 
     List<Review> findReviewByUser(User user);
 
-    List<Review> findReviewByUser(User user, Pageable pageable);
+    Page<Review> findReviewByUser(User user, Pageable pageable);
+
+    Review findReviewByUserAndBill(User user, Bill bill);
 
     Optional<Review> findById(String s);
 
