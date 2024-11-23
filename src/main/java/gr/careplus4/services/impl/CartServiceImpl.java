@@ -1,17 +1,11 @@
 package gr.careplus4.services.impl;
 
-import gr.careplus4.entities.Cart;
-import gr.careplus4.entities.CartDetail;
-import gr.careplus4.entities.Medicine;
-import gr.careplus4.entities.User;
+import gr.careplus4.entities.*;
 import gr.careplus4.models.CartConfirmModel;
 import gr.careplus4.models.CartDetailConfirmModel;
 import gr.careplus4.models.CartDetailModel;
 import gr.careplus4.models.CartModel;
-import gr.careplus4.repositories.CartDetailRepository;
-import gr.careplus4.repositories.CartRepository;
-import gr.careplus4.repositories.MedicineRepository;
-import gr.careplus4.repositories.UserRepository;
+import gr.careplus4.repositories.*;
 import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iCartService;
 import jakarta.servlet.http.HttpSession;
@@ -37,6 +31,12 @@ public class CartServiceImpl implements iCartService {
     @Autowired
     private CartDetailRepository cartDetailRepository;
 
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private EventServiceImpl eventService;
+
     @Override
     public Optional<CartModel> findByUser_PhoneNumber(String phone) {
         Optional<Cart> cart = cartRepository.findByUser_PhoneNumber(phone);
@@ -47,6 +47,12 @@ public class CartServiceImpl implements iCartService {
             cartModel.get().setProductCount(cart.get().getProductCount());
         }
         return cartModel;
+    }
+
+    @Override
+    public Cart findCartByUser(User user) {
+        Cart cart = cartRepository.findByUser(user);
+        return cart == null ? new Cart() : cart;
     }
 
     @Override
@@ -160,7 +166,6 @@ public class CartServiceImpl implements iCartService {
         }
     }
 
-
     private CartDetailModel getCartDetailModel(CartDetail cd) {
         CartDetailModel cartDetailModel = new CartDetailModel();
         cartDetailModel.setCartDetailId(cd.getId());
@@ -184,6 +189,22 @@ public class CartServiceImpl implements iCartService {
         }
     }
 
+    @Override
+    public void handleUpdateCartBeforeCheckout(String cartId, List<CartDetail> cartDetails, String code) {
+        // Update cart detail
+        for (CartDetail cd : cartDetails) {
+            Optional<CartDetail> cdOptional = this.cartDetailRepository.findById(cd.getId());
+            if (cdOptional.isPresent()) {
+                CartDetail currentCartDetail = cdOptional.get();
+                currentCartDetail.setQuantity(cd.getQuantity());
+                this.cartDetailRepository.save(currentCartDetail);
+            }
+        }
 
-
+        // Update cart
+        Optional<Cart> cartOptional = this.cartRepository.findById(cartId);
+        Cart currentCart = cartOptional.get();
+        currentCart.setCouponCode(code);
+        this.cartRepository.save(currentCart);
+    }
 }

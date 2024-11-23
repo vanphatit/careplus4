@@ -16,6 +16,7 @@ public class MedicineModel {
     private String description;
     private BigDecimal unitCost;
     private Date expiryDate;
+    private Date importDate;
     private int stockQuantity;
     private String dosage;
     private BigDecimal rating;
@@ -23,4 +24,5 @@ public class MedicineModel {
     private String categoryId;
     private String unitId;
     private String image;
+    private Boolean isEdit;
 }

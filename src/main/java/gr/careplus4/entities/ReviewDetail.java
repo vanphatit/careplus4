@@ -16,11 +16,13 @@ import java.io.Serializable;
 public class ReviewDetail implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
     @ManyToOne
     @JoinColumn(name = "IDReview", nullable = false)
     private Review review;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "IDMedicine", nullable = false)
     private Medicine medicine;
