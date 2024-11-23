@@ -8,21 +8,19 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class MedicineModel {
+@AllArgsConstructor
+public class MedicineForUserModel {
     private String id;
     private String name;
     private String description;
     private BigDecimal unitCost;
-    private Date expiryDate;
-    private Date importDate;
     private int stockQuantity;
     private String dosage;
     private BigDecimal rating;
-    private String manufacturerId;
-    private String categoryId;
-    private String unitId;
+    private String manufacturerName;
+    private String categoryName;
+    private String unitName;
+    private Date expiryDate;
     private String image;
-    private Boolean isEdit;
 }

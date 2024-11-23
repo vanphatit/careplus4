@@ -49,6 +49,10 @@ public class Medicine implements Serializable {
     @DecimalMax("5.0")
     private BigDecimal rating;
 
+    @Column(name = "ImportDate")
+    @Temporal(TemporalType.DATE)
+    private Date importDate;
+
     @Column(name = "Image", length = 4086)
     @NotEmpty(message = "Image is required")
     private String image;

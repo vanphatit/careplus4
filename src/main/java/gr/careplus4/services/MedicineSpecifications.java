@@ -1,11 +1,12 @@
-package gr.careplus4.controllers.medicines.api;
+package gr.careplus4.services;
 
 import gr.careplus4.entities.Medicine;
+import gr.careplus4.models.MedicineForUserModel;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 
 public class MedicineSpecifications {
     public static Specification<Medicine> containsKeywordInAttributes(String keyword) {
@@ -24,17 +25,24 @@ public class MedicineSpecifications {
             // Tìm kiếm theo thuộc tính description của Medicine
             var descriptionPredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), likePattern);
 
+            // Tìm kiếm theo thuộc tính name của Unit
+            var unitNamePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.join("unit").get("name")), likePattern);
+
+            // Tìm kiếm theo thuộc tính dosage của Medicine
+            var dosagePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("dosage")), likePattern);
+
             // Kết hợp tất cả điều kiện với OR
-            return criteriaBuilder.or(medicineNamePredicate, categoryNamePredicate, manufacturerNamePredicate, descriptionPredicate);
+            return criteriaBuilder.or(medicineNamePredicate, categoryNamePredicate, manufacturerNamePredicate, descriptionPredicate, unitNamePredicate, dosagePredicate);
         };
     }
 
     public static Specification<Medicine> buildSpecification (
             String manufacturerName, String categoryName, String unitName,
             BigDecimal unitCostMin, BigDecimal unitCostMax,
-            Long expiryDateMin, Long expiryDateMax,
+            Date expiryDateMin, Date expiryDateMax,
             Integer stockQuantityMin, Integer stockQuantityMax,
-            BigDecimal ratingMin, BigDecimal ratingMax
+            BigDecimal ratingMin, BigDecimal ratingMax,
+            Date importDateMin, Date importDateMax
     ) {
         return (root, query, criteriaBuilder) -> {
             var predicate = criteriaBuilder.conjunction();
@@ -56,7 +64,7 @@ public class MedicineSpecifications {
             }
 
             if (expiryDateMin != null && expiryDateMax != null) {
-                predicate.getExpressions().add(criteriaBuilder.between(root.get("expiryDate"), new Date(expiryDateMin), new Date(expiryDateMax)));
+                predicate.getExpressions().add(criteriaBuilder.between(root.get("expiryDate"), expiryDateMin, expiryDateMax));
             }
 
             if (stockQuantityMin != null && stockQuantityMax != null) {
@@ -65,6 +73,10 @@ public class MedicineSpecifications {
 
             if (ratingMin != null && ratingMax != null) {
                 predicate.getExpressions().add(criteriaBuilder.between(root.get("rating"), ratingMin, ratingMax));
+            }
+
+            if (importDateMin != null && importDateMax != null) {
+                predicate.getExpressions().add(criteriaBuilder.between(root.get("importDate"), importDateMin, importDateMax));
             }
 
             return predicate;
