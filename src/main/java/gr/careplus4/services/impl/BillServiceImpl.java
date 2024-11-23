@@ -109,7 +109,7 @@ public class BillServiceImpl implements IBillService {
                 order.setStatus("PENDING");
                 order.setPointUsed(usedPoint);
                 order.setEvent(event.get());
-                order.setTotalAmount(cart.get().getTotalAmount());
+//                order.setTotalAmount(cart.get().getTotalAmount()); Nho note lai khong sau nay conflict
 
                 order = this.billRepository.save(order);
 

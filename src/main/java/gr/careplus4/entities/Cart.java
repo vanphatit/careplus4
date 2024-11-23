@@ -1,26 +1,25 @@
 package gr.careplus4.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "Cart")
 public class Cart implements Serializable {
 
     @Id
     @Column(name = "ID", length = 7)
+    @EqualsAndHashCode.Include
     private String id;
 
     @OneToOne
@@ -30,9 +29,8 @@ public class Cart implements Serializable {
     @Column(name = "ProductCount", nullable = false)
     private int productCount;
 
-    @Column(name = "TotalAmount", precision = 10, scale = 2, nullable = false)
-    @DecimalMin("0.00")
-    private BigDecimal totalAmount;
+    @Column(name = "CouponCode", length = 7)
+    private String couponCode;
 
     @OneToMany(mappedBy = "cart")
     private List<CartDetail> cartDetails;
