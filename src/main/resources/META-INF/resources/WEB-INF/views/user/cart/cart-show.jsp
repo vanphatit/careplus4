@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <c:url value="/" var="URL" />
 <!DOCTYPE html>
 <html lang="en">
@@ -46,8 +47,8 @@
                         </tr>
                         </thead>
                         <tbody class="cart-table__body">
-                        <c:forEach var="item" items="${cartDetails}">
-                            <tr class="cart-table__row">
+                        <c:forEach var="item" items="${cartDetails}" varStatus="status">
+                            <tr class="cart-table__row" data-index="${status.index}">
                                 <td class="cart-table__column cart-table__column--image">
     <%--                                <a href="#"><img src="<c:url value='${item.image}' />" alt="" /></a>--%>
                                 </td>
@@ -75,16 +76,18 @@
                         </tbody>
                     </table>
                     <div class="cart__actions">
-                        <form class="cart__coupon-form">
-                            <label for="input-coupon-code" class="sr-only">Coupon Code</label>
-                            <input type="text" class="form-control" id="input-coupon-code" placeholder="Coupon Code" />
-                            <button type="submit" class="btn btn-primary">Apply Coupon</button>
-                        </form>
+                        <div>
+                            <select class="form-control" id="event-select" name="selectedEvent" onchange="updateEventInput(this.value)">
+                                <c:forEach var="event" items="${events}">
+                                    <option value="${event.id}">${event.name}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
                         <div class="cart__buttons">
-                            <a href="<c:url value='/index.html' />" class="btn btn-light">Continue Shopping</a>
-                            <a href="#" class="btn btn-primary cart__update-button">Update Cart</a>
+                            <a href="#" class="btn btn-primary cart__update-button">Continue Shopping</a>
                         </div>
                     </div>
+
                     <div class="row justify-content-end pt-5">
                         <div class="col-12 col-md-7 col-lg-6 col-xl-5">
                             <div class="card">
@@ -97,11 +100,12 @@
                                             <td>${totalPrice}</td>
                                         </tr>
                                         </thead>
-    <%--                                    <tbody class="cart__totals-body">--%>
-    <%--                                    <tr>--%>
-    <%--                                        <th>Shipping</th>--%>
-    <%--                                        <td>${shipping} <div class="cart__calc-shipping"><a href="#">Calculate Shipping</a></div></td>--%>
-    <%--                                    </tr>--%>
+                                        <tbody class="cart__totals-body">
+                                            <tr>
+                                                <th>Shipping</th>
+                                                <td>0</td>
+                                            </tr>
+                                        </tbody>
                                         <tfoot class="cart__totals-footer">
                                         <tr>
                                             <th>Total</th>
@@ -109,13 +113,50 @@
                                         </tr>
                                         </tfoot>
                                     </table>
-                                    <a class="btn btn-primary btn-xl btn-block cart__checkout-button" href="<c:url value='/checkout.html' />">Proceed to checkout</a>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Handle order to bill -->
+                    <form:form action="/confirm-checkout" method="post" id="checkoutForm" modelAttribute="cart">
+                        <div style="display: none;">
+                            <c:forEach var="cartDetail" items="${cart.cartDetails}" varStatus="status">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label>Id:</label>
+                                        <form:input class="form-control"
+                                                    type="text"
+                                                    value="${cartDetail.id}"
+                                                    path="cartDetails[${status.index}].id"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="cart-table__column cart-table__column--quantity" >Quantity:</label>
+                                        <div class="input-number">
+                                            <form:input class="form-control input-number__input" type="number" min="1"
+                                                        value="${cartDetail.quantity}"
+                                                        path="cartDetails[${status.index}].quantity"
+                                                        data-index="${status.index}"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </div>
+                        <input type="text" name="code" id="event-code-input" />
+                        <div class="row justify-content-end">
+                            <div class="col-5">
+                                <button class="btn btn-primary btn-xl btn-block cart__checkout-button">Proceed to checkout</button>
+                            </div>
+                        </div>
+                    </form:form>
                 </div>
             </div>
         </div><!-- site__body / end -->
     </div><!-- site / end -->
+    <script>
+        function updateEventInput(selectedValue) {
+            document.getElementById('event-code-input').value = selectedValue;
+        }
+    </script>
 </body>

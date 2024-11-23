@@ -1,6 +1,7 @@
 package gr.careplus4.services;
 
 import gr.careplus4.entities.Cart;
+import gr.careplus4.entities.CartDetail;
 import gr.careplus4.entities.User;
 import gr.careplus4.models.CartConfirmModel;
 import gr.careplus4.models.CartDetailModel;
@@ -17,4 +18,5 @@ public interface iCartService {
     List<CartDetailModel> getCartDetails(String phone);
     void handleRemoveCartDetail(long cartDetailID, HttpSession session);
     void handleUpdateCartBeforeCheckout(CartConfirmModel cart);
+    void handleUpdateCartBeforeCheckout(String cartId, List<CartDetail> cartDetails, String code);
 }
