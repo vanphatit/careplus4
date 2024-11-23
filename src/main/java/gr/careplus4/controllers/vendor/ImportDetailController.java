@@ -4,10 +4,7 @@ import gr.careplus4.entities.Import;
 import gr.careplus4.entities.ImportDetail;
 import gr.careplus4.entities.Medicine;
 import gr.careplus4.models.ImportDetailModel;
-import gr.careplus4.services.impl.ImportDetailServiceImpl;
-import gr.careplus4.services.impl.ImportServiceImpl;
-import gr.careplus4.services.impl.MedicineServicesImpl;
-import gr.careplus4.services.impl.ProviderServiceImpl;
+import gr.careplus4.services.impl.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Controller
@@ -29,9 +27,9 @@ public class ImportDetailController {
     @Autowired
     ImportDetailServiceImpl importDetailService;
 
-
     @Autowired
     MedicineServicesImpl medicineService;
+
 
     @GetMapping("/add-detail/{importId}")
     public String showAddDetailForm(@PathVariable("importId") String importId, Model model) {
@@ -80,9 +78,23 @@ public class ImportDetailController {
         importDetail.setUnitPrice(detailModel.getUnitPrice());
         importDetailService.save(importDetail); // Lưu ImportDetail
 
-        // Cập nhật giá của Medicine
-        medicine.setUnitCost(detailModel.getUnitPrice());
-        medicineService.save(medicine); // Lưu Medicine với giá mới
+        // Gọi hàm cập nhật giá bán (unitPrice)
+        medicineService.updateUnitPriceFollowUniCost(
+                medicine.getName(),
+                medicine.getManufacturer().getName(),
+                medicine.getExpiryDate(),
+                new Date(), // Ngày hiện tại
+                medicine.getUnitCost()
+        );
+
+        // Gọi hàm cập nhật số lượng tồn kho
+        medicineService.updateStockQuantity(
+                medicine.getName(),
+                medicine.getManufacturer().getName(),
+                medicine.getExpiryDate(),
+                new Date(), // Ngày hiện tại
+                detailModel.getQuantity()
+        );
 
         model.addAttribute("message", "Import Detail added successfully");
         return new ModelAndView("redirect:/vendor/import", model);
