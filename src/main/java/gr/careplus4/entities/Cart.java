@@ -32,6 +32,9 @@ public class Cart implements Serializable {
     @Column(name = "CouponCode", length = 7)
     private String couponCode;
 
+    @Column(name = "UsedPoint", columnDefinition = "bit default 0")
+    private Boolean usedPoint;
+
     @OneToMany(mappedBy = "cart")
     private List<CartDetail> cartDetails;
 }

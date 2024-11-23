@@ -18,5 +18,5 @@ public interface iCartService {
     List<CartDetailModel> getCartDetails(String phone);
     void handleRemoveCartDetail(long cartDetailID, HttpSession session);
     void handleUpdateCartBeforeCheckout(CartConfirmModel cart);
-    void handleUpdateCartBeforeCheckout(String cartId, List<CartDetail> cartDetails, String code);
+    void handleUpdateCartBeforeCheckout(String cartId, List<CartDetail> cartDetails, String code, boolean usedPoint);
 }

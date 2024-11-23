@@ -116,8 +116,10 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                     <!-- Handle order to bill -->
+                    <%--@elvariable id="cart" type=""--%>
                     <form:form action="/confirm-checkout" method="post" id="checkoutForm" modelAttribute="cart">
                         <div style="display: none;">
                             <c:forEach var="cartDetail" items="${cart.cartDetails}" varStatus="status">
@@ -143,9 +145,29 @@
                                 </div>
                             </c:forEach>
                         </div>
-                        <input type="text" name="code" id="event-code-input" />
+                        <input hidden type="text" name="code" id="event-code-input" />
+                        <input hidden type="text" id="usePointsHidden" name="usedPoint" value="false" />
                         <div class="row justify-content-end">
                             <div class="col-5">
+                                <div>
+                                    <div class="form-check form-switch" style="display: flex; align-items: center;
+                                        gap: 10px; margin-top: 10px; margin-bottom: 10px; margin-left: 3px; ">
+                                        <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                id="usePointsSwitch"
+                                                name="usePoints"
+                                                value=${cart.usedPoint}
+                                                onchange="updateUsePointsHiddenField(this.checked)"
+                                                style="transform: scale(1.5); cursor: pointer;" />
+                                        <label
+                                                class="form-check-label"
+                                                for="usePointsSwitch"
+                                                style="font-size: 16px; font-weight: 500; cursor: pointer;">
+                                            Use reward points
+                                        </label>
+                                    </div>
+                                </div>
                                 <button class="btn btn-primary btn-xl btn-block cart__checkout-button">Proceed to checkout</button>
                             </div>
                         </div>
@@ -157,6 +179,9 @@
     <script>
         function updateEventInput(selectedValue) {
             document.getElementById('event-code-input').value = selectedValue;
+        }
+        function updateUsePointsHiddenField(isChecked) {
+            document.getElementById('usePointsHidden').value = isChecked ? "true" : "false";
         }
     </script>
 </body>
