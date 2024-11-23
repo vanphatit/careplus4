@@ -22,6 +22,11 @@ public class ReviewDetailServiceImpl implements iReviewDetailServices {
     }
 
     @Override
+    public List<ReviewDetail> findReviewDetailsByReview(Review review) {
+        return reviewDetailRepository.findReviewDetailsByReview(review);
+    }
+
+    @Override
     public List<ReviewDetail> findReviewDetailsByReview(Review review, Pageable pageable) {
         return reviewDetailRepository.findReviewDetailsByReview(review, pageable);
     }
@@ -49,6 +54,11 @@ public class ReviewDetailServiceImpl implements iReviewDetailServices {
     @Override
     public int countReviewDetailsByReview_Bill_Id(String reviewBillId) {
         return reviewDetailRepository.countReviewDetailsByReview_Bill_Id(reviewBillId);
+    }
+
+    @Override
+    public boolean existsReviewDetailByReviewAndMedicine_Id(Review review, String medicineId) {
+        return reviewDetailRepository.existsReviewDetailByReviewAndMedicine_Id(review, medicineId);
     }
 
     @Override

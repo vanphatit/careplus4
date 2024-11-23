@@ -3,7 +3,9 @@ package gr.careplus4.services.impl;
 import gr.careplus4.entities.Bill;
 import gr.careplus4.entities.Review;
 import gr.careplus4.entities.User;
+import gr.careplus4.repositories.BillRepository;
 import gr.careplus4.repositories.ReviewRepository;
+import gr.careplus4.repositories.UserRepository;
 import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iReviewServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ public class ReviewServiceImpl implements iReviewServices {
     }
 
     @Override
-    public String findTopByIdContains(String id, Sort sort) {
+    public Review findTopByIdContains(String id, Sort sort) {
         return reviewRepository.findTopByIdContains(id, sort);
     }
 
@@ -38,7 +40,8 @@ public class ReviewServiceImpl implements iReviewServices {
     @Override
     public <S extends Review> S save(S entity) {
         if(entity.getId() == null) {
-            String lastId = findTopByIdContains("RE", Sort.by(Sort.Direction.DESC, "id")) != null ? findTopByIdContains("RE", Sort.by(Sort.Direction.DESC, "id")) : "RE00000";
+            String lastId = findTopByIdContains("RE", Sort.by(Sort.Direction.DESC, "id")) != null
+                    ? findTopByIdContains("RE", Sort.by(Sort.Direction.DESC, "id")).getId() : "RE00000";
             entity.setId(GeneratedId.getGeneratedId(lastId));
         }
         return reviewRepository.save(entity);
@@ -50,8 +53,13 @@ public class ReviewServiceImpl implements iReviewServices {
     }
 
     @Override
-    public List<Review> findReviewByUser(User user, Pageable pageable) {
+    public Page<Review> findReviewByUser(User user, Pageable pageable) {
         return reviewRepository.findReviewByUser(user, pageable);
+    }
+
+    @Override
+    public Review findReviewByUserAndBill(User user, Bill bill) {
+        return reviewRepository.findReviewByUserAndBill(user, bill);
     }
 
     @Override
