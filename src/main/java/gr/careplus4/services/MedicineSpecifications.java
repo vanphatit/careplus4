@@ -2,7 +2,9 @@ package gr.careplus4.services;
 
 import gr.careplus4.entities.Medicine;
 import gr.careplus4.models.MedicineForUserModel;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -36,7 +38,7 @@ public class MedicineSpecifications {
         };
     }
 
-    public static Specification<Medicine> buildSpecification (
+    public static Specification<Medicine> buildSpecification(
             String manufacturerName, String categoryName, String unitName,
             BigDecimal unitCostMin, BigDecimal unitCostMax,
             Date expiryDateMin, Date expiryDateMax,
@@ -45,39 +47,79 @@ public class MedicineSpecifications {
             Date importDateMin, Date importDateMax
     ) {
         return (root, query, criteriaBuilder) -> {
-            var predicate = criteriaBuilder.conjunction();
+            Predicate predicate = criteriaBuilder.conjunction();
 
+            // Manufacturer filter
             if (manufacturerName != null) {
-                predicate.getExpressions().add(criteriaBuilder.equal(root.join("manufacturer").get("name"), manufacturerName));
+                Join<Object, Object> manufacturerJoin = root.join("manufacturer", JoinType.LEFT);
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.equal(manufacturerJoin.get("name"), manufacturerName));
             }
 
+            // Category filter
             if (categoryName != null) {
-                predicate.getExpressions().add(criteriaBuilder.equal(root.join("category").get("name"), categoryName));
+                Join<Object, Object> categoryJoin = root.join("category", JoinType.LEFT);
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.equal(categoryJoin.get("name"), categoryName));
             }
 
+            // Unit filter
             if (unitName != null) {
-                predicate.getExpressions().add(criteriaBuilder.equal(root.join("unit").get("name"), unitName));
+                Join<Object, Object> unitJoin = root.join("unit", JoinType.LEFT);
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.equal(unitJoin.get("name"), unitName));
             }
 
-            if (unitCostMin != null && unitCostMax != null) {
-                predicate.getExpressions().add(criteriaBuilder.between(root.get("unitCost"), unitCostMin, unitCostMax));
+            // Unit Cost filter
+            if (unitCostMin != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("unitCost"), unitCostMin));
+            }
+            if (unitCostMax != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.lessThanOrEqualTo(root.get("unitCost"), unitCostMax));
             }
 
-            if (expiryDateMin != null && expiryDateMax != null) {
-                predicate.getExpressions().add(criteriaBuilder.between(root.get("expiryDate"), expiryDateMin, expiryDateMax));
+            // Stock Quantity filter
+            if (stockQuantityMin != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("stockQuantity"), stockQuantityMin));
+            }
+            if (stockQuantityMax != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.lessThanOrEqualTo(root.get("stockQuantity"), stockQuantityMax));
             }
 
-            if (stockQuantityMin != null && stockQuantityMax != null) {
-                predicate.getExpressions().add(criteriaBuilder.between(root.get("stockQuantity"), stockQuantityMin, stockQuantityMax));
+            // Rating filter
+            if (ratingMin != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("rating"), ratingMin));
+            }
+            if (ratingMax != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.lessThanOrEqualTo(root.get("rating"), ratingMax));
             }
 
-            if (ratingMin != null && ratingMax != null) {
-                predicate.getExpressions().add(criteriaBuilder.between(root.get("rating"), ratingMin, ratingMax));
+            // Expiry Date filter
+            if (expiryDateMin != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("expiryDate"), expiryDateMin));
+            }
+            if (expiryDateMax != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.lessThanOrEqualTo(root.get("expiryDate"), expiryDateMax));
             }
 
-            if (importDateMin != null && importDateMax != null) {
-                predicate.getExpressions().add(criteriaBuilder.between(root.get("importDate"), importDateMin, importDateMax));
+            // Import Date filter
+            if (importDateMin != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("importDate"), importDateMin));
             }
+            if (importDateMax != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.lessThanOrEqualTo(root.get("importDate"), importDateMax));
+            }
+
 
             return predicate;
         };

@@ -166,7 +166,8 @@ public class MedicineServicesImpl implements iMedicineServices {
                 expiryDateMin, expiryDateMax, stockQuantityMin, stockQuantityMax,
                 ratingMin, ratingMax, importDateMin, importDateMax
         );
-        return  medicineRepository.findAll(specification , pageable);
+
+        return  medicineRepository.findAll(specification, pageable);
     }
 
     @Override
@@ -373,43 +374,68 @@ public class MedicineServicesImpl implements iMedicineServices {
             BigDecimal ratingMin, BigDecimal ratingMax
     ) {
         return medicines.stream()
-                .filter(medicine ->
-                        // Kiểm tra manufacturerName
-                        (manufacturerName == null || manufacturerName.equals(medicine.getManufacturerName())) &&
+                .filter(medicine -> {
+                    // Kiểm tra manufacturerName
+                    if (manufacturerName != null && !manufacturerName.isEmpty() &&
+                            !manufacturerName.equalsIgnoreCase(medicine.getManufacturerName())) {
+                        return false;
+                    }
 
-                                // Kiểm tra categoryName
-                                (categoryName == null || categoryName.equals(medicine.getCategoryName())) &&
+                    // Kiểm tra categoryName
+                    if (categoryName != null && !categoryName.isEmpty() &&
+                            !categoryName.equalsIgnoreCase(medicine.getCategoryName())) {
+                        return false;
+                    }
 
-                                // Kiểm tra unitName
-                                (unitName == null || unitName.equals(medicine.getUnitName())) &&
+                    // Kiểm tra unitName
+                    if (unitName != null && !unitName.isEmpty() &&
+                            !unitName.equalsIgnoreCase(medicine.getUnitName())) {
+                        return false;
+                    }
 
-                                // Kiểm tra unitCost
-                                (medicine.getUnitCost() != null &&
-                                        medicine.getUnitCost().compareTo(BigDecimal.ZERO) >= 0 && // unitCost không âm
-                                        (unitCostMin == null && unitCostMax == null ||
-                                                (unitCostMin == null || medicine.getUnitCost().compareTo(unitCostMin) >= 0) &&
-                                                        (unitCostMax == null || medicine.getUnitCost().compareTo(unitCostMax) <= 0))) &&
+                    // Kiểm tra unitCost
+                    if (medicine.getUnitCost() != null) {
+                        if (unitCostMin != null && medicine.getUnitCost().compareTo(unitCostMin) < 0) {
+                            return false;
+                        }
+                        if (unitCostMax != null && medicine.getUnitCost().compareTo(unitCostMax) > 0) {
+                            return false;
+                        }
+                    }
 
-                                // Kiểm tra expiryDate
-                                (expiryDateMin == null && expiryDateMax == null ||
-                                        (medicine.getExpiryDate() != null &&
-                                                (expiryDateMin == null || !medicine.getExpiryDate().before(expiryDateMin)) &&
-                                                (expiryDateMax == null || !medicine.getExpiryDate().after(expiryDateMax)))) &&
+                    // Kiểm tra expiryDate
+                    if (medicine.getExpiryDate() != null) {
+                        if (expiryDateMin != null && medicine.getExpiryDate().before(expiryDateMin)) {
+                            return false;
+                        }
+                        if (expiryDateMax != null && medicine.getExpiryDate().after(expiryDateMax)) {
+                            return false;
+                        }
+                    }
 
-                                // Kiểm tra stockQuantity
-                                (stockQuantityMin == null && stockQuantityMax == null ||
-                                        (medicine.getStockQuantity() >= 0 && // Giá trị stockQuantity không âm
-                                                (stockQuantityMin == null || medicine.getStockQuantity() >= stockQuantityMin) &&
-                                                (stockQuantityMax == null || medicine.getStockQuantity() <= stockQuantityMax))) &&
+                    // Kiểm tra stockQuantity
+                    if (medicine.getStockQuantity() != 0) {
+                        if (stockQuantityMin != null && medicine.getStockQuantity() < stockQuantityMin) {
+                            return false;
+                        }
+                        if (stockQuantityMax != null && medicine.getStockQuantity() > stockQuantityMax) {
+                            return false;
+                        }
+                    }
 
-                                // Kiểm tra rating
-                                (medicine.getRating() != null &&
-                                        medicine.getRating().compareTo(BigDecimal.ONE) >= 0 && // Rating >= 1.0
-                                        medicine.getRating().compareTo(new BigDecimal("5.0")) <= 0 && // Rating <= 5.0
-                                        (ratingMin == null && ratingMax == null ||
-                                                (ratingMin == null || medicine.getRating().compareTo(ratingMin) >= 0) &&
-                                                        (ratingMax == null || medicine.getRating().compareTo(ratingMax) <= 0)))
-                )
+                    // Kiểm tra rating
+                    if (medicine.getRating() != null) {
+                        if (ratingMin != null && medicine.getRating().compareTo(ratingMin) < 0) {
+                            return false;
+                        }
+                        if (ratingMax != null && medicine.getRating().compareTo(ratingMax) > 0) {
+                            return false;
+                        }
+                    }
+
+                    // Tất cả điều kiện đều đúng
+                    return true;
+                })
                 .toList();
     }
 
