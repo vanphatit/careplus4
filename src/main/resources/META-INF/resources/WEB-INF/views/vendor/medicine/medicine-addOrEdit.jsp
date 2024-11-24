@@ -4,271 +4,152 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${medicine.id != null ? 'Edit Medicine' : 'Add Medicine'}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
     <style>
-        /* styles.css */
-
-        /* Tổng quan */
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Tiêu đề */
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-            color: #333;
-        }
-
-        /* Bảng */
-        table {
-            width: 90%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
-        }
-
-        table th {
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
-        }
-
-        table tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-
-        table tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        /* Nút hành động */
-        a {
-            text-decoration: none;
-            color: #007bff;
-            margin: 0 5px;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        /* Phân trang */
-        .pagination {
-            text-align: center;
-            margin: 20px auto;
-        }
-
-        .pagination a {
-            display: inline-block;
-            padding: 8px 12px;
-            margin: 0 4px;
-            border: 1px solid #ddd;
-            background-color: white;
-            color: #007bff;
-            border-radius: 4px;
-        }
-
-        .pagination a:hover {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .pagination .current {
-            background-color: #007bff;
-            color: white;
-            pointer-events: none;
-            border: 1px solid #007bff;
-        }
-
-        /* Form */
         form {
-            width: 80%;
-            margin: 20px auto;
             background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-
-        form div {
-            margin-bottom: 15px;
-        }
-
-        form label {
-            display: block;
+        .form-label {
             font-weight: bold;
-            margin-bottom: 5px;
         }
-
-        form input[type="text"],
-        form input[type="number"],
-        form input[type="date"],
-        form textarea,
-        form select,
-        form input[type="file"] {
-            width: 100%;
-            padding: 8px;
-            font-size: 14px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        form textarea {
-            resize: vertical;
-        }
-
-        form button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        form button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Hình ảnh */
-        img {
-            display: block;
-            max-width: 200px;
-            margin: 0 auto;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Back to list */
-        .back-link {
-            text-align: center;
-            margin: 20px auto;
-        }
-
-        .back-link a {
-            text-decoration: none;
-            color: white;
-            background-color: #007bff;
-            padding: 10px 20px;
-            border-radius: 4px;
-        }
-
-        .back-link a:hover {
-            background-color: #0056b3;
-        }
-
     </style>
 </head>
 <body>
-<h1>${medicine.id != null ? 'Edit Medicine' : 'Add Medicine'}</h1>
-<form method="post" action="${pageContext.request.contextPath}/vendor/medicine/save" enctype="multipart/form-data">
-    <!-- ID -->
-    <input type="hidden" name="id" value="${medicine.id}">
+<div class="container mt-5">
+    <h1 class="text-center text-primary">${medicine.id != null ? 'Edit Medicine' : 'Add Medicine'}</h1>
 
-    <!-- Name -->
-    <div>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="${medicine.name}" required>
-    </div>
+    <!-- Hiển thị thông báo lỗi nếu có -->
+    <c:if test="${not empty message}">
+        <div class="alert alert-danger text-center">${message}</div>
+    </c:if>
 
-    <!-- Description -->
-    <div>
-        <label for="description">Description:</label>
-        <textarea id="description" name="description">${medicine.description}</textarea>
-    </div>
+    <form method="post" action="${pageContext.request.contextPath}/vendor/medicine/save" enctype="multipart/form-data" class="mt-4">
+        <!-- Hidden Field: ID -->
+        <input type="hidden" name="id" value="${medicine.id}">
+        <input type="hidden" name="isEdit" value="${medicine.id != null ? true : false}">
 
-    <!-- Unit Cost -->
-    <div>
-        <label for="unitCost">Unit Cost:</label>
-        <input type="number" id="unitCost" name="unitCost" value="${medicine.unitCost}" required>
-    </div>
+        <div class="row">
+            <!-- Name -->
+            <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" id="name" name="name" class="form-control" value="${medicine.name}" required>
+            </div>
 
-    <!-- Expiry Date -->
-    <div>
-        <label for="expiryDate">Expiry Date:</label>
-        <input type="date" id="expiryDate" name="expiryDate" value="${medicine.expiryDate}">
-    </div>
+            <!-- Unit Cost -->
+            <div class="col-md-6 mb-3">
+                <label for="unitCost" class="form-label">Unit Cost:</label>
+                <input type="number" id="unitCost" name="unitCost" class="form-control" value="${medicine.unitCost}" step="0.01" required>
+            </div>
+        </div>
 
-    <!-- Import Date -->
-    <div>
-        <label for="importDate">Import Date:</label>
-        <input type="date" id="importDate" name="importDate" value="${medicine.importDate}">
-    </div>
+        <div class="row">
+            <!-- Description -->
+            <div class="col-md-12 mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <textarea id="description" name="description" class="form-control">${medicine.description}</textarea>
+            </div>
+        </div>
 
-    <!-- Stock Quantity -->
-    <div>
-        <label for="stockQuantity">Stock Quantity:</label>
-        <input type="number" id="stockQuantity" name="stockQuantity" value="${medicine.stockQuantity}" required>
-    </div>
+        <div class="row">
+            <!-- Expiry Date -->
+            <div class="col-md-6 mb-3">
+                <label for="expiryDate" class="form-label">Expiry Date:</label>
+                <input type="date" id="expiryDate" name="expiryDate" class="form-control" value="${medicine.expiryDate}">
+            </div>
 
-    <!-- Dosage -->
-    <div>
-        <label for="dosage">Dosage:</label>
-        <input type="text" id="dosage" name="dosage" value="${medicine.dosage}">
-    </div>
+            <!-- Dosage -->
+            <div class="col-md-6 mb-3">
+                <label for="dosage" class="form-label">Dosage:</label>
+                <input type="text" id="dosage" name="dosage" class="form-control" value="${medicine.dosage}">
+            </div>
+        </div>
 
-    <!-- Rating -->
-    <div>
-        <label for="rating">Rating:</label>
-        <input type="number" id="rating" name="rating" step="0.1" value="${medicine.rating}">
-    </div>
+        <div class="row">
+            <!-- Stock Quantity -->
+            <div class="col-md-6 mb-3">
+                <label for="stockQuantity" class="form-label">Stock Quantity:</label>
+                <input type="number" id="stockQuantity" name="stockQuantity" class="form-control" value="${medicine.stockQuantity}" required>
+            </div>
 
-    <!-- Manufacturer -->
-    <div>
-        <label for="manufacturerId">Manufacturer:</label>
-        <select id="manufacturerId" name="manufacturerId">
-            <c:forEach var="manufacturer" items="${manufacturers}">
-                <option value="${manufacturer.id}" ${manufacturer.id == medicine.manufacturerId ? 'selected' : ''}>${manufacturer.name}</option>
-            </c:forEach>
-        </select>
-    </div>
+            <!-- Manufacturer -->
+            <div class="col-md-6 mb-3">
+                <label for="manufacturerId" class="form-label">Manufacturer:</label>
+                <select id="manufacturerId" name="manufacturerId" class="form-select" required>
+                    <c:forEach var="manufacturer" items="${manufacturers}">
+                        <option value="${manufacturer.id}"
+                                <c:if test="${manufacturer.id == medicine.manufacturerId}">selected</c:if>>
+                                ${manufacturer.name}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+        </div>
 
-    <!-- Category -->
-    <div>
-        <label for="categoryId">Category:</label>
-        <select id="categoryId" name="categoryId">
-            <c:forEach var="category" items="${categories}">
-                <option value="${category.id}" ${category.id == medicine.categoryId ? 'selected' : ''}>${category.name}</option>
-            </c:forEach>
-        </select>
-    </div>
+        <div class="row">
+            <!-- Category -->
+            <div class="col-md-6 mb-3">
+                <label for="categoryId" class="form-label">Category:</label>
+                <select id="categoryId" name="categoryId" class="form-select" required>
+                    <c:forEach var="category" items="${categories}">
+                        <option value="${category.id}"
+                                <c:if test="${category.id == medicine.categoryId}">selected</c:if>>
+                                ${category.name}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
 
-    <!-- Unit -->
-    <div>
-        <label for="unitId">Unit:</label>
-        <select id="unitId" name="unitId">
-            <c:forEach var="unit" items="${units}">
-                <option value="${unit.id}" ${unit.id == medicine.unitId ? 'selected' : ''}>${unit.name}</option>
-            </c:forEach>
-        </select>
-    </div>
+            <!-- Unit -->
+            <div class="col-md-6 mb-3">
+                <label for="unitId" class="form-label">Unit:</label>
+                <select id="unitId" name="unitId" class="form-select" required>
+                    <c:forEach var="unit" items="${units}">
+                        <option value="${unit.id}"
+                                <c:if test="${unit.id == medicine.unitId}">selected</c:if>>
+                                ${unit.name}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+        </div>
 
-    <!-- Image -->
-    <div>
-        <label for="image">Image:</label>
-        <input type="file" id="image" name="image">
-    </div>
+        <div class="row">
+            <!-- Image -->
+            <div class="col-md-12 mb-3">
+                <label for="image" class="form-label">Image:</label>
+                <input type="file" id="image" name="image" class="form-control">
+                <c:if test="${not empty medicine.imageUrl}">
+                    <div class="mt-2">
+                        <img src="${pageContext.request.contextPath}/medicine/image?fileName=${medicine.imageUrl}" alt="Medicine Image" class="img-thumbnail" style="max-width: 200px;">
+                    </div>
+                </c:if>
+            </div>
+        </div>
 
-    <div>
-        <button type="submit">${medicine.id != null ? 'Update Medicine' : 'Add Medicine'}</button>
-    </div>
-</form>
+        <!-- Submit Button -->
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <button type="submit" class="btn btn-primary w-100">
+                    ${medicine.id != null ? 'Update Medicine' : 'Add Medicine'}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

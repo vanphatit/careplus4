@@ -6,120 +6,168 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medicines List</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
+        .filter-section {
             background-color: #f9f9f9;
-            margin: 0;
-            padding: 0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
-        h1 {
-            text-align: center;
-            margin: 20px 0;
+        .filter-section .form-control, .filter-section .btn {
+            margin-top: 10px;
         }
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: #fff;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        a {
-            text-decoration: none;
-            color: #007bff;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .pagination {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .pagination a {
-            display: inline-block;
-            padding: 8px 12px;
-            margin: 0 5px;
-            border: 1px solid #ddd;
-            background-color: #fff;
-            color: #007bff;
-            border-radius: 5px;
-        }
-        .pagination a:hover {
+        .filter-section .btn {
             background-color: #007bff;
             color: #fff;
         }
-        .pagination .current-page {
-            background-color: #007bff;
-            color: #fff;
-            border: 1px solid #007bff;
-            pointer-events: none;
+        .filter-section .btn:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-<h1>Medicines List</h1>
 
-<!-- Hiển thị thông báo lỗi nếu có -->
-<c:if test="${not empty message}">
-    <p style="color: red; text-align: center;">${message}</p>
-</c:if>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Medicines List</h1>
 
-<!-- Bảng danh sách thuốc -->
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Category</th>
-        <th>Manufacturer</th>
-        <th>Unit Cost</th>
-        <th>Stock Quantity</th>
-        <th>Rating</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <c:forEach var="medicine" items="${medicines}">
-        <tr>
-            <td>${medicine.name}</td>
-            <td>${medicine.categoryName}</td>
-            <td>${medicine.manufacturerName}</td>
-            <td>${medicine.unitCost}</td>
-            <td>${medicine.stockQuantity}</td>
-            <td>${medicine.rating}</td>
-            <td>
-                <a href="${pageContext.request.contextPath}/user/medicine/detail?id=${medicine.id}">View Details</a>
-            </td>
-        </tr>
-    </c:forEach>
-    </tbody>
-</table>
+    <!-- Thanh tìm kiếm -->
+    <div class="mb-4">
+        <form action="${pageContext.request.contextPath}/user/medicine/search" method="post" class="d-flex">
+            <input type="text" name="keyword" class="form-control me-2" placeholder="Search medicines by name...">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
 
-<!-- Phân trang -->
-<div class="pagination">
-    <c:if test="${currentPage > 1}">
-        <a href="${pageContext.request.contextPath}/user/medicine/filter?page=${currentPage - 1}&size=${pageSize}">Previous</a>
-    </c:if>
-    <c:forEach begin="1" end="${totalPages}" var="page">
-        <a href="${pageContext.request.contextPath}/user/medicine/filter?page=${page}&size=${pageSize}"
-           class="${page == currentPage ? 'current-page' : ''}">${page}</a>
-    </c:forEach>
-    <c:if test="${currentPage < totalPages}">
-        <a href="${pageContext.request.contextPath}/user/medicine/filter?page=${currentPage + 1}&size=${pageSize}">Next</a>
-    </c:if>
+    <!-- Bộ lọc -->
+    <div class="filter-section">
+        <form action="${pageContext.request.contextPath}/user/medicine/filter" method="post">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="manufacturerName">Manufacturer</label>
+                    <br>
+                    <select id="manufacturerName" name="manufacturerName" class="form-select">
+                        <option value="">${manufacturerName == null ? null : manufacturerName}</option>
+                        <c:forEach var="manufacturer" items="${manufacturers}">
+                            <option value="${manufacturer.name}">${manufacturer.name}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="categoryName">Category</label>
+                    <br>
+                    <select id="categoryName" name="categoryName" class="form-select">
+                        <option value="">${categoryName == null ? null : categoryName}</option>
+                        <br>
+                        <c:forEach var="category" items="${categories}">
+                            <option value="${category.name}">${category.name}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="unitName">Unit</label>
+                    <br>
+                    <select id="unitName" name="unitName" class="form-select">
+                        <option value="">${unitName == null ? null : unitName}</option>
+                        <c:forEach var="unit" items="${units}">
+                            <option value="${unit.name}">${unit.name}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <label for="unitCostMin">Price Min</label>
+                    <input type="number" id="unitCostMin" name="unitCostMin" class="form-control" placeholder="Enter minimum price">
+                </div>
+                <div class="col-md-4">
+                    <label for="unitCostMax">Price Max</label>
+                    <input type="number" id="unitCostMax" name="unitCostMax" class="form-control" placeholder="Enter maximum price">
+                </div>
+                <div class="col-md-4">
+                    <label for="stockQuantityMin">Stock Min</label>
+                    <input type="number" id="stockQuantityMin" name="stockQuantityMin" class="form-control" placeholder="Enter minimum stock">
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <label for="expiryDateMin">Expiry Date Min</label>
+                    <input type="date" id="expiryDateMin" name="expiryDateMin" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="expiryDateMax">Expiry Date Max</label>
+                    <input type="date" id="expiryDateMax" name="expiryDateMax" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="ratingMin">Rating Min</label>
+                    <input type="number" step="0.1" id="ratingMin" name="ratingMin" class="form-control" placeholder="Enter minimum rating">
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <label for="ratingMax">Rating Max</label>
+                    <input type="number" step="0.1" id="ratingMax" name="ratingMax" class="form-control" placeholder="Enter maximum rating">
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Danh sách thuốc -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <c:forEach var="medicine" items="${medicines}">
+            <div class="col">
+                <div class="card h-100">
+                    <img src="${pageContext.request.contextPath}/medicine/image?fileName=${medicine.image}" class="card-img-top" alt="Medicine Image">
+                    <div class="card-body">
+                        <h5 class="card-title">${medicine.name}</h5>
+                        <p class="card-text">Category: ${medicine.categoryName}</p>
+                        <p class="card-text">Manufacturer: ${medicine.manufacturerName}</p>
+                        <p class="card-text">Price: ${medicine.unitCost}</p>
+                        <p class="card-text">Stock: ${medicine.stockQuantity}</p>
+                        <a href="${pageContext.request.contextPath}/user/medicine/${medicine.id}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </c:forEach>
+    </div>
+
+    <!-- Pagination -->
+    <nav>
+        <ul class="pagination justify-content-center mt-4">
+            <c:if test="${currentPage > 1}">
+                <li class="page-item">
+                    <a class="page-link" href="${pageContext.request.contextPath}/user/medicine/filter?page=${currentPage - 1}&size=${pageSize}">Previous</a>
+                </li>
+            </c:if>
+            <c:forEach begin="1" end="${totalPages}" var="page">
+                <li class="page-item ${page == currentPage ? 'active' : ''}">
+                    <a class="page-link" href="${pageContext.request.contextPath}/user/medicine/filter?page=${page}&size=${pageSize}">${page}</a>
+                </li>
+            </c:forEach>
+            <c:if test="${currentPage < totalPages}">
+                <li class="page-item">
+                    <a class="page-link" href="${pageContext.request.contextPath}/user/medicine/filter?page=${currentPage + 1}&size=${pageSize}">Next</a>
+                </li>
+            </c:if>
+        </ul>
+    </nav>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
