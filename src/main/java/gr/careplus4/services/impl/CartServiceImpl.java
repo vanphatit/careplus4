@@ -190,7 +190,7 @@ public class CartServiceImpl implements iCartService {
     }
 
     @Override
-    public void handleUpdateCartBeforeCheckout(String cartId, List<CartDetail> cartDetails, String code) {
+    public void handleUpdateCartBeforeCheckout(String cartId, List<CartDetail> cartDetails, String code, boolean usedPoint) {
         // Update cart detail
         for (CartDetail cd : cartDetails) {
             Optional<CartDetail> cdOptional = this.cartDetailRepository.findById(cd.getId());
@@ -205,6 +205,7 @@ public class CartServiceImpl implements iCartService {
         Optional<Cart> cartOptional = this.cartRepository.findById(cartId);
         Cart currentCart = cartOptional.get();
         currentCart.setCouponCode(code);
+        currentCart.setUsedPoint(usedPoint);
         this.cartRepository.save(currentCart);
     }
 }
