@@ -7,6 +7,7 @@ import gr.careplus4.services.iCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +31,12 @@ public class CategoryServiceImpl implements iCategoryService {
     @Override
     public Page<Category> fetchAllCategories(Pageable page) {
         return categoryRepository.findAll(page);
+    }
+
+    @Query("SELECT c FROM Category c LEFT JOIN FETCH c.subCategories WHERE c.parentCategory IS NULL")
+    @Override
+    public List<Category> findRootCategoriesWithSubCategories() {
+        return categoryRepository.findRootCategoriesWithSubCategories();
     }
 
     @Override
