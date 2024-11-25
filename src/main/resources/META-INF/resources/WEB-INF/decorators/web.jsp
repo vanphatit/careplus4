@@ -385,7 +385,9 @@
     <%@include file="/common/user/header-desktop.jsp"%><!-- desktop site__header / end --><!-- site__body -->
 
     <!-- BEGIN CONTENT -->
-    <sitemesh:write property='body' />
+    <div class="site__body">
+        <sitemesh:write property='body' />
+    </div>
     <!-- END CONTENT -->
 
     <%@include file="/common/user/footer.jsp"%> <!-- site__footer / end -->
