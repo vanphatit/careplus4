@@ -39,7 +39,7 @@ public class ImportDetailController {
             detailModel.setMedicineId(""); // Giá trị mặc định
             model.addAttribute("importId", importId);
             model.addAttribute("detail", detailModel);
-            return "vendor/import-detail-add"; // JSP Form
+            return "vendor/import/import-detail-add"; // JSP Form
         }
         model.addAttribute("error", "Import not found!");
         return "redirect:/vendor/import";
@@ -53,21 +53,21 @@ public class ImportDetailController {
         if (result.hasErrors()) {
             System.out.println("Errors: " + result.getAllErrors());
             model.addAttribute("importId", importId);
-            return new ModelAndView("vendor/import-detail-add", model);
+            return new ModelAndView("vendor/import/import-detail-add", model);
         }
 
         // Kiểm tra Import tồn tại
         Import importEntity = importService.findById(importId).orElse(null);
         if (importEntity == null) {
             model.addAttribute("error", "Import không tồn tại!");
-            return new ModelAndView("vendor/import-detail-add", model);
+            return new ModelAndView("vendor/import/import-detail-add", model);
         }
 
         // Kiểm tra Medicine tồn tại
         Medicine medicine = medicineService.findById(detailModel.getMedicineId()).orElse(null);
         if (medicine == null) {
             model.addAttribute("error", "Medicine không tồn tại!");
-            return new ModelAndView("vendor/import-detail-add", model);
+            return new ModelAndView("vendor/import/import-detail-add", model);
         }
 
         // Tạo mới ImportDetail và ánh xạ dữ liệu

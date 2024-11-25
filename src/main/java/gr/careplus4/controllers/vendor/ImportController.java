@@ -69,7 +69,7 @@ public class ImportController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "vendor/import-list";
+        return "vendor/import/import-list";
     }
 
     @InitBinder
@@ -97,11 +97,11 @@ public class ImportController {
         List<Provider> providers = providerService.findAll();
         if (providers.isEmpty()) {
             model.addAttribute("error", "Không có Provider nào, vui lòng thêm Provider trước khi tạo Import!");
-            return "vendor/import-list"; // Hoặc điều hướng đến một trang khác
+            return "vendor/import/import-list"; // Hoặc điều hướng đến một trang khác
         }
         ImportModel imp = new ImportModel();
         model.addAttribute("imp", imp);
-        return "vendor/import-add";
+        return "vendor/import/import-add";
     }
 
     @PostMapping("/save")
@@ -109,18 +109,18 @@ public class ImportController {
                              BindingResult result) {
         if (result.hasErrors()) {
             System.out.println("Errors: " + result.getAllErrors());
-            return new ModelAndView("vendor/import-add");
+            return new ModelAndView("vendor/import/import-add");
         }
         // Kiểm tra xem Provider có tồn tại không
         if (!providerService.existsById(importModel.getProviderId())) {
             model.addAttribute("error", "Provider không tồn tại!");
-            return new ModelAndView("vendor/import-add", model);
+            return new ModelAndView("vendor/import/import-add", model);
         }
         // Lấy thực thể Provider từ providerId
         Provider provider = providerService.findById(importModel.getProviderId()).orElse(null);
         if (provider == null) {
             model.addAttribute("error", "Provider không tồn tại!");
-            return new ModelAndView("vendor/import-add", model);
+            return new ModelAndView("vendor/import/import-add", model);
         }
 
         // Tạo mới Import và ánh xạ dữ liệu
@@ -144,13 +144,13 @@ public class ImportController {
             // Kiểm tra Provider tồn tại
             if (!providerService.existsById(entity.getProvider().getId())) {
                 model.addAttribute("error", "Provider không tồn tại cho Import này!");
-                return new ModelAndView("vendor/import-list", model);
+                return new ModelAndView("vendor/import/import-list", model);
             }
             model.addAttribute("imp", imp);
-            return new ModelAndView("vendor/import-add", model);
+            return new ModelAndView("vendor/import/import-add", model);
         }
         model.addAttribute("mess", "Import not found");
-        return new ModelAndView("forward:/vendor/import-list", model);
+        return new ModelAndView("forward:/vendor/import/import-list", model);
     }
 
     @GetMapping("/delete/{id}")
@@ -160,7 +160,7 @@ public class ImportController {
             model.addAttribute("imp", optionalImport.get());
             Boolean hasImportDetail = importDetailService.existsImportDetailByImportId(id);
             model.addAttribute("hasImportDetail", hasImportDetail);
-            return "vendor/import-delete"; // Hiển thị trang xác nhận xóa
+            return "vendor/import/import-delete"; // Hiển thị trang xác nhận xóa
         }
         return "redirect:/vendor/import";
     }
@@ -210,7 +210,7 @@ public class ImportController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "vendor/import-list";
+        return "vendor/import/import-list";
     }
 
     @GetMapping("/show/{id}")
@@ -222,9 +222,9 @@ public class ImportController {
 
             model.addAttribute("importDetails", details);
             model.addAttribute("importEntity", importEntity);
-            return "vendor/import-details"; // Giao diện hiển thị chi tiết Import
+            return "vendor/import/import-details"; // Giao diện hiển thị chi tiết Import
         }
         model.addAttribute("error", "Import not found");
-        return "vendor/import-list"; // Quay lại danh sách nếu không tìm thấy Import
+        return "vendor/import/import-list"; // Quay lại danh sách nếu không tìm thấy Import
     }
 }
