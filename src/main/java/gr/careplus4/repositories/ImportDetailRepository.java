@@ -4,6 +4,7 @@ import gr.careplus4.entities.ImportDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -16,9 +17,10 @@ public interface ImportDetailRepository extends JpaRepository<ImportDetail, Long
 
     Long countByMedicine_Id(String medicineId);       // Đếm theo medicine.id
 
-    Optional<ImportDetail> findByImportRecord_Id(String importId); // Tìm ImportDetail bằng importRecord.id
-
     Optional<ImportDetail> findByMedicine_Id(String medicineId);   // Tìm ImportDetail bằng medicine.id
 
     void deleteByImportRecord_Id(String importId);
+
+    List<ImportDetail> findByImportRecord_Id(String importId);
+
 }
