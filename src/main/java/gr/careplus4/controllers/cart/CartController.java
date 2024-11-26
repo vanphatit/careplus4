@@ -13,10 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,6 +33,17 @@ public class CartController {
 
     @Autowired
     private UserServiceImpl userService;
+
+    @GetMapping("/add-medicine-to-cart/{id}")
+    public String addMedicineToCart(@PathVariable String id, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+//        String phone = (String) session.getAttribute("phone");
+        String phone = "0903456782"; // de test thoi mot goi session
+
+        this.cartService.handleAddProductToCart(phone, id, session);
+        return "redirect:/";
+    }
 
     @GetMapping("/cart")
     public String getCartPage(Model model, HttpServletRequest request) {
