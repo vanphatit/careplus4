@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <c:url value="/" var="URL" />
 <!DOCTYPE html>
@@ -13,23 +14,17 @@
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item">
-                                    <a href="<c:url value='/index.html' />">Home</a>
-                                    <svg class="breadcrumb-arrow" width="6px" height="9px">
-                                        <use xlink:href="<c:url value='/images/sprite.svg#arrow-rounded-right-6x9' />"></use>
-                                    </svg>
+                                    <a href="<c:url value='/home' />">Trang chủ</a>
                                 </li>
                                 <li class="breadcrumb-item">
-                                    <a href="#">Breadcrumb</a>
-                                    <svg class="breadcrumb-arrow" width="6px" height="9px">
-                                        <use xlink:href="<c:url value='/images/sprite.svg#arrow-rounded-right-6x9' />"></use>
-                                    </svg>
+                                    Giỏ hàng
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+                                <li class="breadcrumb-item active" aria-current="page">Giỏ hàng mua sắm</li>
                             </ol>
                         </nav>
                     </div>
                     <div class="page-header__title">
-                        <h1>Shopping Cart</h1>
+                        <h1>Giỏ hàng mua sắm</h1>
                     </div>
                 </div>
             </div>
@@ -38,11 +33,11 @@
                     <table class="cart__table cart-table">
                         <thead class="cart-table__head">
                         <tr class="cart-table__row">
-                            <th class="cart-table__column cart-table__column--image">Image</th>
-                            <th class="cart-table__column cart-table__column--product">Medicine</th>
-                            <th class="cart-table__column cart-table__column--price">Price</th>
-                            <th class="cart-table__column cart-table__column--quantity">Quantity</th>
-                            <th class="cart-table__column cart-table__column--total">Total</th>
+                            <th class="cart-table__column cart-table__column--image">Ảnh</th>
+                            <th class="cart-table__column cart-table__column--product">Sản phẩm</th>
+                            <th class="cart-table__column cart-table__column--price">Giá</th>
+                            <th class="cart-table__column cart-table__column--quantity">Số lượng</th>
+                            <th class="cart-table__column cart-table__column--total">Tổng</th>
                             <th class="cart-table__column cart-table__column--remove"></th>
                         </tr>
                         </thead>
@@ -55,7 +50,9 @@
                                 <td class="cart-table__column cart-table__column--product">
                                     <a href="#" class="cart-table__product-name">${item.medicine.name}</a>
                                 </td>
-                                <td class="cart-table__column cart-table__column--price" data-title="Price">${item.unitCost}</td>
+                                <td class="cart-table__column cart-table__column--price" data-title="Price">
+                                    <fmt:formatNumber type="number" value="${item.unitCost}" /> đ
+                                </td>
                                 <td class="cart-table__column cart-table__column--quantity" data-title="Quantity">
                                     <div class="input-number">
                                         <input class="form-control input-number__input" type="number" min="1" value="${item.quantity}" />
@@ -63,7 +60,9 @@
                                         <div class="input-number__sub"></div>
                                     </div>
                                 </td>
-                                <td class="cart-table__column cart-table__column--total" data-title="Total">${item.subTotal}</td>
+                                <td class="cart-table__column cart-table__column--total" data-title="Total">
+                                    <fmt:formatNumber type="number" value="${item.subTotal}" /> đ
+                                </td>
                                 <td class="cart-table__column cart-table__column--remove">
                                     <form method="post" action="/delete-cart-detail/${item.id}">
                                         <button class="btn btn-md bg-light mt-2">
@@ -84,7 +83,7 @@
                             </select>
                         </div>
                         <div class="cart__buttons">
-                            <a href="#" class="btn btn-primary cart__update-button">Continue Shopping</a>
+                            <a href="/" class="btn btn-primary cart__update-button">Tiếp tục mua sắm</a>
                         </div>
                     </div>
 
@@ -92,24 +91,20 @@
                         <div class="col-12 col-md-7 col-lg-6 col-xl-5">
                             <div class="card">
                                 <div class="card-body">
-                                    <h3 class="card-title">Cart Totals</h3>
+                                    <h3 class="card-title">Tạm tính <hr/> </h3>
                                     <table class="cart__totals">
                                         <thead class="cart__totals-header">
                                         <tr>
-                                            <th>Subtotal</th>
-                                            <td>${totalPrice}</td>
+                                            <th>Tổng</th>
+                                            <td><fmt:formatNumber type="number" value="${totalPrice}" /> đ</td>
                                         </tr>
                                         </thead>
                                         <tbody class="cart__totals-body">
-                                            <tr>
-                                                <th>Shipping</th>
-                                                <td>0</td>
-                                            </tr>
                                         </tbody>
                                         <tfoot class="cart__totals-footer">
                                         <tr>
-                                            <th>Total</th>
-                                            <td>${totalPrice}</td>
+                                            <th>Thành tiền</th>
+                                            <td><fmt:formatNumber type="number" value="${totalPrice}" /> đ</td>
                                         </tr>
                                         </tfoot>
                                     </table>
@@ -120,7 +115,7 @@
                     </div>
                     <!-- Handle order to bill -->
                     <%--@elvariable id="cart" type=""--%>
-                    <form:form action="/confirm-checkout" method="post" id="checkoutForm" modelAttribute="cart">
+                    <form:form action="/user/confirm-checkout" method="post" id="checkoutForm" modelAttribute="cart">
                         <div style="display: none;">
                             <c:forEach var="cartDetail" items="${cart.cartDetails}" varStatus="status">
                                 <div class="mb-3">
@@ -147,11 +142,10 @@
                         </div>
                         <input hidden type="text" name="code" id="event-code-input" />
                         <input hidden type="text" id="usePointsHidden" name="usedPoint" value="false" />
-                        <div class="row justify-content-end">
-                            <div class="col-5">
+                        <div class="row justify-content-end pt-2">
+                            <div class="col-12 col-md-7 col-lg-6 col-xl-5">
                                 <div>
-                                    <div class="form-check form-switch" style="display: flex; align-items: center;
-                                        gap: 10px; margin-top: 10px; margin-bottom: 10px; margin-left: 3px; ">
+                                    <div class="form-check form-switch ml-2">
                                         <input
                                                 class="form-check-input"
                                                 type="checkbox"
@@ -164,11 +158,11 @@
                                                 class="form-check-label"
                                                 for="usePointsSwitch"
                                                 style="font-size: 16px; font-weight: 500; cursor: pointer;">
-                                            Use reward points
+                                            Sử dụng điểm thưởng
                                         </label>
                                     </div>
                                 </div>
-                                <button class="btn btn-primary btn-xl btn-block cart__checkout-button">Proceed to checkout</button>
+                                <button class="btn btn-primary btn-xl btn-block cart__checkout-button">Tiến hành thanh toán</button>
                             </div>
                         </div>
                     </form:form>

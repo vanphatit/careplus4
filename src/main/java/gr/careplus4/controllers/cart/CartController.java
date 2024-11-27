@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/user")
 public class CartController {
     @Autowired
     private CartServiceImpl cartService;
@@ -107,7 +108,7 @@ public class CartController {
         String cartId = currentCart.getId();
         List<CartDetail> cartDetails = cart == null ? new ArrayList<>() : cart.getCartDetails();
         this.cartService.handleUpdateCartBeforeCheckout(cartId, cartDetails, code, usedPoint);
-        return "redirect:/checkout";
+        return "redirect:/user/checkout";
     }
 
     @GetMapping("/checkout")
@@ -145,10 +146,9 @@ public class CartController {
             if (event.isPresent() && event.get().getDiscount().intValue() != 0) {
                 percentage = event.get().getDiscount().intValue();
                 discount += subPrice * event.get().getDiscount().floatValue() / 100;
-                totalPrice = subPrice - discount;
-            } else {
-                totalPrice = subPrice;
             }
+            totalPrice = subPrice - discount;
+
         } else {
             cartDetails = new ArrayList<>();
         }
