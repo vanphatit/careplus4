@@ -154,7 +154,7 @@
                 </c:forEach>
 
                 <div class="text-center mt-4">
-                    <a href="${pageContext.request.contextPath}/vendor/medicines" class="btn btn-outline-primary">Back to List</a>
+                    <a href="${pageContext.request.contextPath}/vendor/medicines" class="btn btn-outline-primary">Quay về</a>
                 </div>
             </div>
         </div>

@@ -163,6 +163,13 @@
                 </button>
             </div>
         </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12 text-center">
+                <a href="${pageContext.request.contextPath}/vendor/medicine" class="btn btn-secondary w-100">Quay lại</a>
+            </div>
+        </div>
+
     </form>
 </div>
 
