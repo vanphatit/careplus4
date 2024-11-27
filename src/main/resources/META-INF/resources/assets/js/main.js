@@ -850,11 +850,10 @@
             const quantity = parseInt(quantityInput.value);
 
             const rowTotal = unitPrice * quantity;
-            totalCell.textContent = rowTotal.toFixed(2);
+            totalCell.textContent = rowTotal.toFixed(3) + ' đ';
 
             const index = row.dataset.index;
             const hiddenInput = document.querySelector(`input[data-index='${index}']`);
-            console.log(index,"+++++++++",hiddenInput)
             if (hiddenInput) {
                 hiddenInput.value = quantity;
             }
@@ -877,9 +876,11 @@
                 }
             });
 
-            totalPriceHeader.textContent = totalPrice.toFixed(2);
-            totalPriceFooter.textContent = totalPrice.toFixed(2);
+            totalPriceHeader.textContent = totalPrice.toFixed(3) +' đ';
+            totalPriceFooter.textContent = totalPrice.toFixed(3) + ' đ';
         }
+
+
 
         cartTable.querySelectorAll(".input-number__input").forEach(input => {
             input.addEventListener("input", function () {
@@ -904,4 +905,18 @@
             });
         });
     });
+
+    function formatCurrency(value) {
+        // Use the 'vi-VN' locale to format the number according to Vietnamese currency format
+        // and 'VND' as the currency type for Vietnamese đồng
+        const formatter = new Intl.NumberFormat('vi-VN', {
+            style: 'decimal',
+            minimumFractionDigits: 0, // No decimal part for whole numbers
+        });
+
+        let formatted = formatter.format(value);
+        // Replace dots with commas for thousands separator
+        formatted = formatted.replace(/\./g, ',');
+        return formatted;
+    }
 })(jQuery);

@@ -647,9 +647,9 @@ h6 {
 .btn-primary,
 .btn-primary.disabled,
 .btn-primary:disabled {
-    border-color: #ffd333;
-    background: #ffd333;
-    color: #3d464d;
+    border-color: #0077b6;
+    background: #0077b6;
+    color: #ffffff;
     fill: #3d464d
 }
 
