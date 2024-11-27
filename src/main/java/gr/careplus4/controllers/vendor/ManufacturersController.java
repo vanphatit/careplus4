@@ -53,7 +53,7 @@ public class ManufacturersController  {
         model.addAttribute("manufacturers", manufacturers);
         model.addAttribute("currentPage", currentPage); // Để view biết trang hiện tại
         model.addAttribute("pageSize", pageSize);       // Để view biết kích thước trang
-        return "vendor/manufacturers-list"; // Tên view để render danh sách nhà sản xuất
+        return "vendor/manufacturer/manufacturers-list"; // Tên view để render danh sách nhà sản xuất
     }
 
     @GetMapping("/manufacturer/{id}")
@@ -68,7 +68,7 @@ public class ManufacturersController  {
         String message = "Manufacturer found";
         model.addAttribute("manufacturer", manufacturer.get());
         model.addAttribute("message", message);
-        return "vendor/manufacturer-detail";
+        return "vendor/manufacturer/manufacturer-detail";
     }
 
     @PostMapping("/manufacturer/save")
@@ -104,7 +104,7 @@ public class ManufacturersController  {
         ManufacturerModel manufacturerModel = new ManufacturerModel();
         manufacturerModel.setIsEdit(false);
         model.addAttribute("manufacturer", manufacturerModel);
-        return "vendor/manufacturer-addOrEdit";
+        return "vendor/manufacturer/manufacturer-addOrEdit";
     }
 
     @GetMapping("/manufacturer/edit/{id}")
@@ -158,7 +158,7 @@ public class ManufacturersController  {
         model.addAttribute("manufacturers", manufacturers);
         model.addAttribute("currentPage", currentPage);  // Để view biết trang hiện tại
         model.addAttribute("pageSize", pageSize);        // Để view biết kích thước trang
-        return "vendor/manufacturers-list";
+        return "vendor/manufacturer/manufacturers-list";
     }
 
     @GetMapping("/manufacturer/exist/{name}")
@@ -169,7 +169,7 @@ public class ManufacturersController  {
         } else {
             model.addAttribute("message", "Manufacturer does not exist");
         }
-        return "vendor/manufacturer-list";
+        return "vendor/manufacturer/manufacturer-list";
     }
 
 }

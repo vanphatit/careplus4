@@ -57,6 +57,12 @@ public class MedicinesController {
     @Autowired
     private FileSystemStorageServiceImpl storageService;
 
+    @Autowired
+    private ReviewServiceImpl reviewService;
+
+    @Autowired
+    private ReviewDetailServiceImpl reviewDetailService;
+
     public MedicinesController(MedicineServicesImpl medicineService,
                                ManufacturerServicesImpl manufacturerService,
                                CategoryServiceImpl categoryService,
@@ -71,13 +77,19 @@ public class MedicinesController {
 
     @GetMapping("/vendor/medicines")
     public String getListMedicines(Model model,
+                                   @RequestParam(value = "message", required = false) String message,
+                                   @RequestParam(value = "categoryId", required = false) String categoryId,
                                    @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
                                    @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize) {
         // Đảm bảo currentPage >= 1
         currentPage = Math.max(currentPage, 1);
 
+        Page<Medicine> medicines = null;
+
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("id").ascending());
-        Page<Medicine> medicines = medicineService.findAll(pageable);
+        if (categoryId != null) {
+            medicines = medicineService.searchMedicineByKeyword(categoryId, pageable);
+        } else  medicines = medicineService.findAll(pageable);
 
         int totalPages = medicines.getTotalPages();
         if (totalPages > 0) {
@@ -91,6 +103,7 @@ public class MedicinesController {
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("units", unitService.findAll());
 
+        model.addAttribute("message", message);
         model.addAttribute("medicines", medicines);
         model.addAttribute("currentPage", currentPage); // Để view biết trang hiện tại
         model.addAttribute("pageSize", pageSize);       // Để view biết kích thước trang
@@ -98,15 +111,20 @@ public class MedicinesController {
     }
 
     @GetMapping("/vendor/medicine/{id}")
-    public String getMedicineById(Model model, @PathVariable("id") String id) {
+    public String getMedicineById(Model model, @PathVariable("id") String id,
+                                  @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
+                                  @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize
+    ) {
         Optional<Medicine> medicine = medicineService.findById(id);
 
+        List<ReviewForUserModel> reviews = reviewDetailService.findReviewForUserModelByMedicineId(id);
+
+        model.addAttribute("reviews", reviews);
         if (!medicine.isPresent()) {
             String message = "Medicine not found";
             model.addAttribute("message", message);
             return "redirect:/vendor/medicines";
         }
-        System.out.println(medicine.get());
         String message = "Medicine found";
         model.addAttribute("medicine", medicine.get());
         model.addAttribute("message", message);
@@ -118,6 +136,7 @@ public class MedicinesController {
                               ) {
         MedicineModel medicineModel = new MedicineModel();
         medicineModel.setIsEdit(false);
+        model.addAttribute("CURRENTDATE", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         model.addAttribute("medicine", medicineModel);
         model.addAttribute("manufacturers", manufacturerService.findAll());
         model.addAttribute("categories", categoryService.findAll());
@@ -162,58 +181,53 @@ public class MedicinesController {
                                          @RequestParam("categoryId") String categoryId,
                                          @RequestParam("unitId") String unitId
     ) {
-
-        System.out.println(manufacturerId);
-        System.out.println(categoryId);
-        System.out.println(unitId);
-
         String message = "";
         Medicine medicine = new Medicine();
         Optional<Manufacturer> manufacturer = manufacturerService.findById(manufacturerId);
 
         System.out.println(manufacturer);
 
+        model.addAttribute("manufacturers", manufacturerService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("units", unitService.findAll());
+
+        model.addAttribute("CURRENTDATE", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+
         if (!manufacturer.isPresent()) {
-            message = "Manufacturer not found";
+            message = "Nhà sản xuất không tồn tại";
             model.addAttribute("message", message);
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         Optional<Category> category = categoryService.findById(categoryId);
         if (!category.isPresent()) {
-            message = "Category not found";
+            message = "Loại thuốc không tồn tại";
             model.addAttribute("message", message);
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         Optional<Unit> unit = unitService.findById(unitId);
         if (!unit.isPresent()) {
-            message = "Unit not found";
+            message = "Đơn vị không tồn tại";
             model.addAttribute("message", message);
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         if (medicineModel.getExpiryDate() != null && medicineModel.getExpiryDate().before(new Date())) {
-            message = "Expiry date must be in the future";
+            message = "Ngày hết hạn phải sau ngày hiện tại";
             model.addAttribute("message", message);
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         if (medicineModel.getStockQuantity() < 0) {
-            message = "Stock quantity must be greater than or equal to 0";
-            model.addAttribute("message", message);
-            return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
-        }
-
-        if (medicineModel.getUnitCost().compareTo(BigDecimal.ZERO) < 0) {
-            message = "Unit cost must be greater than or equal to 0";
+            message = "Số lượng tồn kho phải lớn hơn hoặc bằng 0";
             model.addAttribute("message", message);
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         if (medicineModel.getIsEdit())
             if (medicineModel.getRating().compareTo(BigDecimal.ZERO) < 0 && medicineModel.getRating().compareTo(BigDecimal.valueOf(5)) > 0) {
-                message = "Rating must be greater than or equal to 0 and less than or equal to 5";
+                message = "Đánh giá phải nằm trong khoảng từ 0 đến 5";
                 model.addAttribute("message", message);
                 return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
             }
@@ -232,6 +246,11 @@ public class MedicinesController {
             }
         }
 
+        if (medicineModel.getIsEdit()){
+            Medicine oldMedicine = medicineService.findById(medicineModel.getId()).get();
+            medicineModel.setRating(oldMedicine.getRating());
+        }
+
         BeanUtils.copyProperties(medicineModel, medicine);
 
         medicine.setImportDate(new Date());
@@ -243,17 +262,16 @@ public class MedicinesController {
 
         if (medicineModel.getIsEdit()) {
             medicineService.save(medicine);
-            message = "Manufacturer updated successfully";
+            message = "Thông tin thuốc đã được cập nhật";
         } else {
             Medicine lastMedicine = medicineService.findTopByOrderByIdDesc();
             medicine.setRating(new BigDecimal(0));
             String previousMedicineId = (lastMedicine != null) ? lastMedicine.getId() : "MED0000";
             medicine.setId(medicineService.generateMedicineId(previousMedicineId));
             medicineService.save(medicine);
-            message = "Manufacturer added successfully";
+            message = "Thuốc đã được thêm mới";
         }
         model.addAttribute("message", message);
-
         return new ModelAndView("redirect:/vendor/medicines", model);
     }
 
@@ -286,6 +304,7 @@ public class MedicinesController {
         }
 
         model.addAttribute("medicine", medicineModel);
+        model.addAttribute("CURRENTDATE", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         model.addAttribute("manufacturers", manufacturerService.findAll());
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("units", unitService.findAll());
