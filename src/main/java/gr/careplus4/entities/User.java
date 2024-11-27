@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -47,6 +50,14 @@ public class User implements UserDetails {
     @Column(name = "Email", length = 255, nullable = false, unique = true)
     @Email(message = "Email should be valid")
     private String email;
+
+    @CreationTimestamp
+    @Column(name = "CreatedAt", updatable = false, nullable = false)
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "UpdatedAt", nullable = false)
+    private Date updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "IDRole", nullable = false)

@@ -38,9 +38,10 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home/**").permitAll()
-                        .requestMatchers("/au/**").permitAll()
-                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("/", "/home/**", "/error/**", "/au/**").permitAll()
+                        .requestMatchers("/user/**").hasAnyAuthority("USER", "VENDOR", "ADMIN")
+                        .requestMatchers("/vendor/**").hasAnyAuthority("VENDOR", "ADMIN")
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/WEB-INF/decorators/**",
                                 "/WEB-INF/views/guest/**").permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/assets/**")).permitAll()
@@ -52,20 +53,10 @@ public class SecurityConfig {
                 .sessionManagement(management -> management
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .formLogin(login -> login
-                        .loginPage("/au/login")
-                        .permitAll()
-                )
+                .formLogin(login -> login.loginPage("/au/login").permitAll())
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-    }
-
-    @Bean
-    public HttpFirewall allowUrlContainingDoubleSlashes() {
-        StrictHttpFirewall firewall = new StrictHttpFirewall();
-        firewall.setAllowUrlEncodedDoubleSlash(true); // Cho phép URL chứa //
-        return firewall;
     }
 
     @Bean

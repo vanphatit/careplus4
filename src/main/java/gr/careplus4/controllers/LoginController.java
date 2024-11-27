@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -48,9 +49,8 @@ public class LoginController {
     private UserServiceImpl userService;
 
     @PostMapping("/login/login-submit")
-    public String checkLogin(@RequestBody LoginUserModel loginUser,
-                             @RequestParam(value = "remember-me", required = false) String rememberMe, // Add remember-me parameter
-                             Model model) {
+    public ModelAndView checkLogin(@ModelAttribute LoginUserModel loginUser,
+                             @RequestParam(value = "remember-me", required = false) String rememberMe) {
         User authenticatedUser = authenticationService.authenticate(loginUser);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
@@ -59,69 +59,45 @@ public class LoginController {
         loginResponse.setToken(jwtToken);
         loginResponse.setExpireTime(jwtService.getExpirationTime());
 
-        return "guest/home";
+        return new ModelAndView("redirect:/home");
     }
 
 
     @GetMapping("/signup")
-    public String signup() {
+    public String signup(@RequestParam(value = "errorMessage", required = false) String error,
+                         Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", error);
+        }
         return "guest/signup";
     }
 
     @PostMapping("/signup/signup-submit")
     @Transactional
-    public ModelAndView register(@RequestBody RegisterUserModel registerUser, Model model) {
+    public ModelAndView register(@ModelAttribute RegisterUserModel registerUser, ModelMap model) {
         // Kiểm tra xác nhận mật khẩu
         if (!registerUser.getPassword().equals(registerUser.getRePassword())) {
             model.addAttribute("errorMessage", "Mật khẩu và xác nhận mật khẩu không khớp.");
-            return new ModelAndView("guest/signup");
+            return new ModelAndView("redirect:/au/signup", model);
         }
-        User registeredUser = authenticationService.register(registerUser);
-        return new ModelAndView("redirect:/au/login");
-    }
 
-//    @PostMapping("/signup/signup-submit")
-//    public String signup(@RequestParam("name") String name,
-//                         @RequestParam("phoneNumber") String phoneNumber,
-//                         @RequestParam("password") String password,
-//                         @RequestParam("re_pass") String rePass,
-//                         @RequestParam("gender") String gender,
-//                         @RequestParam("email") String email,
-//                         @RequestParam("address") String address,
-//                         @RequestParam("role") int role,
-//                         Model model) {
-//        // Kiểm tra xác nhận mật khẩu
-//        if (!password.equals(rePass)) {
-//            model.addAttribute("errorMessage", "Mật khẩu và xác nhận mật khẩu không khớp.");
-//            return "signup";
-//        }
-//
-//        String apiUrl = apibaseUrl + "/user/addUser";
-//
-//        // Tạo request để gửi đến API
-//        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
-//        requestParams.add("name", name);
-//        requestParams.add("phoneNumber", phoneNumber);
-//        requestParams.add("password", password);
-//        requestParams.add("gender", gender);
-//        requestParams.add("email", email);
-//        requestParams.add("address", address);
-//        requestParams.add("role", String.valueOf(role));
-//
-//        try {
-//            // Gửi POST request tới API
-//            ResponseEntity<Response> response = restTemplate.postForEntity(apiUrl, requestParams, Response.class);
-//
-//            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null && response.getBody().getStatus()) {
-//                model.addAttribute("successMessage", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");
-//                return "redirect:/au/login"; // Điều hướng đến trang đăng nhập khi thành công
-//            } else {
-//                model.addAttribute("errorMessage", "Số điện thoại hoặc email đã tồn tại.");
-//                return "signup"; // Trả về trang đăng ký nếu thất bại
-//            }
-//        } catch (Exception e) {
-//            model.addAttribute("errorMessage", "Đã xảy ra lỗi. Vui lòng thử lại sau. ");
-//            return "signup"; // Trả về trang đăng ký nếu có lỗi
-//        }
-//    }
+        if(userService.findByPhoneNumber(registerUser.getPhone()).isPresent()){
+            model.addAttribute("errorMessage", "Số điện thoại đã tồn tại.");
+            return new ModelAndView( "redirect:/au/signup", model);
+        }
+
+        if(userService.findByEmail(registerUser.getEmail()).isPresent()){
+            model.addAttribute("errorMessage", "Email đã tồn tại.");
+            return new ModelAndView( "redirect:/au/signup", model);
+        }
+
+        registerUser.setIdRole(2);
+
+        if(authenticationService.register(registerUser) != null){
+            model.addAttribute("successMessage", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");
+            return new ModelAndView("forward:/au/login", model);
+        }
+        model.addAttribute("errorMessage", "Đăng ký thất bại! Vui lòng thử lại.");
+        return new ModelAndView( "redirect:/au/signup", model);
+    }
 }

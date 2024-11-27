@@ -42,18 +42,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        String requestUri = request.getRequestURI();
-        System.out.println("Request URI: " + requestUri);
-
-        // Bỏ qua các đường dẫn cụ thể
-        List<String> excludePaths = Arrays.asList("/au/");
-        for (String excludePath : excludePaths) {
-            if (requestUri.startsWith(excludePath)) {
-                System.out.println("Bỏ qua: " + excludePath + " với URI: " + requestUri);
-                filterChain.doFilter(request, response);
-                return;
-            }
-        }
 
         // Phần xử lý JWT
         final String authHeader = request.getHeader("Authorization");

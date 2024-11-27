@@ -5,33 +5,29 @@
 <!-- Sign up form -->
 <section class="signup">
     <div class="container">
+        <!-- Hiển thị thông báo lỗi và thông báo thành công -->
+        <c:if test="${not empty errorMessage}">
+            <div class="alert-danger">
+                <strong>Lỗi:</strong> ${errorMessage}
+                <button type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</button>
+            </div>
+        </c:if>
         <div class="signup-content">
             <div class="signup-form">
                 <h2 class="form-title">Đăng ký</h2>
 
-                <!-- Hiển thị thông báo lỗi và thông báo thành công -->
-                <c:if test="${not empty errorMessage}">
-                    <div class="alert alert-danger">
-                            ${errorMessage}
-                    </div>
-                </c:if>
-                <c:if test="${not empty successMessage}">
-                    <div class="alert alert-success">
-                            ${successMessage}
-                    </div>
-                </c:if>
-
                 <form action="/au/signup/signup-submit" method="POST" class="register-form" id="register-form">
-                    <!-- Name -->
-                    <div class="form-group">
-                        <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                        <input type="text" name="name" id="name" placeholder="Tên của bạn" required maxlength="255"/>
-                    </div>
 
                     <!-- Phone Number -->
                     <div class="form-group">
                         <label for="phone"><i class="zmdi zmdi-phone"></i></label>
-                        <input type="text" name="phoneNumber" id="phone" placeholder="Số điện thoại" required pattern="^\d{10}$" title="Số điện thoại phải gồm 10 chữ số." maxlength="10"/>
+                        <input type="text" name="phone" id="phone" placeholder="Số điện thoại" required pattern="^\d{10}$" title="Số điện thoại phải gồm 10 chữ số." maxlength="10"/>
+                    </div>
+
+                    <!-- Name -->
+                    <div class="form-group">
+                        <label for="fullName"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                        <input type="text" name="fullName" id="fullName" placeholder="Tên của bạn" required maxlength="255"/>
                     </div>
 
                     <!-- Password -->
@@ -42,8 +38,8 @@
 
                     <!-- Confirm Password -->
                     <div class="form-group">
-                        <label for="re_pass"><i class="zmdi zmdi-lock-outline"></i></label>
-                        <input type="password" name="re_pass" id="re_pass" placeholder="Nhập lại mật khẩu" required maxlength="32"/>
+                        <label for="rePassword"><i class="zmdi zmdi-lock-outline"></i></label>
+                        <input type="password" name="rePassword" id="rePassword" placeholder="Nhập lại mật khẩu" required maxlength="32"/>
                     </div>
 
                     <!-- Gender -->
@@ -66,9 +62,6 @@
                         <label for="address"><i class="zmdi zmdi-home"></i></label>
                         <input type="text" name="address" id="address" placeholder="Địa chỉ (Không bắt buộc)" maxlength="255"/>
                     </div>
-
-                    <input type="text" name="role" style="visibility: hidden"
-                            value="2">
 
                     <!-- Submit button -->
                     <div class="form-group form-button">

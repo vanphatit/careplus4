@@ -12,7 +12,8 @@ public class RegisterUserModel {
     private String fullName;
     private String password;
     private String rePassword;
-    private String address;
-    private String email;
     private String gender;
+    private String email;
+    private String address;
+    private int idRole;
 }
