@@ -28,7 +28,7 @@
 </head>
 <body>
 <div class="container mt-5">
-    <h1 class="text-center text-primary">${medicine.id != null ? 'Edit Medicine' : 'Add Medicine'}</h1>
+    <h1 class="text-center text-primary">${medicine.id != null ? 'Cập nhật thông tin thuốc' : 'Thêm thuốc mới'}</h1>
 
     <!-- Hiển thị thông báo lỗi nếu có -->
     <c:if test="${not empty message}">
@@ -40,17 +40,19 @@
         <input type="hidden" name="id" value="${medicine.id}">
         <input type="hidden" name="isEdit" value="${medicine.id != null ? true : false}">
 
+        <input type="hidden" name="rating" value="${medicine.id != null ? medicine.rating : 0.0}">
+        <input type="hidden" name="unitCost" value="${medicine.id != null ? medicine.unitCost : 0.0}">
+
         <div class="row">
             <!-- Name -->
             <div class="col-md-6 mb-3">
-                <label for="name" class="form-label">Name:</label>
-                <input type="text" id="name" name="name" class="form-control" value="${medicine.name}" required>
+                <label for="name" class="form-label">Tên thuốc:</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Nhập tên thuốc" value="${medicine.name}" required>
             </div>
-
-            <!-- Unit Cost -->
+            <!-- Dosage -->
             <div class="col-md-6 mb-3">
-                <label for="unitCost" class="form-label">Unit Cost:</label>
-                <input type="number" id="unitCost" name="unitCost" class="form-control" value="${medicine.unitCost}" step="0.01" required>
+                <label for="dosage" class="form-label">Dosage:</label>
+                <input type="text" id="dosage" name="dosage" class="form-control" placeholder="Nhập liều dùng" value="${medicine.dosage}">
             </div>
         </div>
 
@@ -58,34 +60,41 @@
             <!-- Description -->
             <div class="col-md-12 mb-3">
                 <label for="description" class="form-label">Description:</label>
-                <textarea id="description" name="description" class="form-control">${medicine.description}</textarea>
+                <textarea id="description" name="description" class="form-control" placeholder="Nhập mô tả về thuốc">${medicine.description}</textarea>
             </div>
         </div>
 
         <div class="row">
             <!-- Expiry Date -->
             <div class="col-md-6 mb-3">
-                <label for="expiryDate" class="form-label">Expiry Date:</label>
+                <label for="expiryDate" class="form-label">Ngày hết hạn:</label>
                 <input type="date" id="expiryDate" name="expiryDate" class="form-control" value="${medicine.expiryDate}">
             </div>
-
-            <!-- Dosage -->
+            <!-- Import Date -->
             <div class="col-md-6 mb-3">
-                <label for="dosage" class="form-label">Dosage:</label>
-                <input type="text" id="dosage" name="dosage" class="form-control" value="${medicine.dosage}">
+                <label for="importDate" class="form-label">Ngày nhập:</label>
+                <c:if test="${medicine.id == null}">
+                    <input type="date" id="importDate" disabled name="importDate" class="form-control" value="${CURRENTDATE}">
+                </c:if>
+                <c:if test="${medicine.id != null}">
+                    <input type="date" id="importDate" name="importDate" class="form-control" value="${medicine.importDate}">
+                </c:if>
             </div>
         </div>
 
         <div class="row">
             <!-- Stock Quantity -->
             <div class="col-md-6 mb-3">
-                <label for="stockQuantity" class="form-label">Stock Quantity:</label>
-                <input type="number" id="stockQuantity" name="stockQuantity" class="form-control" value="${medicine.stockQuantity}" required>
+                <label for="stockQuantity" class="form-label">Lượng tồn kho:</label>
+                <input type="number" id="stockQuantity" name="stockQuantity" min="0" placeholder="Nhập lượng tồn kho" class="form-control" value="${medicine.stockQuantity}" required>
             </div>
+        </div>
 
+        <div class="row">
             <!-- Manufacturer -->
             <div class="col-md-6 mb-3">
-                <label for="manufacturerId" class="form-label">Manufacturer:</label>
+                <label for="manufacturerId" class="form-label">Nhà sản xuất:</label>
+                <br>
                 <select id="manufacturerId" name="manufacturerId" class="form-select" required>
                     <c:forEach var="manufacturer" items="${manufacturers}">
                         <option value="${manufacturer.id}"
@@ -95,46 +104,54 @@
                     </c:forEach>
                 </select>
             </div>
-        </div>
-
-        <div class="row">
-            <!-- Category -->
-            <div class="col-md-6 mb-3">
-                <label for="categoryId" class="form-label">Category:</label>
-                <select id="categoryId" name="categoryId" class="form-select" required>
-                    <c:forEach var="category" items="${categories}">
-                        <option value="${category.id}"
-                                <c:if test="${category.id == medicine.categoryId}">selected</c:if>>
-                                ${category.name}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
-
-            <!-- Unit -->
-            <div class="col-md-6 mb-3">
-                <label for="unitId" class="form-label">Unit:</label>
-                <select id="unitId" name="unitId" class="form-select" required>
-                    <c:forEach var="unit" items="${units}">
-                        <option value="${unit.id}"
-                                <c:if test="${unit.id == medicine.unitId}">selected</c:if>>
-                                ${unit.name}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
+                <!-- Category -->
+                <div class="col-md-4 mb-3">
+                    <label for="categoryId" class="form-label">Loại thuốc:</label>
+                    <br>
+                    <select id="categoryId" name="categoryId" class="form-select" required>
+                        <c:forEach var="category" items="${categories}">
+                            <option value="${category.id}"
+                                    <c:if test="${category.id == medicine.categoryId}">selected</c:if>>
+                                    ${category.name}
+                            </option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <!-- Unit -->
+                <div class="col-md-2 mb-3">
+                    <label for="unitId" class="form-label">Đơn vị:</label>
+                    <br>
+                    <select id="unitId" name="unitId" class="form-select" required>
+                        <c:forEach var="unit" items="${units}">
+                            <option value="${unit.id}"
+                                    <c:if test="${unit.id == medicine.unitId}">selected</c:if>>
+                                    ${unit.name}
+                            </option>
+                        </c:forEach>
+                    </select>
+                </div>
         </div>
 
         <div class="row">
             <!-- Image -->
             <div class="col-md-12 mb-3">
-                <label for="image" class="form-label">Image:</label>
+                <label for="image" class="form-label">Ảnh:</label>
                 <input type="file" id="image" name="image" class="form-control">
-                <c:if test="${not empty medicine.imageUrl}">
-                    <div class="mt-2">
-                        <img src="${pageContext.request.contextPath}/medicine/image?fileName=${medicine.imageUrl}" alt="Medicine Image" class="img-thumbnail" style="max-width: 200px;">
-                    </div>
-                </c:if>
+                    <!-- Hiển thị ảnh hiện có nếu có -->
+                    <c:if test="${not empty medicine.imageUrl}">
+                        <div class="mt-2">
+                            <img src="${pageContext.request.contextPath}/medicine/image?fileName=${medicine.imageUrl}"
+                                 alt="Medicine Image"
+                                 class="img-thumbnail"
+                                 style="max-width: 200px;">
+                        </div>
+                    </c:if>
+                <!-- Khung "Xem trước" -->
+                <div class="mt-2" id="previewContainer" style="display: none;">
+                    <label for="previewImage" class="form-label mt-2">Xem trước:</label>
+                    <br>
+                    <img id="previewImage" src="#" alt="Preview Image" class="img-thumbnail" style="max-width: 200px;">
+                </div>
             </div>
         </div>
 
@@ -142,14 +159,77 @@
         <div class="row">
             <div class="col-md-12 text-center">
                 <button type="submit" class="btn btn-primary w-100">
-                    ${medicine.id != null ? 'Update Medicine' : 'Add Medicine'}
+                    ${medicine.id != null ? 'Cập nhật thông tin thuốc' : 'Thêm thuốc mới'}
                 </button>
             </div>
         </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12 text-center">
+                <a href="${pageContext.request.contextPath}/vendor/medicine" class="btn btn-secondary w-100">Quay lại</a>
+            </div>
+        </div>
+
     </form>
 </div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const submitButton = document.querySelector('button[type="submit"]');
+    submitButton.addEventListener("click", function () {
+        submitButton.innerHTML = "Submitting...";
+        submitButton.disabled = true;
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+
+        form.addEventListener("submit", function (e) {
+            const name = document.querySelector("#name").value.trim();
+            const manufacturerId = document.querySelector("#manufacturerId").value.trim();
+            const categoryId = document.querySelector("#categoryId").value.trim();
+            const unitId = document.querySelector("#unitId").value.trim();
+            const stockQuantity = document.querySelector("#stockQuantity").value.trim();
+            const expiryDate = document.querySelector("#expiryDate").value.trim();
+            const dosage = document.querySelector("#dosage").value.trim();
+            const description = document.querySelector("#description").value.trim();
+
+            if (name === "" || manufacturerId === "" || categoryId === "" || unitId === "" || unitCost === "" || stockQuantity === "" || expiryDate === "" || dosage === "" || description === "") {
+                e.preventDefault();
+                alert("Please fill in all the fields!");
+            }
+
+            if (expiryDate < CURRENTDATE) {
+                e.preventDefault();
+                alert("Expiry Date must be greater than or equal to the current date!");
+            }
+
+        });
+
+        const imageInput = document.querySelector("#image");
+        const previewContainer = document.querySelector("#previewContainer");
+        const previewImage = document.querySelector("#previewImage");
+
+        imageInput.addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result; // Hiển thị ảnh mới
+                    previewContainer.style.display = "block"; // Hiện khung xem trước
+                };
+                reader.readAsDataURL(file); // Đọc file ảnh
+            } else {
+                previewImage.src = "#";
+                previewContainer.style.display = "none"; // Ẩn khung xem trước nếu không chọn file
+            }
+        });
+    });
+</script>
+
+
 </body>
 </html>
