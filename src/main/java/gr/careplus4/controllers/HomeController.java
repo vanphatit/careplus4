@@ -1,18 +1,15 @@
 package gr.careplus4.controllers;
 
-import gr.careplus4.entities.User;
-import gr.careplus4.models.UserModel;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
-    @GetMapping("/")
+    @GetMapping(path = {"/", "/home"})
     public String index(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         Cookie[] cookies = request.getCookies();
@@ -41,6 +38,6 @@ public class HomeController {
 //                break;
 //            }
 //        }
-        return "home";
+        return "guest/home";
     }
 }
