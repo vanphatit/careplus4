@@ -117,7 +117,17 @@ public class MedicinesController {
     ) {
         Optional<Medicine> medicine = medicineService.findById(id);
 
-        List<ReviewForUserModel> reviews = reviewDetailService.findReviewForUserModelByMedicineId(id);
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("id").ascending());
+        Page<ReviewForUserModel> reviews = reviewDetailService.findReviewForUserModelByMedicineId(id, pageable);
+
+        int totalPages = reviews.getTotalPages();
+
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
 
         model.addAttribute("reviews", reviews);
         if (!medicine.isPresent()) {
@@ -128,6 +138,8 @@ public class MedicinesController {
         String message = "Medicine found";
         model.addAttribute("medicine", medicine.get());
         model.addAttribute("message", message);
+        model.addAttribute("currentPage", currentPage); // Để view biết trang hiện tại
+        model.addAttribute("pageSize", pageSize);       // Để view biết kích thước trang
         return "vendor/medicine/medicine-detail";
     }
 

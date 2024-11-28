@@ -128,30 +128,45 @@
                     </tbody>
                 </table>
 
-                <!-- Danh sách reviews -->
-                <h3 class="text-primary">Danh sách đánh giá</h3>
-                <c:forEach var="review" items="${reviews}">
-                    <div class="review-item p-3 mb-3" style="background-color: #f8f9fa; border-radius: 10px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);">
-                        <div class="d-flex justify-content-between">
-                            <span class="fw-bold">${review.userName}</span>
-                            <span class="text-muted">
-                                <fmt:formatDate value="${review.date}" pattern="dd/MM/yyyy" />
-                            </span>
-                        </div>
-                        <div class="mt-2">
-                            <!-- Vùng hiển thị sao -->
-                            <div class="rating-stars" style="position: relative; display: inline-block; font-size: 20px; color: #ddd;">
-                                <!-- Sao rỗng -->
-                                <span style="color: #ddd;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-                                <!-- Sao đầy -->
-                                <span style="color: #ffc107; position: absolute; top: 0; left: 0; width: ${review.rating * 20}%; overflow: hidden; white-space: nowrap;">
-                                &#9733;&#9733;&#9733;&#9733;&#9733;
-                                </span>
+                <!-- Bọc toàn bộ danh sách review trong một div -->
+                <div class="reviews-container mt-4">
+                    <h3 class="text-primary">Danh sách đánh giá</h3>
+                    <c:forEach var="review" items="${reviews.content}">
+                        <div class="review-item p-3 mb-3" style="background-color: #f8f9fa; border-radius: 10px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);">
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">${review.userName}</span>
+                                <span class="text-muted">
+                    <fmt:formatDate value="${review.date}" pattern="dd/MM/yyyy" />
+                </span>
                             </div>
+                            <div class="mt-2">
+                                <!-- Vùng hiển thị sao -->
+                                <div class="rating-stars" style="position: relative; display: inline-block; font-size: 20px; color: #ddd;">
+                                    <!-- Sao rỗng -->
+                                    <span style="color: #ddd;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                                    <!-- Sao đầy -->
+                                    <span style="color: #ffc107; position: absolute; top: 0; left: 0; width: ${review.rating * 20}%; overflow: hidden; white-space: nowrap;">
+                        &#9733;&#9733;&#9733;&#9733;&#9733;
+                    </span>
+                                </div>
+                            </div>
+                            <p class="mt-2">${review.review}</p>
                         </div>
-                        <p class="mt-2">${review.review}</p>
-                    </div>
-                </c:forEach>
+                    </c:forEach>
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <c:forEach var="page" items="${pageNumbers}">
+                            <li class="page-item ${page == currentPage ? 'active' : ''}">
+                                <a class="page-link" href="${pageContext.request.contextPath}/vendor/medicine/detail/${medicine.id}?page=${page}&size=${pageSize}">
+                                        ${page}
+                                </a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </nav>
 
                 <div class="text-center mt-4">
                     <a href="${pageContext.request.contextPath}/vendor/medicines" class="btn btn-outline-primary">Quay về</a>

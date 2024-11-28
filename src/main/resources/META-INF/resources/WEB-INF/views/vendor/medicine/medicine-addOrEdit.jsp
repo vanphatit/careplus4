@@ -164,10 +164,8 @@
             </div>
         </div>
 
-        <div class="row mt-3">
-            <div class="col-md-12 text-center">
-                <a href="${pageContext.request.contextPath}/vendor/medicine" class="btn btn-secondary w-100">Quay lại</a>
-            </div>
+        <div class="text-center mt-4">
+            <a href="${pageContext.request.contextPath}/vendor/medicines" class="btn btn-outline-primary">Quay về</a>
         </div>
 
     </form>
@@ -229,7 +227,6 @@
         });
     });
 </script>
-
 
 </body>
 </html>
