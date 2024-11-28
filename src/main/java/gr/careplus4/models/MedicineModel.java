@@ -9,6 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -31,4 +33,10 @@ public class MedicineModel {
     private MultipartFile image;
     private String imageUrl;
     private Boolean isEdit;
+    private List<Map<String, String>> ingredients; // Thành phần
+    private String usage;
+    private String directions;
+    private String sideEffects;
+    private String precautions;
+    private String storage;
 }

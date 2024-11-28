@@ -27,9 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -73,6 +71,22 @@ public class MedicinesController {
         this.categoryService = categoryService;
         this.unitService = unitService;
         this.storageService = storageService;
+    }
+
+    public MedicineModel processMedicine(MedicineModel model) {
+        // Phân tích mô tả và thêm các phần vào model
+        Map<String, Object> descriptionParts = medicineService.parseDescription(model.getDescription(), model.getName());
+
+        // Kiểm tra và gán từng phần
+        model.setDescription(descriptionParts.get("Mô tả sản phẩm") != null ? descriptionParts.get("Mô tả sản phẩm").toString() : "");
+        model.setIngredients(descriptionParts.get("Thành phần") != null ? (List<Map<String, String>>) descriptionParts.get("Thành phần") : new ArrayList<>());
+        model.setUsage(descriptionParts.get("Công dụng") != null ? descriptionParts.get("Công dụng").toString() : "");
+        model.setDirections(descriptionParts.get("Cách dùng") != null ? descriptionParts.get("Cách dùng").toString() : "");
+        model.setSideEffects(descriptionParts.get("Tác dụng phụ") != null ? descriptionParts.get("Tác dụng phụ").toString() : "");
+        model.setPrecautions(descriptionParts.get("Lưu ý") != null ? descriptionParts.get("Lưu ý").toString() : "");
+        model.setStorage(descriptionParts.get("Bảo quản") != null ? descriptionParts.get("Bảo quản").toString() : "");
+
+        return model;
     }
 
     @GetMapping("/vendor/medicines")
@@ -120,6 +134,13 @@ public class MedicinesController {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("id").ascending());
         Page<ReviewForUserModel> reviews = reviewDetailService.findReviewForUserModelByMedicineId(id, pageable);
 
+        MedicineModel medicineModel = new MedicineModel();
+        medicineModel.setName(medicine.get().getName());
+        medicineModel.setDescription(medicine.get().getDescription());
+        medicineModel = processMedicine(medicineModel);
+
+        System.out.println(medicineModel.getIngredients());
+
         int totalPages = reviews.getTotalPages();
 
         if (totalPages > 0) {
@@ -140,6 +161,13 @@ public class MedicinesController {
         model.addAttribute("message", message);
         model.addAttribute("currentPage", currentPage); // Để view biết trang hiện tại
         model.addAttribute("pageSize", pageSize);       // Để view biết kích thước trang
+        model.addAttribute("description", medicineModel.getDescription());
+        model.addAttribute("ingredients", medicineModel.getIngredients());
+        model.addAttribute("usage", medicineModel.getUsage());
+        model.addAttribute("directions", medicineModel.getDirections());
+        model.addAttribute("sideEffects", medicineModel.getSideEffects());
+        model.addAttribute("precautions", medicineModel.getPrecautions());
+        model.addAttribute("storage", medicineModel.getStorage());
         return "vendor/medicine/medicine-detail";
     }
 
@@ -204,6 +232,8 @@ public class MedicinesController {
         String message = "";
         Medicine medicine = new Medicine();
         Optional<Manufacturer> manufacturer = manufacturerService.findById(manufacturerId);
+
+        System.out.println(medicineModel.getDescription());
 
         System.out.println(manufacturer);
 

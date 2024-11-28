@@ -78,7 +78,6 @@
                              style="max-width: 100%; height: auto; border-radius: 10px;"
                             class="medicine-img"
                         />
-
                     </div>
                     <div class="col-md-8">
                         <!-- Thông tin thuốc -->
