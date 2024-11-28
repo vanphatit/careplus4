@@ -156,7 +156,14 @@ public class MedicinesController {
         return "vendor/medicine/medicine-addOrEdit";
     }
 
-    public String handleSaveUploadImage(MultipartFile image, String uploadDir) {
+    private String generateFileName(String medicineName, String fileExtension) {
+        // Format: <medicine_name>_yyyyMMdd_HHmmss.<extension>
+        String timestamp = new java.text.SimpleDateFormat("yyyyMMdd_hhmmss").format(new java.util.Date());
+        String sanitizedMedicineName = medicineName.replaceAll("[^a-zA-Z0-9]", "_"); // Loại bỏ ký tự đặc biệt
+        return sanitizedMedicineName + "_" + timestamp + "." + fileExtension.toLowerCase();
+    }
+
+    public String handleSaveUploadImage(MultipartFile image, String uploadDir, String medicineName) {
         if (image != null && !image.isEmpty()) {
             try {
                 // Kiểm tra và tạo thư mục nếu chưa tồn tại
@@ -166,7 +173,7 @@ public class MedicinesController {
                 }
 
                 // Xử lý tên file để tránh ký tự không hợp lệ
-                String sanitizedFileName = System.currentTimeMillis() + "-" + image.getOriginalFilename().replaceAll("[^a-zA-Z0-9.\\-_]", "_");
+                String sanitizedFileName = generateFileName(medicineName, "png");
 
                 // Đường dẫn đầy đủ của file
                 Path path = uploadPath.resolve(sanitizedFileName);
@@ -175,6 +182,7 @@ public class MedicinesController {
                 Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
                 // Trả về tên file (hoặc đường dẫn)
+                System.out.println("Upload file: " + path);
                 return sanitizedFileName;
             } catch (Exception e) {
                 // Log lỗi để dễ dàng gỡ lỗi
@@ -244,17 +252,52 @@ public class MedicinesController {
                 return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
             }
 
+        System.out.println(medicineModel.getImage().isEmpty());
+        System.out.println(medicineModel.getImage() != null);
+
         // Xử lý upload file (nếu có)
         if (medicineModel.getImage() != null && !medicineModel.getImage().isEmpty()) {
-            String imagePath = handleSaveUploadImage(medicineModel.getImage(), MEDICINE_UPLOAD_DIR);
+            String imagePath = handleSaveUploadImage(medicineModel.getImage(), MEDICINE_UPLOAD_DIR, medicineModel.getName());
             if (imagePath != null) {
-                medicine.setImage(imagePath); // Lưu đường dẫn file vào Entity
+                // Lưu đường dẫn ảnh mới vào Entity
+                String oldImagePath = null;
+                if (medicineModel.getId() != null) {
+                    // Lấy ảnh cũ trước khi ghi đè
+                    Optional<Medicine> existingMedicine = medicineService.findById(medicineModel.getId());
+                    System.out.println("Existing medicine: " + existingMedicine);
+                    if (existingMedicine.isPresent() && existingMedicine.get().getImage() != null) {
+                        oldImagePath = MEDICINE_UPLOAD_DIR + "/" + existingMedicine.get().getImage();
+                    }
+                }
+
+                // Set đường dẫn ảnh mới vào Entity
+                medicine.setImage(imagePath);
+
+                // Sau khi lưu đường dẫn ảnh mới, xóa ảnh cũ (nếu có)
+                if (oldImagePath != null) {
+                    System.out.println("Delete old image: " + oldImagePath);
+                    File oldImageFile = new File(oldImagePath);
+                    if (oldImageFile.exists() && oldImageFile.isFile()) {
+                        boolean deleted = oldImageFile.delete();
+                        if (!deleted) {
+                            System.err.println("Failed to delete old image: " + oldImagePath);
+                        }
+                    }
+                }
             }
         } else {
+            System.out.println("No new image uploaded");
             // Nếu không upload ảnh mới, giữ nguyên ảnh cũ (nếu chỉnh sửa)
             if (medicine.getId() != null) {
                 Optional<Medicine> existingMedicine = medicineService.findById(medicine.getId());
-                existingMedicine.ifPresent(existing -> medicine.setImage(existing.getImage()));
+                if (existingMedicine.isPresent() && existingMedicine.get().getImage() != null) {
+                    medicine.setImage(existingMedicine.get().getImage()); // Giữ lại ảnh cũ
+                } else {
+                    medicine.setImage(null); // Nếu không có ảnh cũ, đặt null
+                }
+            } else {
+                // Trường hợp thêm mới mà không upload ảnh, đặt null
+                medicine.setImage(null);
             }
         }
 
