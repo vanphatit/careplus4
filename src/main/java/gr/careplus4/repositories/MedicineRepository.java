@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MedicineRepository extends JpaRepository<Medicine, String>, JpaSpecificationExecutor<Medicine> {
@@ -33,7 +34,19 @@ public interface MedicineRepository extends JpaRepository<Medicine, String>, Jpa
     List<Medicine> findByStockQuantityBetween(Integer min, Integer max); // Tìm kiếm theo số lượng trong kho
     List<Medicine> findByStockQuantityBetween(Integer min, Integer max, Pageable pageable); // Tìm kiếm theo số lượng trong kho và phân trang
 
-    Boolean existsByNameAndExpiryDateAndManufacturer_Name(String name, Date expiryDate, String manufacturerName); // Kiểm tra xem thuốc đã tồn tại chưa
+    List<Medicine> findByExpiryDateBetween(Date min, Date max); // Tìm kiếm theo ngày hết hạn
+    List<Medicine> findByExpiryDateBetween(Date min, Date max, Pageable pageable); // Tìm kiếm theo ngày hết hạn và phân trang
+
+    List<Medicine> findByImportDateBetween(Date min, Date max); // Tìm kiếm theo ngày nhập
+    List<Medicine> findByImportDateBetween(Date min, Date max, Pageable pageable); // Tìm kiếm theo ngày nhập và phân trang
+
+    Boolean existsByNameAndExpiryDateAndManufacturer_NameAndImportDate(String name, Date expiryDate, String manufacturerName, Date importDate); // Kiểm tra xem thuốc đã tồn tại chưa
+
+    Optional<Medicine> findByNameAndExpiryDateAndManufacturer_NameAndImportDate(String name, Date expiryDate, String manufacturerName, Date importDate); // Tìm kiếm theo tên, ngày hết hạn, tên nhà sản xuất và ngày nhập
+
+    List<Medicine> findByNameAndManufacturer_Name(String name, String manufacturerName); // Tìm kiếm theo tên, ngày hết hạn và tên nhà sản xuất
+
+    List<Medicine> findMedicinesByNameAndManufacturer_NameAndDosage (String name, String manufacturerName, String dosage); // Tìm kiếm theo tên, tên nhà sản xuất và liều lượng
 
     Medicine findTopByOrderByIdDesc(); // Lấy ra co ID lớn nhất
 }

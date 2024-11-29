@@ -7,9 +7,15 @@ import gr.careplus4.services.impl.EventServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +25,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("vendor/event")
@@ -27,9 +35,24 @@ public class EventController {
     EventServiceImpl eventService;
 
     @RequestMapping("")
-    public String all(Model model) {
-        List<Event> list = eventService.findAll();
-        model.addAttribute("listevent", list);
+    public String all(Model model, @RequestParam("page") Optional<Integer> page,
+                      @RequestParam("size") Optional<Integer> size) {
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(10);
+
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("id")); // Thay đổi nếu cần
+        Page<Event> eventPage = eventService.findAll(pageable); // Lấy đối tượng Page<Event>
+
+        model.addAttribute("eventPage", eventPage); // Truyền eventPage vào model
+        model.addAttribute("events", eventPage.getContent());
+
+        int totalPages = eventPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
         return "vendor/event-list";
     }
 
@@ -102,9 +125,53 @@ public class EventController {
 
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable("id") String id) {
-        eventService.deleteById(id); // Phương thức deleteById() do bạn triển khai
+        eventService.deleteById(id);
         return "redirect:/vendor/event";
     }
 
+    @RequestMapping("/searchpaginated")
+    public String search(ModelMap model,
+                         @RequestParam(name="name", required = false) String name,
+                         @RequestParam(name = "id", required = false) String id,
+                         @RequestParam("page") Optional<Integer> page,
+                         @RequestParam("size") Optional<Integer> size) {
+
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(3);
+
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("id")); // Sửa Sort theo id
+
+        Page<Event> resultPage;
+        if (StringUtils.hasText(name)) {
+            resultPage = eventService.findByNameContaining(name, pageable);
+            model.addAttribute("name", name);
+        } else if (StringUtils.hasText(id)) {
+                resultPage = eventService.findById(id, pageable);
+                model.addAttribute("id", id);
+        }
+        else {
+            resultPage = eventService.findAll(pageable);
+        }
+
+        model.addAttribute("eventPage", resultPage);// Truyền eventPage vào model
+        model.addAttribute("events", resultPage.getContent());
+
+        int totalPages = resultPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+        return "vendor/event-list";
+    }
+
+    @GetMapping("/active")
+    public String getActiveEvents(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date inputDate, Model model) {
+        List<Event> activeEvents = eventService.getActiveEvents(inputDate);
+        model.addAttribute("inputDate", inputDate);
+        model.addAttribute("activeEvents", activeEvents);
+        return "vendor/event-active-list"; // Tên file JSP
+    }
 
 }

@@ -18,11 +18,15 @@ import java.math.BigDecimal;
 public class ImportDetail implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+
     @ManyToOne
     @JoinColumn(name = "IDImport", nullable = false)
     private Import importRecord;
 
-    @Id
+
     @ManyToOne
     @JoinColumn(name = "IDMedicine", nullable = false)
     private Medicine medicine;

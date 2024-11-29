@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.List;
@@ -34,9 +35,11 @@ public class Category implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "ParentID")
+    @ToString.Exclude
     @JsonBackReference // Đánh dấu trường này để Jackson không chuyển đổi nó thành JSON và tránh recursion
     private Category parentCategory;
 
     @OneToMany(mappedBy = "parentCategory")
+    @ToString.Exclude
     private List<Category> subCategories;
 }

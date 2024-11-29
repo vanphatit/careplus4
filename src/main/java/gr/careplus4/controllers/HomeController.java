@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
-    @GetMapping("/")
+    @GetMapping({"", "/", "/home"})
     public String index(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         Cookie[] cookies = request.getCookies();

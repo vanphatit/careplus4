@@ -17,9 +17,9 @@
     /*
     // initialize custom numbers
     */
-    $(function () {
-        $('.input-number').customNumber();
-    });
+    // $(function () {
+    //     $('.input-number').customNumber();
+    // });
 
 
     /*
@@ -837,4 +837,86 @@
             productsList.attr('data-with-features', $(this).attr('data-with-features'));
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const cartTable = document.querySelector(".cart__table");
+
+        function updateRowTotal(row) {
+            const priceCell = row.querySelector(".cart-table__column--price");
+            const quantityInput = row.querySelector(".input-number__input");
+            const totalCell = row.querySelector(".cart-table__column--total");
+
+            const unitPrice = parseFloat(priceCell.textContent.trim());
+            const quantity = parseInt(quantityInput.value);
+
+            const rowTotal = unitPrice * quantity;
+            totalCell.textContent = rowTotal.toFixed(3) + ' đ';
+
+            const index = row.dataset.index;
+            const hiddenInput = document.querySelector(`input[data-index='${index}']`);
+            if (hiddenInput) {
+                hiddenInput.value = quantity;
+            }
+
+            updateCartTotal();
+        }
+
+        function updateCartTotal() {
+            const totalPriceHeader = document.querySelector(".cart__totals-header td");
+            const totalPriceFooter = document.querySelector(".cart__totals-footer td");
+            let totalPrice = 0;
+
+            cartTable.querySelectorAll(".cart-table__row").forEach(row => {
+                const totalCell = row.querySelector(".cart-table__column--total");
+                if (totalCell) {
+                    const rowTotal = parseFloat(totalCell.textContent.trim());
+                    if (!isNaN(rowTotal)) {
+                        totalPrice += rowTotal;
+                    }
+                }
+            });
+
+            totalPriceHeader.textContent = totalPrice.toFixed(3) +' đ';
+            totalPriceFooter.textContent = totalPrice.toFixed(3) + ' đ';
+        }
+
+
+
+        cartTable.querySelectorAll(".input-number__input").forEach(input => {
+            input.addEventListener("input", function () {
+                const row = input.closest(".cart-table__row");
+                updateRowTotal(row);
+            });
+        });
+
+        cartTable.querySelectorAll(".input-number__add, .input-number__sub").forEach(button => {
+            button.addEventListener("click", function () {
+                const row = button.closest(".cart-table__row");
+                const input = row.querySelector(".input-number__input");
+                const step = parseInt(input.getAttribute("step") || 1);
+
+                if (button.classList.contains("input-number__add")) {
+                    input.value = parseInt(input.value) + step;
+                } else if (button.classList.contains("input-number__sub")) {
+                    input.value = Math.max(parseInt(input.value) - step, 1);
+                }
+
+                updateRowTotal(row);
+            });
+        });
+    });
+
+    function formatCurrency(value) {
+        // Use the 'vi-VN' locale to format the number according to Vietnamese currency format
+        // and 'VND' as the currency type for Vietnamese đồng
+        const formatter = new Intl.NumberFormat('vi-VN', {
+            style: 'decimal',
+            minimumFractionDigits: 0, // No decimal part for whole numbers
+        });
+
+        let formatted = formatter.format(value);
+        // Replace dots with commas for thousands separator
+        formatted = formatted.replace(/\./g, ',');
+        return formatted;
+    }
 })(jQuery);
