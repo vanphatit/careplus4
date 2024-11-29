@@ -24,6 +24,19 @@
         .form-label {
             font-weight: bold;
         }
+        .form-label {
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        textarea#description {
+            resize: vertical; /* Cho phép người dùng điều chỉnh chiều cao */
+        }
+        img {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+            max-width: 200px;
+        }
     </style>
 </head>
 <body>
@@ -53,14 +66,6 @@
             <div class="col-md-6 mb-3">
                 <label for="dosage" class="form-label">Dosage:</label>
                 <input type="text" id="dosage" name="dosage" class="form-control" placeholder="Nhập liều dùng" value="${medicine.dosage}">
-            </div>
-        </div>
-
-        <div class="row">
-            <!-- Description -->
-            <div class="col-md-12 mb-3">
-                <label for="description" class="form-label">Description:</label>
-                <textarea id="description" name="description" class="form-control" placeholder="Nhập mô tả về thuốc">${medicine.description}</textarea>
             </div>
         </div>
 
@@ -133,6 +138,13 @@
         </div>
 
         <div class="row">
+            <div class="col-md-12 mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <textarea id="description" name="description" class="form-control" rows="10" cols="50" placeholder="Nhập mô tả về thuốc">${medicine.description}</textarea>
+            </div>
+        </div>
+
+        <div class="row">
             <!-- Image -->
             <div class="col-md-12 mb-3">
                 <label for="image" class="form-label">Ảnh:</label>
@@ -167,7 +179,6 @@
         <div class="text-center mt-4">
             <a href="${pageContext.request.contextPath}/vendor/medicines" class="btn btn-outline-primary">Quay về</a>
         </div>
-
     </form>
 </div>
 
@@ -227,6 +238,5 @@
         });
     });
 </script>
-
 </body>
 </html>

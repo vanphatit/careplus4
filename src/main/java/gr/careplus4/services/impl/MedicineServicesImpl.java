@@ -474,4 +474,120 @@ public class MedicineServicesImpl implements iMedicineServices {
         // Trả về đối tượng Page<MedicineForUserModel>
         return new PageImpl<>(pagedMedicines, pageable, filteredMedicines.size());
     }
+
+    public Map<String, Object> parseDescription(String description, String medicineName) {
+        Map<String, Object> sections = new HashMap<>();
+
+        // Các tiêu đề chính
+        String[] headers = {
+                "Mô tả sản phẩm",
+                "Thành phần",
+                "Công dụng",
+                "Cách dùng",
+                "Tác dụng phụ",
+                "Lưu ý",
+                "Bảo quản"
+        };
+
+        // Chia đoạn văn theo tiêu đề
+        for (int i = 0; i < headers.length; i++) {
+            String header = headers[i];
+            String nextHeader = (i < headers.length - 1) ? headers[i + 1] : null;
+
+            int startIndex = description.indexOf(header);
+            if (startIndex == -1) continue;
+
+            int endIndex = nextHeader != null ? description.indexOf(nextHeader) : description.length();
+            String sectionContent = description.substring(startIndex + header.length(), endIndex).trim();
+
+            if (header.equals("Thành phần")) {
+                List<Map<String, String>> ingredients = parseIngredients(sectionContent);
+                sections.put(header, ingredients);
+            } else {
+                sectionContent = removeMedicineName(sectionContent, medicineName);
+                sectionContent = capitalizeFirstLetter(sectionContent);
+                if (!sectionContent.isEmpty()) {
+                    sections.put(header, sectionContent);
+                }
+            }
+        }
+
+        return sections;
+    }
+
+    /**
+     * Phân tích phần "Thành phần" để trích xuất thông tin thành phần và hàm lượng.
+     */
+    private List<Map<String, String>> parseIngredients(String content) {
+        List<Map<String, String>> ingredients = new ArrayList<>();
+
+        // Loại bỏ các từ và phần không cần thiết
+        content = content.replaceAll("(?i)Thành phần của .+|Thành phần cho .+|Thông tin thành phần", "").trim();
+
+        // Chia nội dung thành các dòng
+        String[] lines = content.split("\n");
+
+        // Duyệt qua từng dòng để tách thành phần và hàm lượng
+        String ingredient = null;
+        String quantity = null;
+
+        for (String line : lines) {
+            line = line.trim();
+
+            if (line.isEmpty()) continue; // Bỏ qua các dòng trống
+
+            // Kiểm tra nếu dòng này là thành phần hoặc hàm lượng
+            if (ingredient == null) {
+                // Dòng đầu tiên là thành phần
+                ingredient = line;
+            } else {
+                // Dòng thứ hai là hàm lượng
+                quantity = line;
+
+                // Tạo bản đồ để lưu thành phần và hàm lượng
+                Map<String, String> ingredientMap = new HashMap<>();
+                ingredientMap.put("Thông tin thành phần", ingredient);
+                ingredientMap.put("Hàm lượng", quantity);
+
+                ingredients.add(ingredientMap);
+
+                // Reset ingredient và quantity để chuẩn bị cho lần phân tích tiếp theo
+                ingredient = null;
+                quantity = null;
+            }
+        }
+
+        return ingredients;
+    }
+
+    /**
+     * Loại bỏ tên thuốc khỏi nội dung.
+     */
+    private String removeMedicineName(String content, String medicineName) {
+        String normalizedContent = content.toLowerCase();
+        String normalizedMedicineName = medicineName.toLowerCase();
+
+        if (normalizedContent.contains(normalizedMedicineName)) {
+            normalizedContent = normalizedContent.replace(normalizedMedicineName, "").trim();
+        }
+
+        String[] nameParts = normalizedMedicineName.split("\\s+");
+        for (String part : nameParts) {
+            if (normalizedContent.contains(part)) {
+                normalizedContent = normalizedContent.replace(part, "").trim();
+            }
+        }
+
+        return normalizedContent;
+    }
+
+    /**
+     * Viết hoa chữ cái đầu.
+     */
+    private String capitalizeFirstLetter(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        return text.substring(0, 1).toUpperCase() + text.substring(1);
+    }
 }
