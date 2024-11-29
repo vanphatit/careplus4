@@ -60,7 +60,7 @@ public class CartServiceImpl implements iCartService {
        Optional<User> user = this.userRepository.findByPhoneNumber(phone);
        if (user.isPresent()) {
            // check user đã có Cart chưa ? nếu chưa -> tạo mới
-           Optional<Cart> cart;
+           Optional<Cart> cart ;
            if (user.get().getCart() != null && user.get().getCart().getId() != null) {
                cart = this.cartRepository.findById(user.get().getCart().getId());
            } else {
@@ -83,8 +83,8 @@ public class CartServiceImpl implements iCartService {
                // Cap nhat lai gio hang cho user
                user.get().setCart(otherCart);
                 try {
-                    this.userRepository.save(user.get());
                     this.cartRepository.save(otherCart);
+                    this.userRepository.save(user.get());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -104,12 +104,10 @@ public class CartServiceImpl implements iCartService {
                    cd.setUnitCost(realProduct.getUnitCost());
                    cd.setQuantity(1);
                    this.cartDetailRepository.save(cd);
-
                    // update cart (cartCount);
                    int total = cart.get().getProductCount() + 1;
                    cart.get().setProductCount(total);
                    this.cartRepository.save(cart.get());
-//                   session.setAttribute("cartCount", total);
                } else {
                    oldDetail.setQuantity(oldDetail.getQuantity() + 1);
                    oldDetail.setSubTotal(oldDetail.getSubTotal().add(realProduct.getUnitCost()));

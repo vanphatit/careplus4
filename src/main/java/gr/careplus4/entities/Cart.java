@@ -1,10 +1,7 @@
 package gr.careplus4.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -22,8 +19,10 @@ public class Cart implements Serializable {
     @EqualsAndHashCode.Include
     private String id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @ToString.Exclude
     @JoinColumn(name = "UserPhone", nullable = false, unique = true)
+
     private User user;
 
     @Column(name = "ProductCount", nullable = false)
@@ -36,5 +35,6 @@ public class Cart implements Serializable {
     private Boolean usedPoint;
 
     @OneToMany(mappedBy = "cart")
+    @ToString.Exclude
     private List<CartDetail> cartDetails;
 }
