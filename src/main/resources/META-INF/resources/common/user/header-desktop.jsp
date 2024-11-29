@@ -15,24 +15,41 @@
                     <div class="topbar__spring"></div>
                     <div class="topbar__item">
                         <div class="topbar-dropdown">
-                            <button class="topbar-dropdown__btn" type="button">Tài khoản
+                            <button class="topbar-dropdown__btn" type="button">
+                                <c:choose>
+                                    <c:when test="${not empty user}">
+                                        ${user.name} <!-- Hiển thị tên người dùng -->
+                                    </c:when>
+                                    <c:otherwise>
+                                        Tài khoản
+                                    </c:otherwise>
+                                </c:choose>
                                 <svg width="7px" height="5px">
                                     <use href="${URL}assets/images/sprite.svg#arrow-rounded-down-7x5"></use>
                                 </svg>
                             </button>
                             <div class="topbar-dropdown__body"><!-- .menu -->
                                 <ul class="menu menu--layout--topbar">
-                                    <li><a href="${URL}assets/account.html">Thông tin cá nhân</a></li>
+                                    <li><a href="${URL}assets/account.html">Tài khoản của tôi</a></li>
                                     <li><a href="${URL}assets/#">Đơn hàng</a></li>
                                     <li><a href="#">Đánh giá</a></li>
                                 </ul><!-- .menu / end -->
                             </div>
                         </div>
                     </div>
-                    <div class="topbar__item topbar__item--link"><a class="topbar-link"
-                                                                    href="/au/login">Đăng nhập</a></div>
-                    <div class="topbar__item topbar__item--link"><a class="topbar-link"
-                                                                    href="/au/logout">Đăng xuất</a></div>
+                    <c:choose>
+                        <c:when test="${not empty user}">
+                            <div class="topbar__item topbar__item--link"><a class="topbar-link"
+                                                                            href="/au/logout">Đăng xuất</a></div>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="topbar__item topbar__item--link"><a class="topbar-link"
+                                                                            href="/au/login">Đăng nhập</a></div>
+                            <div class="topbar__item topbar__item--link"><a class="topbar-link"
+                                                                            href="/au/signup">Đăng ký</a></div>
+                        </c:otherwise>
+                    </c:choose>
+
                 </div>
             </div>
         </div><!-- .topbar / end -->
@@ -41,7 +58,7 @@
                 <div class="nav-panel__container container">
                     <div class="nav-panel__row">
                         <div class="nav-panel__logo">
-                            <a href="#">
+                            <a href="/">
                                 <img src="${URL}assets/images/careplus4-high-resolution-logo-transparent.png"
                                      width="auto" height="30px"></a>
                         </div><!-- .nav-links -->
@@ -49,7 +66,7 @@
                             <ul class="nav-links__list">
                                 <c:forEach var="category" items="${rootCategories}">
                                     <li class="nav-links__item nav-links__item--with-submenu">
-                                        <a href="/categories/${category.id}">
+                                        <a href="/user/medicine?${category.id}">
                                             <span>${category.name}
                                             <svg class="nav-links__arrow" width="9px" height="6px">
                                                 <use href="images/sprite.svg#arrow-rounded-down-9x6"></use>
@@ -60,7 +77,7 @@
                                                 <ul class="menu menu--layout--classic">
                                                     <c:forEach var="subCategory" items="${category.subCategories}">
                                                         <li>
-                                                            <a href="/categories/${subCategory.id}">
+                                                            <a href="/user/medicine?${subCategory.id}">
                                                                     ${subCategory.name}
                                                             </a>
                                                         </li>
