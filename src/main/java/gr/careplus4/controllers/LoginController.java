@@ -1,137 +1,129 @@
 package gr.careplus4.controllers;
 
 import gr.careplus4.entities.User;
+import gr.careplus4.filters.JwtAuthenticationFilter;
+import gr.careplus4.models.LoginResponse;
+import gr.careplus4.models.LoginUserModel;
+import gr.careplus4.models.RegisterUserModel;
 import gr.careplus4.models.Response;
-import gr.careplus4.models.UserModel;
-import gr.careplus4.repositories.RoleRepository;
-import gr.careplus4.services.iRoleService;
-import gr.careplus4.services.impl.RoleServiceImpl;
 import gr.careplus4.services.impl.UserServiceImpl;
+import gr.careplus4.services.security.AuthenticationService;
+import gr.careplus4.services.security.JwtCookies;
+import gr.careplus4.services.security.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/au")
 public class LoginController {
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
 
     @Autowired
-    private RestTemplate restTemplate;
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private JwtCookies jwtCookies;
+
+    public LoginController(AuthenticationService authenticationService, JwtService jwtService) {
+        this.authenticationService = authenticationService;
+        this.jwtService = jwtService;
+    }
+
+    @GetMapping("/login")
+    public String login(HttpServletRequest request) {
+        // Kiểm tra JWT có tồn tại và hợp lệ
+        if (jwtCookies.isJwtValid(request)) {
+            return "redirect:/home";
+        }
+
+        return "guest/login";
+    }
 
     @Autowired
     private UserServiceImpl userService;
 
-    @Value("${api.base-url}")
-    private String apibaseUrl;
-
     @PostMapping("/login/login-submit")
-    public String checkLogin(@RequestParam("phoneNumber") String phoneNumber,
-                             @RequestParam("password") String password,
-                             @RequestParam(value = "remember-me", required = false) String rememberMe, // Add remember-me parameter
-                             Model model, HttpSession session, HttpServletResponse resp) {
-        String apiUrl = apibaseUrl + "/user/getUserLogin";
-
-        // Tạo request gửi đến API đăng nhập
-        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
-        requestParams.add("phoneNumber", phoneNumber);
-        requestParams.add("password", password);
-
+    public ModelAndView checkLogin(@ModelAttribute LoginUserModel loginUser,
+                                   @RequestParam(value = "remember-me", required = false) String rememberMe,
+                                   HttpServletResponse response) {
         try {
-            // Gửi yêu cầu POST tới API
-            ResponseEntity<Response> response = restTemplate.postForEntity(apiUrl, requestParams, Response.class);
-            if (response.getBody() != null && response.getBody().getStatus()) {
-                // Đăng nhập thành công, chuyển hướng đến trang chủ
+            // Xác thực người dùng
+            User authenticatedUser = authenticationService.authenticate(loginUser);
 
-                if ("on".equals(rememberMe)) { // Only if remember-me is checked
-                    // Tạo Cookie cho mã định danh hoặc token của người dùng
-                    Cookie userCookie = new Cookie("phoneNumber", phoneNumber);
-                    userCookie.setHttpOnly(true); // Đảm bảo cookie chỉ được gửi trong các yêu cầu HTTP
-                    userCookie.setPath("/"); // Đặt path cho cookie (sử dụng trên toàn bộ domain)
-                    userCookie.setMaxAge(7 * 24 * 60 * 60); // Thời hạn cookie (ví dụ: 1 tuần)
-                    resp.addCookie(userCookie);
+            // Tạo JWT
+            long expiration = rememberMe != null ? 604800000L : 3600000L; // 7 ngày hoặc 1 giờ
+            String jwtToken = jwtService.generateToken(authenticatedUser, expiration);
 
-                    // Lưu thông tin người dùng vào session
-                    session.setAttribute("phoneNumber", phoneNumber);
-                }
+            jwtCookies.setJwtToCookies(response, jwtToken, expiration);
 
-                return "redirect:/";
-            } else {
-                // Đăng nhập thất bại, gửi thông báo lỗi về trang đăng nhập
-                model.addAttribute("errorMessage", "User not found or incorrect password");
-                return "redirect:/au/login"; // Trả về trang đăng nhập nếu thất bại
-            }
-        } catch (Exception e) {
-            // Xử lý nếu có lỗi từ API hoặc kết nối thất bại
-            model.addAttribute("errorMessage", "An error occurred. Please try again.");
-            return "login";
+            // Chuyển hướng về trang chủ
+            return new ModelAndView("redirect:/home");
+        } catch (AuthenticationException e) {
+            // Trả về trang login với thông báo lỗi
+            ModelAndView mav = new ModelAndView("login");
+            mav.addObject("error", "Invalid username or password");
+            return mav;
         }
     }
 
-
     @GetMapping("/signup")
-    public String signup() {
-        return "signup";
+    public String signup(@RequestParam(value = "errorMessage", required = false) String error,
+                         Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", error);
+        }
+        return "guest/signup";
     }
 
     @PostMapping("/signup/signup-submit")
-    public String signup(@RequestParam("name") String name,
-                         @RequestParam("phoneNumber") String phoneNumber,
-                         @RequestParam("password") String password,
-                         @RequestParam("re_pass") String rePass,
-                         @RequestParam("gender") String gender,
-                         @RequestParam("email") String email,
-                         @RequestParam("address") String address,
-                         @RequestParam("role") int role,
-                         Model model) {
+    @Transactional
+    public ModelAndView register(@ModelAttribute RegisterUserModel registerUser, ModelMap model) {
         // Kiểm tra xác nhận mật khẩu
-        if (!password.equals(rePass)) {
+        if (!registerUser.getPassword().equals(registerUser.getRePassword())) {
             model.addAttribute("errorMessage", "Mật khẩu và xác nhận mật khẩu không khớp.");
-            return "signup";
+            return new ModelAndView("redirect:/au/signup", model);
         }
 
-        String apiUrl = apibaseUrl + "/user/addUser";
-
-        // Tạo request để gửi đến API
-        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
-        requestParams.add("name", name);
-        requestParams.add("phoneNumber", phoneNumber);
-        requestParams.add("password", password);
-        requestParams.add("gender", gender);
-        requestParams.add("email", email);
-        requestParams.add("address", address);
-        requestParams.add("role", String.valueOf(role));
-
-        try {
-            // Gửi POST request tới API
-            ResponseEntity<Response> response = restTemplate.postForEntity(apiUrl, requestParams, Response.class);
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null && response.getBody().getStatus()) {
-                model.addAttribute("successMessage", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");
-                return "redirect:/au/login"; // Điều hướng đến trang đăng nhập khi thành công
-            } else {
-                model.addAttribute("errorMessage", "Số điện thoại hoặc email đã tồn tại.");
-                return "signup"; // Trả về trang đăng ký nếu thất bại
-            }
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Đã xảy ra lỗi. Vui lòng thử lại sau. ");
-            return "signup"; // Trả về trang đăng ký nếu có lỗi
+        if(userService.findByPhoneNumber(registerUser.getPhone()).isPresent()){
+            model.addAttribute("errorMessage", "Số điện thoại đã tồn tại.");
+            return new ModelAndView( "redirect:/au/signup", model);
         }
+
+        if(userService.findByEmail(registerUser.getEmail()).isPresent()){
+            model.addAttribute("errorMessage", "Email đã tồn tại.");
+            return new ModelAndView( "redirect:/au/signup", model);
+        }
+
+        registerUser.setIdRole(2);
+
+        if(authenticationService.register(registerUser) != null){
+            model.addAttribute("successMessage", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");
+            return new ModelAndView("forward:/au/login", model);
+        }
+        model.addAttribute("errorMessage", "Đăng ký thất bại! Vui lòng thử lại.");
+        return new ModelAndView( "redirect:/au/signup", model);
     }
 }

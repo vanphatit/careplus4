@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -107,6 +110,17 @@ public class ReviewController {
                                         @RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "5") int size,
                                         Model model) {
+
+        // Lấy thông tin từ SecurityContext
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName(); // username (hoặc phoneNumber)
+
+        // Kiểm tra nếu id không khớp và người dùng không phải ADMIN
+        if (!currentUsername.equals(id) || !authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
+            throw new AccessDeniedException("You do not have permission to view this resource.");
+        }
+
         User user = userServiceImpl.findByPhoneNumber(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         System.out.println("User: " + user.getPhoneNumber());
