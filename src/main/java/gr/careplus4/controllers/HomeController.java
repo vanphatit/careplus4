@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @Controller
 public class HomeController {
-
     @GetMapping(path = {"/", "/home"})
     public String index() {
         return "guest/home";

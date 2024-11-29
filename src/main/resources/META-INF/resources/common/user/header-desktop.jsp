@@ -58,7 +58,7 @@
                 <div class="nav-panel__container container">
                     <div class="nav-panel__row">
                         <div class="nav-panel__logo">
-                            <a href="/">
+                            <a href="${pageContext.request.contextPath}/">
                                 <img src="${URL}assets/images/careplus4-high-resolution-logo-transparent.png"
                                      width="auto" height="30px"></a>
                         </div><!-- .nav-links -->

@@ -13,10 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/user")
 public class CartController {
     @Autowired
     private CartServiceImpl cartService;
@@ -36,6 +34,17 @@ public class CartController {
 
     @Autowired
     private UserServiceImpl userService;
+
+    @PostMapping("/add-medicine-to-cart/{id}")
+    public String addMedicineToCart(@PathVariable String id, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+//        String phone = (String) session.getAttribute("phone");
+        String phone = "0903456782"; // de test thoi mot goi session
+
+        this.cartService.handleAddProductToCart(phone, id, session);
+        return "redirect:/";
+    }
 
     @GetMapping("/cart")
     public String getCartPage(Model model, HttpServletRequest request) {
@@ -99,7 +108,7 @@ public class CartController {
         String cartId = currentCart.getId();
         List<CartDetail> cartDetails = cart == null ? new ArrayList<>() : cart.getCartDetails();
         this.cartService.handleUpdateCartBeforeCheckout(cartId, cartDetails, code, usedPoint);
-        return "redirect:/checkout";
+        return "redirect:/user/checkout";
     }
 
     @GetMapping("/checkout")
@@ -137,10 +146,9 @@ public class CartController {
             if (event.isPresent() && event.get().getDiscount().intValue() != 0) {
                 percentage = event.get().getDiscount().intValue();
                 discount += subPrice * event.get().getDiscount().floatValue() / 100;
-                totalPrice = subPrice - discount;
-            } else {
-                totalPrice = subPrice;
             }
+            totalPrice = subPrice - discount;
+
         } else {
             cartDetails = new ArrayList<>();
         }
