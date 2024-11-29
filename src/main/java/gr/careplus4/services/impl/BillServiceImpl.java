@@ -99,6 +99,10 @@ public class BillServiceImpl implements IBillService {
                 } else {
                     preBillId = "B000000";
                 }
+
+                float totalPrice = getTotalPrice(usedPoint, cartDetails, event);
+
+
                 Bill order = new Bill();
                 order.setId(GeneratedId.getGeneratedId(preBillId));
                 order.setUser(user.get());
@@ -109,7 +113,7 @@ public class BillServiceImpl implements IBillService {
                 order.setStatus("PENDING");
                 order.setPointUsed(usedPoint);
                 order.setEvent(event.get());
-//                order.setTotalAmount(cart.get().getTotalAmount()); Nho note lai khong sau nay conflict
+                order.setTotalAmount(BigDecimal.valueOf(totalPrice));
 
                 order = this.billRepository.save(order);
 
@@ -120,7 +124,7 @@ public class BillServiceImpl implements IBillService {
                     orderDetail.setMedicine(cd.getMedicine());
                     orderDetail.setUnitCost(cd.getUnitCost());
                     orderDetail.setQuantity(cd.getQuantity());
-                    orderDetail.setSubTotal(cd.getSubTotal()); // gia nay la bao gom khi da giam
+                    orderDetail.setSubTotal(cd.getSubTotal());
                     this.billDetailRepository.save(orderDetail);
                 }
 
@@ -139,12 +143,32 @@ public class BillServiceImpl implements IBillService {
                 }
 
                 this.cartRepository.deleteById(cart.get().getId());
-
-                // step 3 : update session
-//                session.setAttribute("cartCount", 0);
             }
         }
 
+    }
+
+    private float getTotalPrice(int usedPoint, List<CartDetail> cartDetails, Optional<Event> event) {
+        float totalPrice = 0;
+        float discount = 0;
+
+        if (!cartDetails.isEmpty()) {
+            for (CartDetail cd : cartDetails) {
+                totalPrice += cd.getSubTotal().floatValue();
+            }
+
+            if (usedPoint > 0) {
+                //(Số điểm sử dụng / 10) × 1.000
+                discount += (float) (usedPoint * 1000) / 10;
+            }
+
+            if (event.isPresent() && event.get().getDiscount().intValue() != 0) {
+                discount += totalPrice * event.get().getDiscount().floatValue() / 100;
+            }
+
+            totalPrice = totalPrice - discount;
+        }
+        return totalPrice;
     }
 
     @Override
