@@ -7,17 +7,13 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.firewall.HttpFirewall;
-import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 import java.util.List;
 
@@ -28,9 +24,10 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.authenticationProvider = authenticationProvider;
+    public SecurityConfig(AuthenticationProvider authenticationProvider,
+                          JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.authenticationProvider = authenticationProvider;
     }
 
     @Bean
@@ -39,9 +36,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home/**", "/error/**", "/au/**").permitAll()
-                        .requestMatchers("/user/**").hasAnyAuthority("USER", "VENDOR", "ADMIN")
-                        .requestMatchers("/vendor/**").hasAnyAuthority("VENDOR", "ADMIN")
-                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/user/**",
+                                "/WEB-INF/views/user/**").hasAnyAuthority("USER", "VENDOR", "ADMIN")
+                        .requestMatchers("/vendor/**",
+                                "/WEB-INF/views/vendor/**").hasAnyAuthority("VENDOR", "ADMIN")
+                        .requestMatchers("/admin/**",
+                                "/WEB-INF/views/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/WEB-INF/decorators/**",
                                 "/WEB-INF/views/guest/**").permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/assets/**")).permitAll()
@@ -54,8 +54,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .formLogin(login -> login.loginPage("/au/login").permitAll())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Chạy trước UsernamePasswordAuthenticationFilter
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

@@ -1,8 +1,12 @@
 package gr.careplus4.configs;
 
 import gr.careplus4.configs.interceptors.CategoryInterceptor;
+import gr.careplus4.configs.interceptors.UserInterceptor;
 import gr.careplus4.repositories.UserRepository;
 import gr.careplus4.services.impl.CategoryServiceImpl;
+import gr.careplus4.services.impl.UserServiceImpl;
+import gr.careplus4.services.security.JwtCookies;
+import gr.careplus4.services.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -25,13 +29,25 @@ public class WebConfig implements WebMvcConfigurer {
     private CategoryServiceImpl categoryService;
 
     @Autowired
+    private UserServiceImpl userService;
+
+    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtCookies jwtCookies;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new UserInterceptor(userService, jwtCookies, jwtService))
+                .addPathPatterns("/**")
+                .excludePathPatterns("/au/**", "/assets/**", "/v1/api/**", "/css/**", "/js/**", "/images/**");
         registry.addInterceptor(new CategoryInterceptor(categoryService))
                 .addPathPatterns("/**")
-                .excludePathPatterns("/au/**");
+                .excludePathPatterns("/au/**", "/assets/**", "/v1/api/**", "/css/**", "/js/**", "/images/**");
     }
 
     @Override

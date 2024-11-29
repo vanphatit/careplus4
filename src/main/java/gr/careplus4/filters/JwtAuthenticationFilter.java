@@ -3,28 +3,45 @@ package gr.careplus4.filters;
 import gr.careplus4.services.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final HandlerExceptionResolver handlerExceptionResolver;
+
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    // Danh sách URI cần bỏ qua
+    private final List<String> excludedPaths = Arrays.asList(
+            "/au/**",
+            "/assets/**",
+            "/v1/api/**",
+            "/css/**",
+            "/js/**",
+            "/images/**"
+    );
 
     public JwtAuthenticationFilter(
             JwtService jwtService,
@@ -43,26 +60,44 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // Phần xử lý JWT
-        final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        String requestURI = request.getRequestURI();
+        // Kiểm tra nếu URI hiện tại khớp với một pattern trong danh sách
+        for (String pattern : excludedPaths) {
+            if (pathMatcher.match(pattern, requestURI)) {
+                // Nếu khớp, bỏ qua xử lý và chuyển tiếp đến filter tiếp theo
+                filterChain.doFilter(request, response);
+                return;
+            }
+        }
+
+        // Lấy JWT từ Cookies
+        final String jwt = getJwtFromCookies(request);
+
+        // Nếu không có JWT, bỏ qua và tiếp tục Filter Chain
+        if (jwt == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            final String jwt = authHeader.substring(7);
-            final String userPhone = jwtService.extractUsername(jwt);
+            final String username = jwtService.extractUsername(jwt);
 
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (userPhone != null && authentication == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userPhone);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                // Load user details từ database (hoặc cache)
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
                 if (jwtService.isTokenValid(jwt, userDetails)) {
+                    // Lấy roles từ JWT
+                    List<GrantedAuthority> authorities = jwtService.extractRoles(jwt)
+                            .stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList());
+
+                    // Tạo Authentication object và set vào SecurityContext
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
-                            userDetails.getAuthorities()
+                            authorities
                     );
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -70,9 +105,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
 
+            // Tiếp tục request nếu hợp lệ
             filterChain.doFilter(request, response);
         } catch (Exception exception) {
             handlerExceptionResolver.resolveException(request, response, null, exception);
         }
+    }
+
+    private String getJwtFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("JWT".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }
