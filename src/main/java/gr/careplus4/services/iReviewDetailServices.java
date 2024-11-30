@@ -3,13 +3,19 @@ package gr.careplus4.services;
 import gr.careplus4.entities.Medicine;
 import gr.careplus4.entities.Review;
 import gr.careplus4.entities.ReviewDetail;
+import gr.careplus4.models.ReviewForUserModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface iReviewDetailServices {
+
+    Page<ReviewForUserModel> findReviewForUserModelByMedicineId(String medicineId, Pageable pageable);
+
     List<ReviewDetail> findReviewDetailByReview_IdAndMedicine_Id(String reviewId, String medicineId);
+
+    List<ReviewDetail> findReviewDetailsByMedicine(Medicine medicine);
 
     List<ReviewDetail> findReviewDetailsByReview(Review review);
 
