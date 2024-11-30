@@ -43,10 +43,25 @@ public class BillServiceImpl implements IBillService {
     }
 
     @Override
+    public Page<Bill> fetchBillsByUser(User user, Pageable pageable) {
+        return this.billRepository.findAllBillsByUser(user, pageable);
+    }
+
+    @Override
     public int getNumberOfPage(int pageSize) {
-        int totalCategories = (int) billRepository.count();
-        int countPage = (int) (totalCategories / pageSize);
-        if (totalCategories % pageSize != 0) {
+        int totalBills = (int) billRepository.count();
+        int countPage = (int) (totalBills / pageSize);
+        if (totalBills % pageSize != 0) {
+            countPage++;
+        }
+        return countPage;
+    }
+
+    @Override
+    public int getNumberOfPageByUser(int pageSize, User user) {
+        int totalBills = (int) billRepository.findBillsByUser(user).stream().count();
+        int countPage = (int) (totalBills / pageSize);
+        if (totalBills % pageSize != 0) {
             countPage++;
         }
         return countPage;

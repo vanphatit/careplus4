@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -48,6 +49,7 @@ public class Bill implements Serializable {
     private String method;
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "IDEvent")
     private Event event;
 
@@ -60,5 +62,6 @@ public class Bill implements Serializable {
     private String status;
 
     @OneToMany(mappedBy = "bill")
+    @ToString.Exclude
     private List<BillDetail> bilDetails;
 }

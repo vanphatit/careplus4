@@ -12,7 +12,9 @@ import java.util.Optional;
 
 public interface IBillService {
     Page<Bill> fetchAllBills(Pageable pageable);
+    Page<Bill> fetchBillsByUser(User user, Pageable pageable);
     int getNumberOfPage(int pageSize);
+    int getNumberOfPageByUser(int pageSize, User user);
     void deleteBill(Bill bill);
     void saveBill(Bill bill);
     Optional<Bill> findById(String id);
