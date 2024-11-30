@@ -14,6 +14,7 @@ import java.util.List;
 public interface ReviewDetailRepository extends JpaRepository<ReviewDetail, Long> {
     List<ReviewDetail> findReviewDetailByReview_IdAndMedicine_Id(String reviewId, @Size(max = 7) String medicineId);
     List<ReviewDetail> findReviewDetailsByReview(Review review);
+    List<ReviewDetail> findReviewDetailsByMedicine(Medicine medicine);
     List<ReviewDetail> findReviewDetailsByReview(Review review, Pageable pageable);
     List<ReviewDetail> findReviewDetailsByMedicine(Medicine medicine, Pageable pageable);
 
