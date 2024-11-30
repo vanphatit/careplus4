@@ -16,6 +16,6 @@ public interface IBillService {
     void deleteBill(Bill bill);
     void saveBill(Bill bill);
     Optional<Bill> findById(String id);
-    void handlePlaceOrder(HttpSession session, String receiverName,String receiverAddress, String receiverPhone, int usedPoint, String eventCode, boolean accumulate);
+    void handlePlaceOrder(String receiverName,String receiverAddress, String phone, int usedPoint, String eventCode, boolean accumulate);
     List<Bill> findBillsByUserAndDateBetween(User user, Date startDate, Date endDate);
 }

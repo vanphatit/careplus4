@@ -24,7 +24,7 @@ public class Bill implements Serializable {
     @Column(name = "ID", length = 7)
     private String id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "UserPhone", nullable = false)
     private User user;
 
