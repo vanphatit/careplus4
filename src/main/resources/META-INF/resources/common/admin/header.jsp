@@ -53,10 +53,6 @@
             <i class='app-menu__icon bx bx-purchase-tag-alt'></i>
             <span class="app-menu__label">Quản lý thuốc</span></a>
         </li>
-        <li><a class="app-menu__item" href="<c:url value='/' />">
-            <i class='app-menu__icon bx bx-cart-alt'></i>
-            <span class="app-menu__label">Quản lý giỏ hàng</span></a>
-        </li>
         <li><a class="app-menu__item" href="<c:url value='/vendor/import' />">
             <i class='app-menu__icon bx bx-task'></i>
             <span class="app-menu__label">Quản lý nhập hàng</span></a>
