@@ -25,8 +25,9 @@ public class Bill implements Serializable {
     @Column(name = "ID", length = 7)
     private String id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "UserPhone", nullable = false)
+    @ToString.Exclude
     private User user;
 
     @Column(name = "ReceiverName", length = 255, nullable = false)

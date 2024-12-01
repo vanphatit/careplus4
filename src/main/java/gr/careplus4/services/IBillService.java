@@ -2,7 +2,6 @@ package gr.careplus4.services;
 
 import gr.careplus4.entities.Bill;
 import gr.careplus4.entities.User;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,4 +19,6 @@ public interface IBillService {
     Optional<Bill> findById(String id);
     void handlePlaceOrder(String receiverName,String receiverAddress, String phone, int usedPoint, String eventCode, boolean accumulate);
     List<Bill> findBillsByUserAndDateBetween(User user, Date startDate, Date endDate);
+    Page<Bill> findByIdContaining(String id, Pageable pageable);
+    Page<Bill> findAll(Pageable pageable);
 }

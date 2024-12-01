@@ -202,4 +202,14 @@ public class BillServiceImpl implements IBillService {
         }
         return result;
     }
+
+    @Override
+    public Page<Bill> findByIdContaining(String id, Pageable pageable) {
+        return this.billRepository.findByIdContaining(id, pageable);
+    }
+
+    @Override
+    public Page<Bill> findAll(Pageable pageable) {
+        return this.billRepository.findAll(pageable);
+    }
 }

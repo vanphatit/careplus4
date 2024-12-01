@@ -56,8 +56,8 @@
                                     <td colspan="2"></td>
                                     <td colspan="1">
                                         <c:choose>
-                                            <c:when test="${bill.status == 'DONE'}">
-                                                <span class="badge bg-success">DONE</span>
+                                            <c:when test="${bill.status == 'COMPLETED'}">
+                                                <span class="badge bg-success">COMPLETED</span>
                                                 <br />
                                                 <a href="/user/${id}/review/${bill.id}" class="btn btn-sm btn-primary mt-2">Đánh giá</a>
                                             </c:when>

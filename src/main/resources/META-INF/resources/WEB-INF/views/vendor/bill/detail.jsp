@@ -9,10 +9,10 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Hóa đơn</h1>
+                <h1 class="mt-4">Bill</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/bills">Hóa đơn</a></li>
+                    <li class="breadcrumb-item"><a href="/vendor">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/vendor/bills">Bills</a></li>
                     <li class="breadcrumb-item active">Chiết tiết</li>
                 </ol>
                 <div class="container mt-5">
@@ -38,7 +38,7 @@
                             </ul>
                         </div>
                     </div>
-                    <a href="/admin/bills" class="btn btn-info mt-3">Quay lại</a>
+                    <a href="/vendor/bills" class="btn btn-info mt-3">Quay lại</a>
                 </div>
             </div>
         </main>
