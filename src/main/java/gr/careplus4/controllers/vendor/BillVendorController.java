@@ -1,4 +1,4 @@
-package gr.careplus4.controllers.admin.bill;
+package gr.careplus4.controllers.vendor;
 
 import gr.careplus4.entities.Bill;
 import gr.careplus4.services.impl.BillServiceImpl;
@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-@RequestMapping("/admin")
-public class BillManagementController {
+@RequestMapping("/vendor")
+public class BillVendorController {
     @Autowired
     private BillServiceImpl billService;
 
@@ -37,38 +37,38 @@ public class BillManagementController {
         model.addAttribute("pageNo", numberPages);
         model.addAttribute("currentPage", page);
 
-        return "admin/bill/bill-list";
+        return "vendor/bill/bill-list";
     }
 
     @GetMapping("/bill/update/{id}")
     public String getUpdateBillPage(Model model, @PathVariable String id) {
         Optional<Bill> currentBill = this.billService.findById(id);
         model.addAttribute("currentBill", currentBill.get());
-        return "admin/bill/update";
+        return "vendor/bill/update";
     }
 
-    @PostMapping("bill/update")
+    @PostMapping("/bill/update")
     public String handleUpdateBill(
             @ModelAttribute("newBill") @Valid Bill bill,
             BindingResult newProductBindingResult) {
 
         this.billService.saveBill(bill);
 
-        return "redirect:/admin/bills";
+        return "redirect:/vendor/bills";
     }
 
     @GetMapping("/bill/{id}")
     public String getBillDetailPage(Model model, @PathVariable String id) {
         Optional<Bill> bill = this.billService.findById(id);
         model.addAttribute("bill", bill.get());
-        return "admin/bill/detail";
+        return "vendor/bill/detail";
     }
 
     @GetMapping("/bill/delete/{id}")
     public String getDeleteBillPage(Model model, @PathVariable String id) {
         Optional<Bill> bill = this.billService.findById(id);
         this.billService.deleteBill(bill.get());
-        return "redirect:/admin/bills";
+        return "redirect:/vendor/bills";
     }
 
     @RequestMapping("/bill/search")
@@ -100,6 +100,8 @@ public class BillManagementController {
         model.addAttribute("pageNo", totalPages);
         model.addAttribute("currentPage", page);
 
-        return "admin/bill/bill-list";
+        return "vendor/bill/bill-list";
     }
+
+
 }

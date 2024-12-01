@@ -16,7 +16,7 @@
                 <div class="mt-3">
                     <div class="row">
                         <div class="col-12 mx-auto">
-                            <form action="/admin/bill/search" method="get" class="form-inline">
+                            <form action="/vendor/bill/search" method="get" class="form-inline">
                                 <input type="text" name="id" placeholder="Tìm theo mã hóa đơn" value="${id}" class="form-control"/>
                                 <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                             </form>
@@ -60,11 +60,11 @@
                                             </c:choose>
                                         </td>
                                         <td>
-                                            <a href="/admin/bill/${bill.id}"
+                                            <a href="/vendor/bill/${bill.id}"
                                                class="btn btn-success">Chi tiết </a>
-                                            <a href="/admin/bill/update/${bill.id}"
+                                            <a href="/vendor/bill/update/${bill.id}"
                                                class="btn btn-warning  mx-2">Cập nhật</a>
-                                            <a href="/admin/bill/delete/${bill.id}"
+                                            <a href="/vendor/bill/delete/${bill.id}"
                                                class="btn btn-danger">Xóa</a>
                                         </td>
                                     </tr>
@@ -76,7 +76,7 @@
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination justify-content-center">
                                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="/admin/bills?page=${currentPage-1}" aria-label="Previous">
+                                        <a class="page-link" href="/vendor/bills?page=${currentPage-1}" aria-label="Previous">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
@@ -84,18 +84,18 @@
                                         <c:choose>
                                             <c:when test="${currentPage == i}">
                                                 <li class="page-item active">
-                                                    <a class="page-link" href="/admin/bills?page=${i}">${i}</a>
+                                                    <a class="page-link" href="/vendor/bills?page=${i}">${i}</a>
                                                 </li>
                                             </c:when>
                                             <c:otherwise>
                                                 <li class="page-item">
-                                                    <a class="page-link" href="/admin/bills?page=${i}">${i}</a>
+                                                    <a class="page-link" href="/vendor/bills?page=${i}">${i}</a>
                                                 </li>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>
                                     <li class="page-item ${currentPage == pageNo ? 'disabled' : ''}">
-                                        <a class="page-link" href="/admin/bills?page=${currentPage + 1}" aria-label="Next">
+                                        <a class="page-link" href="/vendor/bills?page=${currentPage + 1}" aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
                                             <span class="sr-only">Next</span>
                                         </a>

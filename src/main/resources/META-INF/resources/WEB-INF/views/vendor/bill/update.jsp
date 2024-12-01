@@ -10,8 +10,8 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Cập nhật hóa đơn</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/bills">Hóa đơn</a></li>
+                    <li class="breadcrumb-item"><a href="/vendor">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/vendor/bills">Hóa đơn</a></li>
                     <li class="breadcrumb-item active">Cập nhật</li>
                 </ol>
                 <div class="container mt-5">
@@ -19,7 +19,7 @@
                         <div class="col-md-6 col-12 mx-auto">
                             <h3>Cập nhật trạng thái đơn hàng</h3>
                             <hr />
-                            <form method="POST" action="/admin/bill/update" class="row">
+                            <form method="POST" action="/vendor/bill/update" class="row">
                                 <!-- ID -->
                                 <div class="mb-3 col-12" >
                                     <label class="form-label">Id:</label>
