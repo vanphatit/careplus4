@@ -19,22 +19,25 @@
                                 <c:choose>
                                     <c:when test="${not empty user}">
                                         ${user.name} <!-- Hiển thị tên người dùng -->
+                                        <svg width="7px" height="5px">
+                                            <use href="${URL}assets/images/sprite.svg#arrow-rounded-down-7x5"></use>
+                                        </svg>
                                     </c:when>
                                     <c:otherwise>
                                         Tài khoản
                                     </c:otherwise>
                                 </c:choose>
-                                <svg width="7px" height="5px">
-                                    <use href="${URL}assets/images/sprite.svg#arrow-rounded-down-7x5"></use>
-                                </svg>
                             </button>
-                            <div class="topbar-dropdown__body"><!-- .menu -->
-                                <ul class="menu menu--layout--topbar">
-                                    <li><a href="${URL}assets/account.html">Tài khoản của tôi</a></li>
-                                    <li><a href="${URL}assets/#">Đơn hàng</a></li>
-                                    <li><a href="#">Đánh giá</a></li>
-                                </ul><!-- .menu / end -->
-                            </div>
+
+                            <c:if test="${not empty user}">
+                                <div class="topbar-dropdown__body"><!-- .menu -->
+                                    <ul class="menu menu--layout--topbar">
+                                        <li><a href="${pageContext.request.contextPath}/user/userInfo">Tài khoản của tôi</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/user/bills">Đơn hàng</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/user/${user.phoneNumber}/reviews">Đánh giá</a></li>
+                                    </ul><!-- .menu / end -->
+                                </div>
+                            </c:if>
                         </div>
                     </div>
                     <c:choose>
@@ -120,7 +123,7 @@
                                     class="indicator__area"><svg width="20px" height="20px">
                                                     <use href="${URL}assets/images/sprite.svg#heart-20"></use>
                                                 </svg> <span class="indicator__value">0</span></span></a></div>
-                            <div class="indicator"><a href="${pageContext.request.contextPath}/cart"
+                            <div class="indicator"><a href="${pageContext.request.contextPath}/user/cart"
                                                       class="indicator__button"><span
                                     class="indicator__area"><svg width="20px"
                                                                  height="20px">
