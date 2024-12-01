@@ -9,8 +9,8 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Tạo mới danh mục</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/categories">Danh mục</a></li>
+                    <li class="breadcrumb-item"><a href="/vendor">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/vendor/categories">Danh mục</a></li>
                     <li class="breadcrumb-item active">Tạo mới</li>
                 </ol>
                 <div class="mt-5">
@@ -23,7 +23,7 @@
                                 </div>
                             </c:if>
                             <hr />
-                            <form method="POST" action="/admin/category/create" class="row">
+                            <form method="POST" action="/vendor/category/create" class="row">
                                 <div class="mb-3 col-12">
                                     <label class="form-label" for="id">ID:</label>
                                     <input type="text" class="form-control" id="id" name="id" />
@@ -56,7 +56,7 @@
                                 </div>
 
                                 <div class="col-12 mb-5">
-                                    <a href="/admin/categories" class="btn btn-success">Quay lại</a>
+                                    <a href="/vendor/categories" class="btn btn-success">Quay lại</a>
                                     <button type="submit" class="btn btn-primary">Tạo</button>
                                 </div>
                             </form>

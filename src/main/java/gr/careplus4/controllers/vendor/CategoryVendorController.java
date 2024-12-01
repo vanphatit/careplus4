@@ -1,4 +1,4 @@
-package gr.careplus4.controllers.admin.category;
+package gr.careplus4.controllers.vendor;
 
 import gr.careplus4.entities.Category;
 import gr.careplus4.models.CategoryModel;
@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-@RequestMapping("/admin")
-public class CategoryController {
+@RequestMapping("/vendor")
+public class CategoryVendorController {
 
     @Autowired
     private CategoryServiceImpl categoryService;
@@ -39,7 +39,7 @@ public class CategoryController {
         model.addAttribute("pageNo", numberPages);
         model.addAttribute("currentPage", page);
 
-        return "admin/category/category-list";
+        return "vendor/category/category-list";
     }
 
     @GetMapping("/category/create")
@@ -47,39 +47,39 @@ public class CategoryController {
         List<Category> categories = categoryService.findAll();
         model.addAttribute("newCategory", new CategoryModel());
         model.addAttribute("categories", categories);
-        return "admin/category/create";
+        return "vendor/category/create";
     }
 
     @PostMapping("/category/create")
     public String handleCreateProduct( Model model,
-            @ModelAttribute("newCategory") @Valid CategoryModel category,
-            BindingResult newProductBindingResult) {
+                                       @ModelAttribute("newCategory") @Valid CategoryModel category,
+                                       BindingResult newProductBindingResult) {
 
         List<Category> categories = categoryService.findAll();
         model.addAttribute("newCategory", new CategoryModel());
         model.addAttribute("categories", categories);
         // validate
         if (newProductBindingResult.hasErrors()) {
-            return "admin/category/create";
+            return "vendor/category/create";
         }
 
         if (this.categoryService.existsById(category.getId())) {
             model.addAttribute("error", "Đã tồn tại ID danh mục này");
-            return "admin/category/create";
+            return "vendor/category/create";
         }
 
         if (this.categoryService.existsByName(category.getName())) {
             model.addAttribute("error", "Đã tồn tại tên danh mục này");
-            return "admin/category/create";
+            return "vendor/category/create";
         }
 
         if (category.getId().isEmpty() || category.getName().isEmpty()) {
             model.addAttribute("error", "Chưa nhập ID hoặc tên cho danh mục");
-            return "admin/category/create";
+            return "vendor/category/create";
         }
 
         this.categoryService.save(category);
-        return "redirect:/admin/categories";
+        return "redirect:/vendor/categories";
     }
 
     @GetMapping("/category/update/{id}")
@@ -88,7 +88,7 @@ public class CategoryController {
         List<Category> categories = categoryService.findAll();
         model.addAttribute("categories", categories);
         model.addAttribute("currentCategory", currentCategory.get());
-        return "admin/category/update";
+        return "vendor/category/update";
     }
 
     @PostMapping("category/update")
@@ -98,7 +98,7 @@ public class CategoryController {
 
         // validate
         if (newProductBindingResult.hasErrors()) {
-            return "admin/category/update";
+            return "vendor/category/update";
         }
 
         CategoryModel newCategory = new CategoryModel();
@@ -108,21 +108,21 @@ public class CategoryController {
         newCategory.setParentCategoryId(category.getParentCategoryId());
         this.categoryService.save(newCategory);
 
-        return "redirect:/admin/categories";
+        return "redirect:/vendor/categories";
     }
 
     @GetMapping("/category/delete/{id}")
     public String getDeleteProductPage(Model model, @PathVariable String id) {
         Optional<Category> category = this.categoryService.findById(id);
         this.categoryService.delete(category.get());
-        return "redirect:/admin/categories";
+        return "redirect:/vendor/categories";
     }
 
     @GetMapping("/category/{id}")
     public String getProductDetailPage(Model model, @PathVariable String id) {
         Optional<Category> category = this.categoryService.findById(id);
         model.addAttribute("category", category.get());
-        return "admin/category/detail";
+        return "vendor/category/detail";
     }
 
     @RequestMapping("/category/search")
@@ -153,7 +153,8 @@ public class CategoryController {
         model.addAttribute("pageNo", totalPages);
         model.addAttribute("currentPage", page);
 
-        return "admin/category/category-list";
+        return "vendor/category/category-list";
     }
 
 }
+

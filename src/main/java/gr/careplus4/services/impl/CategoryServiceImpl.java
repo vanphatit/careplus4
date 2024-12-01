@@ -89,4 +89,14 @@ public class CategoryServiceImpl implements iCategoryService {
         }
         return countPage;
     }
+
+    @Override
+    public Page<Category> findAll(Pageable pageable) {
+        return this.categoryRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Category> findByNameLike(String name, Pageable pageable) {
+        return this.categoryRepository.findByNameLike(name, pageable);
+    }
 }
