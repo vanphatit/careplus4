@@ -10,7 +10,7 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Quản lý danh mục</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/vendor">Dashboard</a></li>
                     <li class="breadcrumb-item active">Danh mục</li>
                 </ol>
                 <div class="mt-5">
@@ -19,12 +19,12 @@
                             <div class="d-flex justify-content-between">
                                 <h3>Danh sách danh mục</h3>
                                 <div class="d-flex align-items-center">
-                                    <form action="/admin/category/search" method="get" class="form-inline">
+                                    <form action="/vendor/category/search" method="get" class="form-inline">
                                         <input type="text" name="name" placeholder="Tên danh mục" value="${name}" class="form-control"/>
                                         <button type="submit" class="btn btn-dark mx-2">Tìm kiếm</button>
                                     </form>
                                 </div>
-                                <a href="/admin/category/create" class="btn btn-outline-info">Tạo mới</a>
+                                <a href="/vendor/category/create" class="btn btn-outline-info">Tạo mới</a>
                             </div>
 
                             <hr />
@@ -55,11 +55,11 @@
                                         </td>
                                         <td>${category.parentCategory.id}</td>
                                         <td>
-                                            <a href="/admin/category/${category.id}"
+                                            <a href="/vendor/category/${category.id}"
                                                class="btn btn-success">Chi tiết</a>
-                                            <a href="/admin/category/update/${category.id}"
+                                            <a href="/vendor/category/update/${category.id}"
                                                class="btn btn-warning mx-2">Cập nhật</a>
-                                            <a href="/admin/category/delete/${category.id}"
+                                            <a href="/vendor/category/delete/${category.id}"
                                                class="btn btn-danger">Xóa</a>
                                         </td>
                                     </tr>
@@ -71,7 +71,7 @@
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination justify-content-center">
                                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="/admin/categories?page=${currentPage-1}" aria-label="Previous">
+                                        <a class="page-link" href="/vendor/categories?page=${currentPage-1}" aria-label="Previous">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
@@ -79,18 +79,18 @@
                                         <c:choose>
                                             <c:when test="${currentPage == i}">
                                                 <li class="page-item active">
-                                                    <a class="page-link" href="/admin/categories?page=${i}">${i}</a>
+                                                    <a class="page-link" href="/vendor/categories?page=${i}">${i}</a>
                                                 </li>
                                             </c:when>
                                             <c:otherwise>
                                                 <li class="page-item">
-                                                    <a class="page-link" href="/admin/categories?page=${i}">${i}</a>
+                                                    <a class="page-link" href="/vendor/categories?page=${i}">${i}</a>
                                                 </li>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>
                                     <li class="page-item ${currentPage == pageNo ? 'disabled' : ''}">
-                                        <a class="page-link" href="/admin/categories?page=${currentPage + 1}" aria-label="Next">
+                                        <a class="page-link" href="/vendor/categories?page=${currentPage + 1}" aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
                                             <span class="sr-only">Next</span>
                                         </a>

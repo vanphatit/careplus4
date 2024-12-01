@@ -11,8 +11,8 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Danh mục</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/categories">Danh mục</a></li>
+                    <li class="breadcrumb-item"><a href="/vendor">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/vendor/categories">Danh mục</a></li>
                     <li class="breadcrumb-item active">Chi tiết</li>
                 </ol>
                 <div class="container mt-5">
@@ -34,7 +34,7 @@
                                 </ul>
                             </div>
                         </div>
-                    <a href="/admin/categories" class="btn btn-info mt-3">Quay lại</a>
+                    <a href="/vendor/categories" class="btn btn-info mt-3">Quay lại</a>
                     </div>
                 </div>
         </main>

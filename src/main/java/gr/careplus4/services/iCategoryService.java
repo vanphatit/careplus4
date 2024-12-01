@@ -23,4 +23,6 @@ public interface iCategoryService {
     boolean existsById (String id);
     boolean existsByName(String name);
     int getNumberOfPage(int pageSize);
+    Page<Category> findAll(Pageable pageable);
+    Page<Category> findByNameLike(String name, Pageable pageable);
 }
