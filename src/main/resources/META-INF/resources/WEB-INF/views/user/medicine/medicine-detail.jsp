@@ -1,5 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +25,7 @@
             margin-bottom: 20px;
         }
         .medicine-details img {
-            max-width: 100%;
+            max-width: 100%; /* Đảm bảo ảnh không vượt quá kích thước vùng */
             height: auto;
             border-radius: 10px;
         }
@@ -36,6 +34,27 @@
         }
         .back-link a {
             text-decoration: none;
+        }
+        .medicine-img {
+            width: 100%; /* Đảm bảo ảnh co dãn theo vùng chứa */
+            max-width: 400px; /* Giới hạn chiều rộng tối đa */
+            height: 400px; /* Chiều cao cố định */
+            border-radius: 10px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 768px) {
+            .medicine-img {
+                width: 300px; /* Chiều rộng nhỏ hơn trên màn hình nhỏ */
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .medicine-img {
+                width: 200px; /* Chiều rộng nhỏ hơn nữa */
+                height: 200px;
+            }
         }
     </style>
 </head>
@@ -52,52 +71,56 @@
         <div class="col-md-8">
             <div class="medicine-details p-4">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4 text-center">
                         <!-- Hình ảnh thuốc -->
-                        <img src="${pageContext.request.contextPath}/medicine/image?fileName=${medicine.image}" alt="${medicine.name}">
+                        <img src="${pageContext.request.contextPath}/medicine/image?fileName=${medicine.image}&width=400&height=400"
+                             alt="${medicine.name}"
+                             style="max-width: 100%; height: auto; border-radius: 10px;"
+                            class="medicine-img"
+                        />
                     </div>
                     <div class="col-md-8">
                         <!-- Thông tin thuốc -->
                         <table class="table table-borderless">
                             <tbody>
                             <tr>
-                                <th>Name:</th>
+                                <th scope="row">Name:</th>
                                 <td>${medicine.name}</td>
                             </tr>
                             <tr>
-                                <th>Description:</th>
+                                <th scope="row">Description:</th>
                                 <td>${medicine.description}</td>
                             </tr>
                             <tr>
-                                <th>Category:</th>
+                                <th scope="row">Category:</th>
                                 <td>${medicine.categoryName}</td>
                             </tr>
                             <tr>
-                                <th>Manufacturer:</th>
+                                <th scope="row">Manufacturer:</th>
                                 <td>${medicine.manufacturerName}</td>
                             </tr>
                             <tr>
-                                <th>Unit Name:</th>
+                                <th scope="row">Unit Name:</th>
                                 <td>${medicine.unitName}</td>
                             </tr>
                             <tr>
-                                <th>Unit Cost:</th>
+                                <th scope="row">Unit Cost:</th>
                                 <td>${medicine.unitCost}</td>
                             </tr>
                             <tr>
-                                <th>Stock Quantity:</th>
+                                <th scope="row">Stock Quantity:</th>
                                 <td>${medicine.stockQuantity}</td>
                             </tr>
                             <tr>
-                                <th>Rating:</th>
+                                <th scope="row">Rating:</th>
                                 <td>${medicine.rating}</td>
                             </tr>
                             <tr>
-                                <th>Expiry Date:</th>
+                                <th scope="row">Expiry Date:</th>
                                 <td>${medicine.expiryDate}</td>
                             </tr>
                             <tr>
-                                <th>Dosage:</th>
+                                <th scope="row">Dosage:</th>
                                 <td>${medicine.dosage}</td>
                             </tr>
                             </tbody>

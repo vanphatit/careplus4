@@ -27,6 +27,6 @@
 </div>
 
 <!-- JS -->
-<script src="vendor/jquery/jquery.min.js"></script>
+<script src="${URL}assets/vendor/jquery-3.3.1/jquery.min.js"></script>
 </body>
 </html>

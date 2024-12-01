@@ -16,15 +16,13 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements iUserService {
+
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
-    @Autowired
-    iRoleService roleService;
     
     @Override
     public boolean emailExists(String email) {

@@ -12,11 +12,7 @@ import java.util.Optional;
 @Service
 public class RoleServiceImpl implements iRoleService {
     @Autowired
-    RoleRepository roleRepository;
-
-    public RoleServiceImpl(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
+    private RoleRepository roleRepository;
 
     @Override
     public List<Role> findAll() {

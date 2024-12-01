@@ -9,36 +9,36 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Bill</h1>
+                <h1 class="mt-4">Hóa đơn</h1>
                 <ol class="breadcrumb mb-4">
                     <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/bills">Bills</a></li>
-                    <li class="breadcrumb-item active">View details</li>
+                    <li class="breadcrumb-item"><a href="/admin/bills">Hóa đơn</a></li>
+                    <li class="breadcrumb-item active">Chiết tiết</li>
                 </ol>
                 <div class="container mt-5">
                     <div class="row">
                         <div class="col-12 mx-auto">
                             <div class="d-flex justify-content-between">
-                                <h3>Bill detail with id = ${bill.id}</h3>
+                                <h3>Hóa đơn chi tiết với mã: ${bill.id}</h3>
                             </div>
 
                             <hr />
                             <div class="card-header">
-                                Bill information
+                                Thông tin hóa đơn
                             </div>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item">ID: ${bill.id}</li>
-                                <li class="list-group-item">Receiver: ${bill.name}</li>
-                                <li class="list-group-item">Address: ${bill.address}</li>
-                                <li class="list-group-item">Create date: ${bill.date}</li>
-                                <li class="list-group-item">Method: ${bill.method}</li>
-                                <li class="list-group-item">Total: ${bill.totalAmount}</li>
-                                <li class="list-group-item">Event Code: ${bill.event.id}</li>
-                                <li class="list-group-item">Status: ${bill.status}</li>
+                                <li class="list-group-item">Mã: ${bill.id}</li>
+                                <li class="list-group-item">Người nhận: ${bill.name}</li>
+                                <li class="list-group-item">Địa chỉ: ${bill.address}</li>
+                                <li class="list-group-item">Ngày tạo: ${bill.date}</li>
+                                <li class="list-group-item">Thanh toán: ${bill.method}</li>
+                                <li class="list-group-item">Tổng tiền: ${bill.totalAmount}</li>
+                                <li class="list-group-item">Mã sự kiện(Nếu có): ${bill.event.id}</li>
+                                <li class="list-group-item">Trạng thái đơn hàng: ${bill.status}</li>
                             </ul>
                         </div>
                     </div>
-                    <a href="/admin/bills" class="btn btn-info mt-3">Back</a>
+                    <a href="/admin/bills" class="btn btn-info mt-3">Quay lại</a>
                 </div>
             </div>
         </main>

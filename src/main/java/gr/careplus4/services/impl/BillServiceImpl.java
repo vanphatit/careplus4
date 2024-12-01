@@ -43,10 +43,25 @@ public class BillServiceImpl implements IBillService {
     }
 
     @Override
+    public Page<Bill> fetchBillsByUser(User user, Pageable pageable) {
+        return this.billRepository.findAllBillsByUser(user, pageable);
+    }
+
+    @Override
     public int getNumberOfPage(int pageSize) {
-        int totalCategories = (int) billRepository.count();
-        int countPage = (int) (totalCategories / pageSize);
-        if (totalCategories % pageSize != 0) {
+        int totalBills = (int) billRepository.count();
+        int countPage = (int) (totalBills / pageSize);
+        if (totalBills % pageSize != 0) {
+            countPage++;
+        }
+        return countPage;
+    }
+
+    @Override
+    public int getNumberOfPageByUser(int pageSize, User user) {
+        int totalBills = (int) billRepository.findBillsByUser(user).stream().count();
+        int countPage = (int) (totalBills / pageSize);
+        if (totalBills % pageSize != 0) {
             countPage++;
         }
         return countPage;
@@ -81,11 +96,11 @@ public class BillServiceImpl implements IBillService {
 
 
     @Override
-    public void handlePlaceOrder(HttpSession session, String receiverName, String receiverAddress,
-                                 String receiverPhone,  int usedPoint, String eventCode, boolean accumulate) {
+    public void handlePlaceOrder(String receiverName, String receiverAddress,
+                                 String phone,  int usedPoint, String eventCode, boolean accumulate) {
         // step 1:
-        Optional<Cart> cart = this.cartRepository.findByUser_PhoneNumber(receiverPhone);
-        Optional<User> user = this.userService.findByPhoneNumber(receiverPhone);
+        Optional<Cart> cart = this.cartRepository.findByUser_PhoneNumber(phone);
+        Optional<User> user = this.userService.findByPhoneNumber(phone);
         Optional<Event> event = this.eventService.findById(eventCode);
         if (cart.isPresent()) {
             List<CartDetail> cartDetails = cart.get().getCartDetails();
@@ -99,17 +114,23 @@ public class BillServiceImpl implements IBillService {
                 } else {
                     preBillId = "B000000";
                 }
+
+                float totalPrice = getTotalPrice(usedPoint, cartDetails, event, user);
+
+                Date date = new Date();
                 Bill order = new Bill();
                 order.setId(GeneratedId.getGeneratedId(preBillId));
                 order.setUser(user.get());
-                order.setDate(new Date());
+                order.setDate(date);
                 order.setName(receiverName);
                 order.setAddress(receiverAddress);
                 order.setMethod("COD");
                 order.setStatus("PENDING");
                 order.setPointUsed(usedPoint);
-                order.setEvent(event.get());
-//                order.setTotalAmount(cart.get().getTotalAmount()); Nho note lai khong sau nay conflict
+                if (event.isPresent()) {
+                    order.setEvent(event.get());
+                }
+                order.setTotalAmount(BigDecimal.valueOf(totalPrice));
 
                 order = this.billRepository.save(order);
 
@@ -120,7 +141,7 @@ public class BillServiceImpl implements IBillService {
                     orderDetail.setMedicine(cd.getMedicine());
                     orderDetail.setUnitCost(cd.getUnitCost());
                     orderDetail.setQuantity(cd.getQuantity());
-                    orderDetail.setSubTotal(cd.getSubTotal()); // gia nay la bao gom khi da giam
+                    orderDetail.setSubTotal(cd.getSubTotal());
                     this.billDetailRepository.save(orderDetail);
                 }
 
@@ -128,7 +149,7 @@ public class BillServiceImpl implements IBillService {
 
                 // accumulate point
                 if (accumulate) {
-                    int newPoint = sum.divide(BigDecimal.valueOf(10)).intValue();
+                    int newPoint = (int) sum.floatValue() / 1000;
                     user.get().setPointEarned(user.get().getPointEarned() + newPoint);
                     this.userService.save(user.get());
                 }
@@ -139,12 +160,35 @@ public class BillServiceImpl implements IBillService {
                 }
 
                 this.cartRepository.deleteById(cart.get().getId());
-
-                // step 3 : update session
-//                session.setAttribute("cartCount", 0);
             }
         }
 
+    }
+
+    private float getTotalPrice(int usedPoint, List<CartDetail> cartDetails, Optional<Event> event, Optional<User> user) {
+        float totalPrice = 0;
+        float discount = 0;
+
+        if (!cartDetails.isEmpty()) {
+            for (CartDetail cd : cartDetails) {
+                totalPrice += cd.getSubTotal().floatValue();
+            }
+
+            if (usedPoint > 0) {
+                // (Số điểm sử dụng / 10) × 1.000
+                discount += (float) (usedPoint * 1000) / 10;
+                // Cập nhật ngay lại số điểm mà người dùng đã sử dụng
+                user.get().setPointEarned(0);
+                this.userService.save(user.get());
+            }
+
+            if (event.isPresent() && event.get().getDiscount().intValue() != 0) {
+                discount += totalPrice * event.get().getDiscount().floatValue() / 100;
+            }
+
+            totalPrice = totalPrice - discount;
+        }
+        return totalPrice;
     }
 
     @Override
@@ -157,5 +201,15 @@ public class BillServiceImpl implements IBillService {
             }
         }
         return result;
+    }
+
+    @Override
+    public Page<Bill> findByIdContaining(String id, Pageable pageable) {
+        return this.billRepository.findByIdContaining(id, pageable);
+    }
+
+    @Override
+    public Page<Bill> findAll(Pageable pageable) {
+        return this.billRepository.findAll(pageable);
     }
 }

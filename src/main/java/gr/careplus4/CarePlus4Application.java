@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
 
 @SpringBootApplication
 @EnableConfigurationProperties(StorageProperties.class)
@@ -20,11 +21,11 @@ public class CarePlus4Application {
 
     @Bean
     public FilterRegistrationBean<CustomSiteMeshFilter> siteMeshFilter() {
-        FilterRegistrationBean<CustomSiteMeshFilter> filterRegistrationBean
-                = new FilterRegistrationBean<CustomSiteMeshFilter>();
-        filterRegistrationBean.setFilter(new CustomSiteMeshFilter());
-        filterRegistrationBean.addUrlPatterns("/*");
-        return filterRegistrationBean;
+        FilterRegistrationBean<CustomSiteMeshFilter> filter = new FilterRegistrationBean<>();
+        filter.setFilter(new CustomSiteMeshFilter());
+        filter.addUrlPatterns("/*"); // Áp dụng SiteMesh cho tất cả các URL
+        filter.setOrder(Ordered.HIGHEST_PRECEDENCE + 1); // Đảm bảo chạy sau Security
+        return filter;
     }
 
     @Bean

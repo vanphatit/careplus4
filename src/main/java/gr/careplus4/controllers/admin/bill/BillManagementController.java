@@ -1,21 +1,24 @@
 package gr.careplus4.controllers.admin.bill;
 
 import gr.careplus4.entities.Bill;
-import gr.careplus4.entities.Category;
-import gr.careplus4.models.CategoryModel;
 import gr.careplus4.services.impl.BillServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/admin")
@@ -68,5 +71,35 @@ public class BillManagementController {
         return "redirect:/admin/bills";
     }
 
+    @RequestMapping("/bill/search")
+    public String searchByIdOrProviderId(ModelMap model,
+                                         @RequestParam(name = "id", required = false) String id,
+                                         @RequestParam(defaultValue = "1") int page){
+        int pageSize = 5;
 
+        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by("id"));
+
+        Page<Bill> resultPage;
+        if (StringUtils.hasText(id)) {
+            resultPage = billService.findByIdContaining(id, pageable);
+            model.addAttribute("id", id);
+        }
+        else {
+            resultPage = billService.findAll(pageable);
+        }
+
+        int totalPages = resultPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        model.addAttribute("bills", resultPage.getContent());
+        model.addAttribute("pageNo", totalPages);
+        model.addAttribute("currentPage", page);
+
+        return "admin/bill/bill-list";
+    }
 }

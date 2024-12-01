@@ -8,6 +8,7 @@ import gr.careplus4.models.EventModel;
 import gr.careplus4.services.impl.CartServiceImpl;
 import gr.careplus4.services.impl.EventServiceImpl;
 import gr.careplus4.services.impl.UserServiceImpl;
+import gr.careplus4.services.security.JwtCookies;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/user")
 public class CartController {
     @Autowired
     private CartServiceImpl cartService;
@@ -34,12 +34,14 @@ public class CartController {
     @Autowired
     private UserServiceImpl userService;
 
-    @GetMapping("/add-medicine-to-cart/{id}")
+    @Autowired
+    private JwtCookies jwtCookies;
+
+    @PostMapping("/add-medicine-to-cart/{id}")
     public String addMedicineToCart(@PathVariable String id, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
-//        String phone = (String) session.getAttribute("phone");
-        String phone = "0903456782"; // de test thoi mot goi session
+        String phone = jwtCookies.getUserPhoneFromJwt(request);
 
         this.cartService.handleAddProductToCart(phone, id, session);
         return "redirect:/";
@@ -48,10 +50,10 @@ public class CartController {
     @GetMapping("/cart")
     public String getCartPage(Model model, HttpServletRequest request) {
         User currentUser = new User();
-        HttpSession session = request.getSession(false);
 
-//        long userId = (Long) session.getAttribute("id");
-        currentUser.setPhoneNumber("0903456782");
+        String phone = jwtCookies.getUserPhoneFromJwt(request);
+
+        currentUser.setPhoneNumber(phone);
 
         Cart cart = this.cartService.findCartByUser(currentUser);
 
@@ -67,9 +69,7 @@ public class CartController {
             cartDetails = new ArrayList<>();
         }
 
-        LocalDate localDate = LocalDate.now();
-
-        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date date = new Date();
 
         List<Event> eventList = this.eventService.getActiveEvents(date);
 
@@ -99,25 +99,28 @@ public class CartController {
     }
 
     @PostMapping("/confirm-checkout")
-    public String getCheckOutPage(@ModelAttribute("cart") Cart cart, @RequestParam("code") String code, @RequestParam("usedPoint") boolean usedPoint) {
-        User currentUser = new User(); // Tam thoi
-        currentUser.setPhoneNumber("0903456782");
+    public String getCheckOutPage(@ModelAttribute("cart") Cart cart,
+                                  @RequestParam("code") String code,
+                                  @RequestParam("usedPoint") boolean usedPoint,
+                                  HttpServletRequest request) {
+        User currentUser = new User();
+        String phone = jwtCookies.getUserPhoneFromJwt(request);
+        currentUser.setPhoneNumber(phone);
 
         Cart currentCart = this.cartService.findCartByUser(currentUser);
         String cartId = currentCart.getId();
         List<CartDetail> cartDetails = cart == null ? new ArrayList<>() : cart.getCartDetails();
         this.cartService.handleUpdateCartBeforeCheckout(cartId, cartDetails, code, usedPoint);
-        return "redirect:/checkout";
+        return "redirect:/user/checkout";
     }
 
     @GetMapping("/checkout")
     public String getCheckOutPage(Model model, HttpServletRequest request) {
-//        User currentUser = new User();// null
-//        HttpSession session = request.getSession(false);
-//        long id = (long) session.getAttribute("id");
-//        currentUser.setId(id);
 
-        Optional<User> currentUser = this.userService.findByPhoneNumber("0903456782");
+        String phone = jwtCookies.getUserPhoneFromJwt(request);
+
+        Optional<User> currentUser = this.userService.findByPhoneNumber(phone);
+        currentUser.get().setPhoneNumber(phone);
 
         Cart cart = this.cartService.findCartByUser(currentUser.orElse(null));
 
@@ -145,10 +148,9 @@ public class CartController {
             if (event.isPresent() && event.get().getDiscount().intValue() != 0) {
                 percentage = event.get().getDiscount().intValue();
                 discount += subPrice * event.get().getDiscount().floatValue() / 100;
-                totalPrice = subPrice - discount;
-            } else {
-                totalPrice = subPrice;
             }
+            totalPrice = subPrice - discount;
+
         } else {
             cartDetails = new ArrayList<>();
         }

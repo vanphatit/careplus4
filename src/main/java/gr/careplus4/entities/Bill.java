@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -24,8 +25,9 @@ public class Bill implements Serializable {
     @Column(name = "ID", length = 7)
     private String id;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "UserPhone", nullable = false)
+    @ToString.Exclude
     private User user;
 
     @Column(name = "ReceiverName", length = 255, nullable = false)
@@ -48,6 +50,7 @@ public class Bill implements Serializable {
     private String method;
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "IDEvent")
     private Event event;
 
@@ -60,5 +63,6 @@ public class Bill implements Serializable {
     private String status;
 
     @OneToMany(mappedBy = "bill")
+    @ToString.Exclude
     private List<BillDetail> bilDetails;
 }

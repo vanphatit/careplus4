@@ -647,9 +647,9 @@ h6 {
 .btn-primary,
 .btn-primary.disabled,
 .btn-primary:disabled {
-    border-color: #ffd333;
-    background: #ffd333;
-    color: #3d464d;
+    border-color: #0077b6;
+    background: #0077b6;
+    color: #ffffff;
     fill: #3d464d
 }
 
@@ -3905,9 +3905,9 @@ screen and (-ms-high-contrast:active) {
 }
 
 .mobile-header__panel {
-    background: #ffd333;
+    background: #0077b6;
     box-shadow: 0 1px rgba(0, 0, 0, .04), inset 0 -1px rgba(0, 0, 0, .04);
-    color: #3d464d;
+    color: #ffffff;
     position: relative
 }
 
@@ -3930,7 +3930,7 @@ screen and (-ms-high-contrast:active) {
     height: 36px;
     border-radius: 2px;
     background: transparent;
-    fill: #3d464d;
+    fill: #ffffff;
     border: none;
     padding: 0;
     margin: 0;

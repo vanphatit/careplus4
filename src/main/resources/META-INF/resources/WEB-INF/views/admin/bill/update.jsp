@@ -8,16 +8,16 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Update Bill</h1>
+                <h1 class="mt-4">Cập nhật hóa đơn</h1>
                 <ol class="breadcrumb mb-4">
                     <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/bills">Bills</a></li>
-                    <li class="breadcrumb-item active">Update</li>
+                    <li class="breadcrumb-item"><a href="/admin/bills">Hóa đơn</a></li>
+                    <li class="breadcrumb-item active">Cập nhật</li>
                 </ol>
                 <div class="container mt-5">
                     <div class="row">
                         <div class="col-md-6 col-12 mx-auto">
-                            <h3>Update Status</h3>
+                            <h3>Cập nhật trạng thái đơn hàng</h3>
                             <hr />
                             <form method="POST" action="/admin/bill/update" class="row">
                                 <!-- ID -->
@@ -28,7 +28,7 @@
 
                                 <!-- Status -->
                                 <div class="mb-3 col-12">
-                                    <label class="form-label">Status:</label>
+                                    <label class="form-label">Trạng thái:</label>
                                     <select class="form-control" name="status">
                                         <option value="PENDING" ${currentBill.status == 'PENDING' ? 'selected' : ''}>PENDING</option>
                                         <option value="PROCESSING" ${currentBill.status == 'PROCESSING' ? 'selected' : ''}>PROCESSING</option>
@@ -38,7 +38,7 @@
 
                                 <!-- Submit Button -->
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-warning">Update Status</button>
+                                    <button type="submit" class="btn btn-warning">Cập nhật</button>
                                 </div>
                             </form>
                         </div>

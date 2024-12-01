@@ -8,10 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public interface iMedicineServices {
 
@@ -121,4 +118,6 @@ public interface iMedicineServices {
             BigDecimal ratingMin, BigDecimal ratingMax,
             Pageable pageable
     );
+
+    Map<String, Object> parseDescription(String description, String medicineName);
 }

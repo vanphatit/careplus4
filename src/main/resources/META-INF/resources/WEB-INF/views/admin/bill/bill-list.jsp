@@ -3,42 +3,39 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <link href="/css/styles.css" rel="stylesheet" />
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-</head>
-
 <body class="sb-nav-fixed">
 <div id="layoutSidenav">
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Manage Bills</h1>
+                <h1 class="mt-4">Quản lý hóa đơn</h1>
                 <ol class="breadcrumb mb-4">
                     <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Bills</li>
+                    <li class="breadcrumb-item active">Hóa đơn</li>
                 </ol>
-                <div class="mt-5">
+                <div class="mt-3">
                     <div class="row">
                         <div class="col-12 mx-auto">
-                            <div class="d-flex justify-content-between">
-                                <h3>Table bills</h3>
+                            <form action="/admin/bill/search" method="get" class="form-inline">
+                                <input type="text" name="id" placeholder="Tìm theo mã hóa đơn" value="${id}" class="form-control"/>
+                                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                            </form>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <h3>Danh sách hóa đơn</h3>
                             </div>
 
                             <hr />
                             <table class=" table table-bordered table-hover">
                                 <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Receiver name</th>
-                                    <th>Address</th>
-                                    <th>Create Date</th>
-                                    <th>Method</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th>Mã hóa đơn</th>
+                                    <th>Người nhận</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Thanh toán</th>
+                                    <th>Trạng thái</th>
+                                    <th>Xử lý</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -49,14 +46,26 @@
                                         <td>${bill.address}</td>
                                         <td>${bill.date}</td>
                                         <td>${bill.method}</td>
-                                        <td>${bill.status}</td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${bill.status == 'COMPLETED'}">
+                                                    <span class="badge bg-success">COMPLETED</span>
+                                                </c:when>
+                                                <c:when test="${bill.status == 'PROCESSING'}">
+                                                    <span class="badge bg-primary">PROCESSING</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badge bg-warning">${bill.status}</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
                                         <td>
                                             <a href="/admin/bill/${bill.id}"
-                                               class="btn btn-success">View</a>
+                                               class="btn btn-success">Chi tiết </a>
                                             <a href="/admin/bill/update/${bill.id}"
-                                               class="btn btn-warning  mx-2">Update</a>
+                                               class="btn btn-warning  mx-2">Cập nhật</a>
                                             <a href="/admin/bill/delete/${bill.id}"
-                                               class="btn btn-danger">Delete</a>
+                                               class="btn btn-danger">Xóa</a>
                                         </td>
                                     </tr>
 

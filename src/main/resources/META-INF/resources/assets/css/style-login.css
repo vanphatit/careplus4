@@ -284,7 +284,7 @@ figure {
     -webkit-border-radius: 5px;
     -o-border-radius: 5px;
     -ms-border-radius: 5px;
-    margin-top: 25px;
+    margin-top: 5px;
     cursor: pointer; }
 .form-submit:hover {
     background: #4292dc; }
@@ -410,6 +410,36 @@ label {
 
 .label-has-error {
     top: 22%; }
+
+.alert-danger {
+    color: #fff;
+    background-color: #dc3545;
+    border: 1px solid #dc3545;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.alert-danger .close {
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.alert {
+    transition: opacity 0.3s ease-out;
+}
+
+.alert[style*="display: none;"] {
+    opacity: 0;
+}
 
 label.error {
     position: relative;
