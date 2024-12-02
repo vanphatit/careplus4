@@ -13722,6 +13722,14 @@ be a descendant of the grid when it is being dragged.
     transition: background-color 0.3s ease;
 }
 
+.app-nav__role {
+    background: transparent; /* Không có màu nền */
+    padding: 15px;
+    text-align: center; /* Căn giữa chữ VENDOR */
+    font-weight: bold; /* Làm chữ đậm */
+    color: white;
+}
+
 .app-nav__item:hover, .app-nav__item:focus {
     background: rgba(0, 0, 0, 0.1);
     color: #f6f6f6;
