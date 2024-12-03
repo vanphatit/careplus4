@@ -3,85 +3,114 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Import Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
-<body>
-<h1>Import</h1>
+<body class="bg-light">
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Một số thông tin về phiếu nhập</h1>
 
-<!-- Hiển thị thông tin chung về Import -->
-<c:choose>
-    <c:when test="${importEntity != null}">
-        <table border="1" style="width: 50%; margin-bottom: 20px;">
-            <tr>
-                <th>ID</th>
-                <td>${importEntity.id}</td>
-            </tr>
-            <tr>
-                <th>Provider ID</th>
-                <td>${importEntity.provider.id}</td>
-            </tr>
-            <tr>
-                <th>Provider Name</th>
-                <td>${importEntity.provider.name}</td>
-            </tr>
-            <tr>
-                <th>Date</th>
-                <td><fmt:formatDate value="${importEntity.date}" pattern="yyyy-MM-dd" /></td>
-            </tr>
-            <tr>
-                <th>Total Amount</th>
-                <td><fmt:formatNumber value="${importEntity.totalAmount}" type="number" groupingUsed="true" /></td>
-            </tr>
-        </table>
-    </c:when>
-    <c:otherwise>
-        <p>No import details available.</p>
-        <a href="${pageContext.request.contextPath}/vendor/import">Back to List</a>
-    </c:otherwise>
-</c:choose>
+    <!-- Hiển thị thông tin chung về Import -->
+    <c:choose>
+        <c:when test="${importEntity != null}">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Thông tin phiếu nhập</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Mã ID phiếu nhập</th>
+                            <td>${importEntity.id}</td>
+                        </tr>
+                        <tr>
+                            <th>Mã ID nhà cung cấp</th>
+                            <td>${importEntity.provider.id}</td>
+                        </tr>
+                        <tr>
+                            <th>Tên nhà cung cấp</th>
+                            <td>${importEntity.provider.name}</td>
+                        </tr>
+                        <tr>
+                            <th>Ngày nhập</th>
+                            <td><fmt:formatDate value="${importEntity.date}" pattern="yyyy-MM-dd" /></td>
+                        </tr>
+                        <tr>
+                            <th>Tổng thanh toán</th>
+                            <td><fmt:formatNumber value="${importEntity.totalAmount}" type="number" groupingUsed="true" /></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <div class="alert alert-warning text-center" role="alert">
+                No import details available.
+            </div>
+            <div class="text-center">
+                <a href="${pageContext.request.contextPath}/vendor/import" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to List</a>
+            </div>
+        </c:otherwise>
+    </c:choose>
 
-<!-- Hiển thị danh sách chi tiết ImportDetail -->
-<c:choose>
-    <c:when test="${importDetails != null}">
-        <h2>Import Detail List</h2>
-        <table border="1" style="width: 100%;">
-            <thead>
-            <tr>
-                <th>STT</th>
-                <th>Medicine ID</th>
-                <th>Medicine Name</th>
-                <th>Quantity</th>
-                <th>Unit Price</th>
-                <th>Sub Total</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="detail" items="${importDetails}" varStatus="iter">
-                <tr>
-                    <td>${iter.index + 1}</td>
-                    <td>${detail.medicine.id}</td>
-                    <td>${detail.medicine.name}</td>
-                    <td>${detail.quantity}</td>
-                    <td>
-                        <fmt:formatNumber value="${detail.unitPrice}" type="currency" currencySymbol="$" />
-                    </td>
-                    <td>
-                        <fmt:formatNumber value="${detail.subTotal}" type="currency" currencySymbol="$" />
-                    </td>
-                    <td><a href="${pageContext.request.contextPath}/vendor/import-detail/delete-detail/${detail.id}">Delete</a></td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </c:when>
-    <c:otherwise>
-        <p>No import items found for this import.</p>
-    </c:otherwise>
-</c:choose>
+    <!-- Hiển thị danh sách chi tiết ImportDetail -->
+    <c:choose>
+        <c:when test="${importDetails != null}">
+            <h2 class="text-center my-4">Danh sách phiếu nhập chi tiết</h2>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-primary">
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã thuốc</th>
+                        <th>Tên thuốc</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Thanh toán</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="detail" items="${importDetails}" varStatus="iter">
+                        <tr>
+                            <td>${iter.index + 1}</td>
+                            <td>${detail.medicine.id}</td>
+                            <td>${detail.medicine.name}</td>
+                            <td>${detail.quantity}</td>
+                            <td>
+                                <fmt:formatNumber value="${detail.unitPrice}" type="number" groupingUsed="true" />
+                            </td>
+                            <td>
+                                <fmt:formatNumber value="${detail.subTotal}" type="number" groupingUsed="true" />
+                            </td>
+                            <td>
+                                <a href="${pageContext.request.contextPath}/vendor/import-detail/delete-detail/${detail.id}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <div class="alert alert-warning text-center" role="alert">
+                No import items found for this import.
+            </div>
+        </c:otherwise>
+    </c:choose>
 
-<a href="${pageContext.request.contextPath}/vendor/import">Back to List</a>
+    <div class="text-center mt-4">
+        <a href="${pageContext.request.contextPath}/vendor/import" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 </html>
