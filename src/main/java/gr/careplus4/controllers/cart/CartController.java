@@ -44,7 +44,7 @@ public class CartController {
         String phone = jwtCookies.getUserPhoneFromJwt(request);
 
         this.cartService.handleAddProductToCart(phone, id, session);
-        return "redirect:/";
+        return "redirect:/user/medicines";
     }
 
     @GetMapping("/cart")
