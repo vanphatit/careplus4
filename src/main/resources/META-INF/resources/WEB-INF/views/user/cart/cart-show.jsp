@@ -45,10 +45,12 @@
                         <c:forEach var="item" items="${cartDetails}" varStatus="status">
                             <tr class="cart-table__row" data-index="${status.index}">
                                 <td class="cart-table__column cart-table__column--image">
-    <%--                                <a href="#"><img src="<c:url value='${item.image}' />" alt="" /></a>--%>
+                                    <img src="${pageContext.request.contextPath}/image?fileName=${item.medicine.image}"
+                                         alt="${item.medicine.name}"
+                                    />
                                 </td>
                                 <td class="cart-table__column cart-table__column--product">
-                                    <a href="#" class="cart-table__product-name">${item.medicine.name}</a>
+                                    <a href="/user/medicine/${item.medicine.id}" class="cart-table__product-name">${item.medicine.name}</a>
                                 </td>
                                 <td class="cart-table__column cart-table__column--price" data-title="Price">
                                     <fmt:formatNumber type="number" value="${item.unitCost}" /> đ
@@ -83,7 +85,7 @@
                             </select>
                         </div>
                         <div class="cart__buttons">
-                            <a href="/" class="btn btn-primary cart__update-button">Tiếp tục mua sắm</a>
+                            <a href="/user/medicines" class="btn btn-primary cart__update-button">Tiếp tục mua sắm</a>
                         </div>
                     </div>
 
