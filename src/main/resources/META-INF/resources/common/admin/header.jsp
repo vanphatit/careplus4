@@ -1,5 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:url value="/" var="URL"></c:url>
 <%--<!DOCTYPE html>--%>
 <%--<html lang="en">--%>
@@ -18,7 +18,7 @@
 <header class="app-header">
     <a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
     <ul class="app-nav">
-            <!-- Hiển thị vai trò của người dùng -->
+        <!-- Hiển thị vai trò của người dùng -->
         <li class="app-nav__role">
             <!-- Ô chứa chữ VENDOR -->
             <span>${user.role.name}</span>
@@ -34,7 +34,8 @@
 <%--<!-- Sidebar -->--%>
 <aside class="app-sidebar">
     <div class="app-sidebar__user">
-        <img class="app-sidebar__user-avatar" src="<c:url value='/assets/images/careplus4-high-resolution-logo.png' />" width="50px" alt="User Image">
+        <img class="app-sidebar__user-avatar" src="<c:url value='/assets/images/careplus4-high-resolution-logo.png' />"
+             width="50px" alt="User Image">
         <div>
             <p class="app-sidebar__user-name"><b>CarePlus4</b></p>
             <p class="app-sidebar__user-designation">Chào mừng bạn trở lại</p>
@@ -42,13 +43,23 @@
     </div>
     <hr>
     <ul class="app-menu">
-        <!-- Quản lý bán hàng -->
-        <li>
-            <a class="app-menu__item haha" href="<c:url value='/' />">
-                <i class='app-menu__icon bx bx-cart-alt'></i>
-                <span class="app-menu__label">Quản lý bán hàng</span>
-            </a>
-        </li>
+        <c:if test="${user.role.name=='ADMIN'}">
+            <li>
+                <a class="app-menu__item haha" href="<c:url value='/admin/bills' />">
+                    <i class='app-menu__icon bx bx-cart-alt'></i>
+                    <span class="app-menu__label">Quản lý bán hàng</span>
+                </a>
+            </li>
+        </c:if>
+
+        <c:if test="${user.role.name=='VENDOR'}">
+            <li>
+                <a class="app-menu__item haha" href="<c:url value='/vendor/bills' />">
+                    <i class='app-menu__icon bx bx-cart-alt'></i>
+                    <span class="app-menu__label">Quản lý bán hàng</span>
+                </a>
+            </li>
+        </c:if>
 
         <!-- Các thẻ dành cho ADMIN -->
         <c:if test="${user.role.name=='ADMIN'}">
@@ -105,11 +116,6 @@
                 </a>
             </li>
         </c:if>
-    </ul>
-
-
-
-    <!-- Add more menu items -->
     </ul>
 </aside>
 
