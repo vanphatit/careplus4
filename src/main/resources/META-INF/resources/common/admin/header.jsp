@@ -46,7 +46,7 @@
         <c:if test="${user.role.name=='ADMIN'}">
             <li>
                 <a class="app-menu__item haha" href="<c:url value='/admin/bills' />">
-                    <i class='app-menu__icon bx bx-cart-alt'></i>
+                    <i class='app-menu__icon bx bx-receipt'></i>
                     <span class="app-menu__label">Quản lý bán hàng</span>
                 </a>
             </li>
@@ -55,7 +55,7 @@
         <c:if test="${user.role.name=='VENDOR'}">
             <li>
                 <a class="app-menu__item haha" href="<c:url value='/vendor/bills' />">
-                    <i class='app-menu__icon bx bx-cart-alt'></i>
+                    <i class='app-menu__icon bx bx-receipt'></i>
                     <span class="app-menu__label">Quản lý bán hàng</span>
                 </a>
             </li>
@@ -71,7 +71,7 @@
             </li>
             <li>
                 <a class="app-menu__item" href="<c:url value='/admin/categories' />">
-                    <i class='app-menu__icon bx bx-id-card'></i>
+                    <i class='app-menu__icon bx bx-category'></i>
                     <span class="app-menu__label">Quản lý danh mục</span>
                 </a>
             </li>
@@ -83,8 +83,14 @@
             </li>
             <li>
                 <a class="app-menu__item" href="<c:url value='/admin/provider' />">
-                    <i class='app-menu__icon bx bx-run'></i>
+                    <i class='app-menu__icon bx bx-heart'></i>
                     <span class="app-menu__label">Quản lý nhà cung cấp</span>
+                </a>
+            </li>
+            <li>
+                <a class="app-menu__item" href="<c:url value='/admin/users' />">
+                    <i class='app-menu__icon bx bx-run'></i>
+                    <span class="app-menu__label">Quản lý người dùng</span>
                 </a>
             </li>
         </c:if>
@@ -93,16 +99,21 @@
         <c:if test="${user.role.name=='ADMIN' || user.role.name == 'VENDOR'}">
             <li>
                 <a class="app-menu__item" href="<c:url value='/vendor/medicines' />">
-                    <i class='app-menu__icon bx bx-purchase-tag-alt'></i>
+                    <i class='app-menu__icon bx bx-capsule'></i>
                     <span class="app-menu__label">Quản lý thuốc</span>
                 </a>
             </li>
             <li>
                 <a class="app-menu__item" href="<c:url value='/vendor/import' />">
-                    <i class='app-menu__icon bx bx-task'></i>
+                    <i class='app-menu__icon bx bx-log-in-circle'></i>
                     <span class="app-menu__label">Quản lý nhập hàng</span>
                 </a>
             </li>
+            <li>
+                <a class="app-menu__item" href="<c:url value='/vendor/manufacturers' />">
+                    <i class='app-menu__icon bx bx-user-check'></i>
+                    <span class="app-menu__label">Quản lý nhà sản xuất</span>
+                </a>
             <li>
                 <a class="app-menu__item" href="<c:url value='/vendor/event' />">
                     <i class='app-menu__icon bx bx-calendar-check'></i>
@@ -111,7 +122,7 @@
             </li>
             <li>
                 <a class="app-menu__item" href="<c:url value='/vendor/reviews' />">
-                    <i class='app-menu__icon bx bx-user-voice'></i>
+                    <i class='app-menu__icon bx bx-message-rounded-dots'></i>
                     <span class="app-menu__label">Quản lý review</span>
                 </a>
             </li>
