@@ -7,11 +7,11 @@
         <div class="site-header__topbar topbar">
             <div class="topbar__container container">
                 <div class="topbar__row">
-                    <div class="topbar__item topbar__item--link"><a class="topbar-link"
-                                                                    href="${URL}assets/about-us.html">Về chúng tôi</a>
-                    </div>
-                    <div class="topbar__item topbar__item--link">
-                        <a class="topbar-link" href="${URL}assets/track-order.html">Theo dõi đơn hàng</a></div>
+<%--                    <div class="topbar__item topbar__item--link"><a class="topbar-link"--%>
+<%--                                                                    href="${URL}assets/about-us.html">Về chúng tôi</a>--%>
+<%--                    </div>--%>
+<%--                    <div class="topbar__item topbar__item--link">--%>
+<%--                        <a class="topbar-link" href="${URL}assets/track-order.html">Theo dõi đơn hàng</a></div>--%>
                     <div class="topbar__spring"></div>
                     <div class="topbar__item">
                         <div class="topbar-dropdown">
@@ -33,8 +33,8 @@
                                 <div class="topbar-dropdown__body"><!-- .menu -->
                                     <ul class="menu menu--layout--topbar">
                                         <li><a href="${pageContext.request.contextPath}/user/userInfo">Tài khoản của tôi</a></li>
-                                        <li><a href="${pageContext.request.contextPath}/user/bills">Đơn hàng</a></li>
-                                        <li><a href="${pageContext.request.contextPath}/user/${user.phoneNumber}/reviews">Đánh giá</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/user/order-history">Đơn hàng</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/user/reviews">Đánh giá</a></li>
                                     </ul><!-- .menu / end -->
                                 </div>
                             </c:if>
@@ -69,7 +69,7 @@
                             <ul class="nav-links__list">
                                 <c:forEach var="category" items="${rootCategories}">
                                     <li class="nav-links__item nav-links__item--with-submenu">
-                                        <a href="/user/medicine?${category.id}">
+                                        <a href="/user/medicines?${category.id}">
                                             <span>${category.name}
                                             <svg class="nav-links__arrow" width="9px" height="6px">
                                                 <use href="images/sprite.svg#arrow-rounded-down-9x6"></use>
@@ -104,8 +104,8 @@
                                                 </svg></span></button>
                                 <div class="indicator__dropdown">
                                     <div class="drop-search">
-                                        <form action="#" class="drop-search__form"><input
-                                                class="drop-search__input" name="search"
+                                        <form action="/user/medicine/search" method="post" class="drop-search__form">
+                                            <input class="drop-search__input" name="keyword"
                                                 placeholder="Tìm kiếm sản phẩm"
                                                 aria-label="Site search" type="text" autocomplete="off">
                                             <button
@@ -119,16 +119,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="indicator"><a href="${URL}wishlist.html" class="indicator__button"><span
-                                    class="indicator__area"><svg width="20px" height="20px">
-                                                    <use href="${URL}assets/images/sprite.svg#heart-20"></use>
-                                                </svg> <span class="indicator__value">0</span></span></a></div>
+<%--                            <div class="indicator"><a href="${URL}wishlist.html" class="indicator__button"><span--%>
+<%--                                    class="indicator__area"><svg width="20px" height="20px">--%>
+<%--                                                    <use href="${URL}assets/images/sprite.svg#heart-20"></use>--%>
+<%--                                                </svg> <span class="indicator__value">0</span></span></a></div>--%>
                             <div class="indicator"><a href="${pageContext.request.contextPath}/user/cart"
                                                       class="indicator__button"><span
                                     class="indicator__area"><svg width="20px"
                                                                  height="20px">
                                                     <use href="${URL}assets/images/sprite.svg#cart-20"></use>
-                                                </svg> <span class="indicator__value">3</span></span></a>
+                                                </svg> <span class="indicator__value">${user.cart.productCount}</span></span></a>
                             </div>
                         </div>
                     </div>
