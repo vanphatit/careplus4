@@ -140,7 +140,7 @@
                             <div class="row align-items-center">
                                 <input type="hidden" name="medicineId" value="${medicine.id}">
                                 <!-- Chọn số lượng -->
-                                <div class="quantity-selector">
+                                <div class="quantity-selector" style="width: 50%">
                                     <label for="quantity" class="form-label">Chọn số lượng:</label>
                                     <div class="input-group">
                                         <!-- Nút giảm -->
@@ -152,7 +152,7 @@
                                     </div>
                                 </div>
                                 <!-- Nút thêm vào giỏ hàng -->
-                                <div class="col-6 text-end">
+                                <div class="col-6 text-end" style="margin-top: 21px">
                                     <input type="hidden" name="medicineId" value="${medicine.id}">
                                     <button type="submit" class="btn btn-success mt-3">
                                         <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng

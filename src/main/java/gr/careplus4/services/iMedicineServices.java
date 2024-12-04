@@ -119,7 +119,13 @@ public interface iMedicineServices {
             Pageable pageable
     );
 
-    List<MedicineForUserModel> findTop10SellingMedicinesFromUniqueList();
+    List<MedicineForUserModel> findTop9SellingMedicinesFromUniqueList();
+
+    List<Map<String, Object>> findTop9FavoriteBrandsWithDetails();
+
+    List<Map<String, Object>> findTop9FavoriteCategoriesWithDetails();
+
+    List<Map<String, Object>> findTop3PopularMedicinesLast7Days();
 
     List<MedicineForUserModel> getRelatedProducts(String id, String cateName, Pageable pageable);
 
