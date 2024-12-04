@@ -12,6 +12,8 @@ public interface iRoleService {
 
     Optional<Role> findById(Integer integer);
 
+    Optional<Role> findByName(String name);
+
     boolean existsById(Integer integer);
 
     long count();

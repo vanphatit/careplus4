@@ -30,6 +30,8 @@ public interface iUserService {
 
     Page<User> findByNameContaining(String name, Pageable pageable);
 
+    Page<User> findByNameContainingIgnoreCaseOrPhoneNumber(String name, String phoneNumber, Pageable pageable);
+
     Optional<User> findByEmail(String email);
 
     List<User> findAll();
