@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface iCartService {
     Optional<CartModel> findByUser_PhoneNumber(String phone);
     Cart findCartByUser(User user);
-    void handleAddProductToCart(String phone, String medicineId, HttpSession session);
+    void handleAddProductToCart(String phone, String medicineId, int quantity);
     List<CartDetailModel> getCartDetails(String phone);
     void handleRemoveCartDetail(long cartDetailID, HttpSession session);
     void handleUpdateCartBeforeCheckout(CartConfirmModel cart);
