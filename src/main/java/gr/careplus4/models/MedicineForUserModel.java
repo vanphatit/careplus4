@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -23,4 +25,10 @@ public class MedicineForUserModel {
     private String unitName;
     private Date expiryDate;
     private String image;
+    private List<Map<String, String>> ingredients; // Thành phần
+    private String usage;
+    private String directions;
+    private String sideEffects;
+    private String precautions;
+    private String storage;
 }

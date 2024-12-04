@@ -119,5 +119,9 @@ public interface iMedicineServices {
             Pageable pageable
     );
 
+    List<MedicineForUserModel> findTop10SellingMedicinesFromUniqueList();
+
+    List<MedicineForUserModel> getRelatedProducts(String id, String cateName, Pageable pageable);
+
     Map<String, Object> parseDescription(String description, String medicineName);
 }

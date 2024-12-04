@@ -89,6 +89,22 @@ public class MedicinesController {
         return model;
     }
 
+    public MedicineForUserModel processMedicine(MedicineForUserModel model) {
+        // Phân tích mô tả và thêm các phần vào model
+        Map<String, Object> descriptionParts = medicineService.parseDescription(model.getDescription(), model.getName());
+
+        // Kiểm tra và gán từng phần
+        model.setDescription(descriptionParts.get("Mô tả sản phẩm") != null ? descriptionParts.get("Mô tả sản phẩm").toString() : "");
+        model.setIngredients(descriptionParts.get("Thành phần") != null ? (List<Map<String, String>>) descriptionParts.get("Thành phần") : new ArrayList<>());
+        model.setUsage(descriptionParts.get("Công dụng") != null ? descriptionParts.get("Công dụng").toString() : "");
+        model.setDirections(descriptionParts.get("Cách dùng") != null ? descriptionParts.get("Cách dùng").toString() : "");
+        model.setSideEffects(descriptionParts.get("Tác dụng phụ") != null ? descriptionParts.get("Tác dụng phụ").toString() : "");
+        model.setPrecautions(descriptionParts.get("Lưu ý") != null ? descriptionParts.get("Lưu ý").toString() : "");
+        model.setStorage(descriptionParts.get("Bảo quản") != null ? descriptionParts.get("Bảo quản").toString() : "");
+
+        return model;
+    }
+
     @GetMapping("/vendor/medicines")
     public String getListMedicines(Model model,
                                    @RequestParam(value = "message", required = false) String message,
@@ -138,8 +154,6 @@ public class MedicinesController {
         medicineModel.setName(medicine.get().getName());
         medicineModel.setDescription(medicine.get().getDescription());
         medicineModel = processMedicine(medicineModel);
-
-        System.out.println(medicineModel.getIngredients());
 
         int totalPages = reviews.getTotalPages();
 
@@ -209,8 +223,6 @@ public class MedicinesController {
                 // Lưu file
                 Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-                // Trả về tên file (hoặc đường dẫn)
-                System.out.println("Upload file: " + path);
                 return sanitizedFileName;
             } catch (Exception e) {
                 // Log lỗi để dễ dàng gỡ lỗi
@@ -232,10 +244,6 @@ public class MedicinesController {
         String message = "";
         Medicine medicine = new Medicine();
         Optional<Manufacturer> manufacturer = manufacturerService.findById(manufacturerId);
-
-        System.out.println(medicineModel.getDescription());
-
-        System.out.println(manufacturer);
 
         model.addAttribute("manufacturers", manufacturerService.findAll());
         model.addAttribute("categories", categoryService.findAll());
@@ -282,9 +290,6 @@ public class MedicinesController {
                 return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
             }
 
-        System.out.println(medicineModel.getImage().isEmpty());
-        System.out.println(medicineModel.getImage() != null);
-
         // Xử lý upload file (nếu có)
         if (medicineModel.getImage() != null && !medicineModel.getImage().isEmpty()) {
             String imagePath = handleSaveUploadImage(medicineModel.getImage(), MEDICINE_UPLOAD_DIR, medicineModel.getName());
@@ -294,7 +299,6 @@ public class MedicinesController {
                 if (medicineModel.getId() != null) {
                     // Lấy ảnh cũ trước khi ghi đè
                     Optional<Medicine> existingMedicine = medicineService.findById(medicineModel.getId());
-                    System.out.println("Existing medicine: " + existingMedicine);
                     if (existingMedicine.isPresent() && existingMedicine.get().getImage() != null) {
                         oldImagePath = MEDICINE_UPLOAD_DIR + "/" + existingMedicine.get().getImage();
                     }
@@ -305,7 +309,6 @@ public class MedicinesController {
 
                 // Sau khi lưu đường dẫn ảnh mới, xóa ảnh cũ (nếu có)
                 if (oldImagePath != null) {
-                    System.out.println("Delete old image: " + oldImagePath);
                     File oldImageFile = new File(oldImagePath);
                     if (oldImageFile.exists() && oldImageFile.isFile()) {
                         boolean deleted = oldImageFile.delete();
@@ -316,7 +319,6 @@ public class MedicinesController {
                 }
             }
         } else {
-            System.out.println("No new image uploaded");
             // Nếu không upload ảnh mới, giữ nguyên ảnh cũ (nếu chỉnh sửa)
             if (medicine.getId() != null) {
                 Optional<Medicine> existingMedicine = medicineService.findById(medicine.getId());
@@ -342,8 +344,6 @@ public class MedicinesController {
         medicine.setManufacturer(manufacturer.get());
         medicine.setCategory(category.get());
         medicine.setUnit(unit.get());
-
-        System.out.println(medicine);
 
         if (medicineModel.getIsEdit()) {
             medicineService.save(medicine);
@@ -464,20 +464,6 @@ public class MedicinesController {
             if (categoryName == "") categoryName = null;
             if (unitName == "") unitName = null;
 
-            System.out.println(manufacturerName);
-            System.out.println(categoryName);
-            System.out.println(unitName);
-            System.out.println(unitCostMin);
-            System.out.println(unitCostMax);
-            System.out.println(expiryDateMin);
-            System.out.println(expiryDateMax);
-            System.out.println(stockQuantityMin);
-            System.out.println(stockQuantityMax);
-            System.out.println(ratingMin);
-            System.out.println(ratingMax);
-            System.out.println(importDateMin);
-            System.out.println(importDateMax);
-
             // Đảm bảo currentPage >= 1
             currentPage = Math.max(currentPage, 1);
 
@@ -491,10 +477,6 @@ public class MedicinesController {
                     importDateMin, importDateMax,
                     pageable
             );
-
-            for (Medicine medicine : medicines) {
-                System.out.println(medicine);
-            }
 
             int totalPages = medicines.getTotalPages();
             if (totalPages > 0) {
@@ -538,12 +520,18 @@ public class MedicinesController {
     @GetMapping("/user/medicines")
     public String getListMedicinesUser(Model model,
                                    @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
-                                   @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize) {
+                                   @RequestParam(value = "size", required = false, defaultValue = "12") int pageSize,
+                                   @RequestParam(value = "categoryid", required = false) String categoryId
+                                       ) {
         // Đảm bảo currentPage >= 1
         currentPage = Math.max(currentPage, 1);
-
+        Page<MedicineForUserModel> medicines = null;
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("name").ascending());
-        Page<MedicineForUserModel> medicines = medicineService.getMedicinesForUser(pageable);
+        if (categoryId != null) {
+            medicines = medicineService.searchMedicineByKeywordForUser(categoryId, pageable);
+        } else{
+            medicines = medicineService.getMedicinesForUser(pageable);
+        }
 
         int totalPages = medicines.getTotalPages();
         if (totalPages > 0) {
@@ -557,24 +545,84 @@ public class MedicinesController {
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("units", unitService.findAll());
 
-        model.addAttribute("medicines", medicines.getContent());
+        List<MedicineForUserModel> list = medicines.getContent();
+
+        model.addAttribute("medicines", list);
         model.addAttribute("currentPage", currentPage); // Để view biết trang hiện tại
         model.addAttribute("pageSize", pageSize);       // Để view biết kích thước trang
         return "user/medicine/medicines-list"; // Tên view để render danh sách thuốc
     }
 
+    private List<List<MedicineForUserModel>> splitList(Set<MedicineForUserModel> set, int size) {
+        List<MedicineForUserModel> list = new ArrayList<>(set); // Chuyển Set thành List
+        List<List<MedicineForUserModel>> chunks = new ArrayList<>();
+        for (int i = 0; i < list.size(); i += size) {
+            chunks.add(list.subList(i, Math.min(i + size, list.size())));
+        }
+        return chunks;
+    }
+
     @GetMapping("/user/medicine/{id}")
-    public String getMedicineByIdUser(Model model, @PathVariable("id") String id) {
+    public String getMedicineByIdUser(Model model,
+                                      @PathVariable("id") String id,
+                                      @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
+                                      @RequestParam(value = "productPage", required = false, defaultValue = "1") int productPage,
+                                      @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize,
+                                      @RequestParam(value = "productSize", required = false, defaultValue = "5") int productPageSize
+                                      ) {
         Optional<MedicineForUserModel> medicine = medicineService.findMedicineByIdForUser(id);
+
+
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("id").ascending());
+        Pageable productPageable = PageRequest.of(productPage - 1, productPageSize, Sort.by("id").ascending());
+        Page<ReviewForUserModel> reviews = reviewDetailService.findReviewForUserModelByMedicineId(id, pageable);
+        Page<MedicineForUserModel> medicines_relative_Man = medicineService.searchMedicineByKeywordForUser(medicine.get().getManufacturerName(), productPageable);
+        Page<MedicineForUserModel> medicines_relative_Cat = medicineService.searchMedicineByKeywordForUser(medicine.get().getCategoryName(), productPageable);
+        Page<MedicineForUserModel> medicines_relative = medicineService.searchMedicineByKeywordForUser(medicine.get().getDosage(), productPageable);
+
+        MedicineForUserModel medicineModel = new MedicineForUserModel();
+        medicineModel.setName(medicine.get().getName());
+        medicineModel.setDescription(medicine.get().getDescription());
+        medicineModel = processMedicine(medicineModel);
 
         if (!medicine.isPresent()) {
             String message = "Medicine not found";
             model.addAttribute("message", message);
             return "redirect:/user/medicines";
         }
+
+
+        // Chuyển các trang thành các danh sách
+        List<MedicineForUserModel> list_Man = medicines_relative_Man.getContent();
+        List<MedicineForUserModel> list_Cat = medicines_relative_Cat.getContent();
+        List<MedicineForUserModel> list_Name = medicines_relative.getContent();
+
+        // Kết hợp các danh sách vào một list duy nhất
+        List<MedicineForUserModel> list = new ArrayList<>();
+        list.addAll(list_Man);
+        list.addAll(list_Cat);
+        list.addAll(list_Name);
+
+        Set<MedicineForUserModel> uniqueList = new HashSet<>(list);
+
+        // Chia nhóm sản phẩm (5 sản phẩm mỗi nhóm)
+        List<List<MedicineForUserModel>> groupedProducts = splitList(uniqueList, 2);
+
         String message = "Medicine found";
+        model.addAttribute("reviews", reviews);
         model.addAttribute("medicine", medicine.get());
         model.addAttribute("message", message);
+        model.addAttribute("description", medicineModel.getDescription());
+        model.addAttribute("ingredients", medicineModel.getIngredients());
+        model.addAttribute("usage", medicineModel.getUsage());
+        model.addAttribute("directions", medicineModel.getDirections());
+        model.addAttribute("sideEffects", medicineModel.getSideEffects());
+        model.addAttribute("precautions", medicineModel.getPrecautions());
+        model.addAttribute("storage", medicineModel.getStorage());
+        model.addAttribute("medicines_relative", groupedProducts);
+        model.addAttribute("productPage", productPage); // Trang hiện tại của sản phẩm
+        model.addAttribute("productPageSize", productPageSize); // Kích thước mỗi trang sản phẩm
+        model.addAttribute("totalProductPages", medicines_relative.getTotalPages()); // Tổng số trang sản phẩm
         return "user/medicine/medicine-detail";
     }
 
