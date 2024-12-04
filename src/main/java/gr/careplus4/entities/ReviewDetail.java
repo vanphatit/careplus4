@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -33,5 +34,5 @@ public class ReviewDetail implements Serializable {
     @Column(name = "Rating", nullable = false)
     @DecimalMin("0.0")
     @DecimalMax("5.0")
-    private float rating;
+    private BigDecimal rating;
 }
