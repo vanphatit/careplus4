@@ -49,8 +49,9 @@
                         <div class="medicine-card">
                             <img src="${pageContext.request.contextPath}/image?fileName=${medicine.image}" alt="${medicine.name}">
                             <div class="card-body">
-                                <h5><strong><a href="${pageContext.request.contextPath}/user/medicine/${medicine.id}" class="btn">${medicine.name}</a></strong></h5>
-                                <p><strong>Loại:</strong> ${medicine.categoryName}</p>
+                                <h5><strong><a href="${pageContext.request.contextPath}/user/medicine/${medicine.id}" class="manufacturer-name btn">${medicine.name}</a></strong></h5>
+                                <p><strong>Loại:</strong></p>
+                                <p class="manufacturer-name">${medicine.categoryName}</p>
                                 <p><strong>Nhà sản xuất:</strong></p>
                                 <p class="manufacturer-name">${medicine.manufacturerName}</p>
                                 <p><strong>Đơn vị:</strong> ${medicine.unitName}</p>
