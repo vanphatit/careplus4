@@ -98,6 +98,7 @@
                                 </div>
                                 <form method="post" action="${pageContext.request.contextPath}/user/add-medicine-to-cart/${medicine.id}">
                                     <input type="hidden" name="medicineId" value="${medicine.id}">
+                                    <input type="hidden" name="quantity" value="1" >
                                     <button type="submit" class="btn btn-primary mt-2">Thêm vào giỏ hàng</button>
                                 </form>
                             </div>

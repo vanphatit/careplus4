@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -236,17 +237,37 @@ public class MedicineServicesImpl implements iMedicineServices {
     @Override
     public void updateTotalRatingForMedicine(String name, String manufacturerName, BigDecimal rating) {
         List<Medicine> medicines = medicineRepository.findByNameAndManufacturer_Name(name, manufacturerName);
-        if (medicines.size() > 0) {
+
+        if (!medicines.isEmpty()) {
+            // Lưu tổng điểm đánh giá và số lượng đánh giá
+            BigDecimal totalRatings = BigDecimal.ZERO;
+            int totalReviews = 0;
+
+            // Duyệt qua danh sách để tính tổng điểm đánh giá và số lượng đánh giá
             for (Medicine medicine : medicines) {
-                BigDecimal totalRating = medicine.getRating();
-                totalRating = (totalRating.add(rating)).divide(new BigDecimal(2));
-                medicine.setRating(totalRating);
+                if (medicine.getRating() != null) {
+                    totalRatings = totalRatings.add(medicine.getRating());
+                    totalReviews++;
+                }
+            }
+
+            // Cộng thêm đánh giá mới
+            totalRatings = totalRatings.add(rating);
+            totalReviews++;
+
+            // Tính trung bình đánh giá
+            BigDecimal averageRating = totalRatings.divide(BigDecimal.valueOf(totalReviews), 2, RoundingMode.HALF_UP);
+
+            // Cập nhật đánh giá cho từng thuốc
+            for (Medicine medicine : medicines) {
+                medicine.setRating(averageRating);
                 medicineRepository.save(medicine);
             }
         } else {
             System.out.println("Medicine not found");
         }
     }
+
 
     @Override
     public List<Medicine> findMedicinesByNameAndManufacturer_NameAndDosage(String name, String manufacturerName, String dosage) {
