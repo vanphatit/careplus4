@@ -11,6 +11,21 @@
                     <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
                     <li class="breadcrumb-item active">Người dùng</li>
                 </ol>
+
+                <!-- Hiển thị thông báo -->
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            ${error}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </c:if>
+                <c:if test="${not empty success}">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            ${success}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </c:if>
+
                 <div class="mt-5">
                     <div class="row">
                         <div class="col-12 mx-auto">
@@ -57,8 +72,16 @@
                                         <td>
                                             <a href="/admin/user/${user.phoneNumber}" class="btn btn-success btn-sm">Chi tiết</a>
                                             <a href="/admin/user/update/${user.phoneNumber}" class="btn btn-warning btn-sm mx-2">Cập nhật</a>
-                                            <a href="/admin/user/delete/${user.phoneNumber}" class="btn btn-danger btn-sm"
-                                               onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này?')">Xóa</a>
+                                            <c:choose>
+                                                <c:when test="${user.status}">
+                                                    <a href="/admin/user/delete/${user.phoneNumber}" class="btn btn-danger btn-sm"
+                                                       onclick="return confirm('Bạn có chắc chắn muốn tắt hoạt động người dùng này?')">Tắt hoạt động</a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="/admin/user/activate/${user.phoneNumber}" class="btn btn-primary btn-sm"
+                                                       onclick="return confirm('Bạn có chắc chắn muốn kích hoạt người dùng này?')">Kích hoạt</a>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
                                     </tr>
                                 </c:forEach>
