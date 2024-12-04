@@ -152,6 +152,7 @@
                 <!-- Inner carousel content -->
                 <div class="carousel-inner">
                     <c:forEach var="event" items="${events}" varStatus="status">
+                        <c:if test="${event.discount != 0.00}">
                         <div class="carousel-item ${status.index == 0 ? 'active' : ''}">
                             <div class="banner-slide p-5 text-center">
                                 <h2 class="text-primary">${event.name}</h2>
@@ -160,6 +161,7 @@
                                 <p><strong>Giảm giá:</strong> ${event.discount}%</p>
                             </div>
                         </div>
+                        </c:if>
                     </c:forEach>
 
                     <!-- Controls placed outside -->
