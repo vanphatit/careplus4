@@ -18,6 +18,6 @@ public class CartDetailController {
     public String postMethodName(@PathVariable long id, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         this.cartDetailService.handleRemoveCartDetail(id, session);
-        return "redirect:/cart";
+        return "redirect:/user/cart";
     }
 }
