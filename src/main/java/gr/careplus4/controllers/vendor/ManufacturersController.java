@@ -61,11 +61,11 @@ public class ManufacturersController  {
         Optional<Manufacturer> manufacturer = manufacturerService.findById(id);
 
         if (!manufacturer.isPresent()) {
-            String message = "Manufacturer not found";
+            String message = "Nhà sản xuất không tồn tại";
             model.addAttribute("message", message);
             return "redirect:/vendor/manufacturers";
         }
-        String message = "Manufacturer found";
+        String message = "Nhà sản xuất " + manufacturer.get().getName();
         model.addAttribute("manufacturer", manufacturer.get());
         model.addAttribute("message", message);
         return "vendor/manufacturer/manufacturer-detail";
@@ -79,7 +79,7 @@ public class ManufacturersController  {
         String message = "";
         Manufacturer manufacturer = new Manufacturer();
         if (result.hasErrors()) {
-            message = "Error adding manufacturer";
+            message = "Vui lòng sửa các lỗi sau đây và thử lại";
             model.addAttribute("message", message);
             return new ModelAndView("vendor/manufacturer-addOrEdit");
         }
@@ -87,13 +87,13 @@ public class ManufacturersController  {
 
         if (manufacturerModel.getIsEdit()) {
             manufacturerService.save(manufacturer);
-            message = "Manufacturer updated successfully";
+            message = "Nhà sản xuất đã được cập nhật";
         } else {
             Manufacturer lastManufacturer = manufacturerService.findTopByOrderByIdDesc();
             String previousManufacturerId = (lastManufacturer != null) ? lastManufacturer.getId() : "MAN0000";
             manufacturer.setId(manufacturerService.generateManufacturerId(previousManufacturerId));
             manufacturerService.save(manufacturer);
-            message = "Manufacturer added successfully";
+            message = "Nhà sản xuất đã được thêm";
         }
         model.addAttribute("message", message);
         return new ModelAndView("redirect:/vendor/manufacturers", model);
@@ -115,11 +115,11 @@ public class ManufacturersController  {
             Manufacturer manufacturerEntity = manufacturer.get();
             BeanUtils.copyProperties(manufacturerEntity, manufacturerModel);
             manufacturerModel.setIsEdit(true);
-            model.addAttribute("message", "Manufacturer is edited successfully");
+            model.addAttribute("message", "Chỉnh sửa nhà sản xuất " + manufacturerModel.getName());
             model.addAttribute("manufacturer", manufacturerModel);
             return new ModelAndView("vendor/manufacturer-addOrEdit", model);
         }
-        model.addAttribute("message", "Manufacturer not found");
+        model.addAttribute("message", "Nhà sản xuất không tồn tại");
         return new ModelAndView("redirect:/vendor/manufacturers", model);
     }
 
@@ -128,16 +128,16 @@ public class ManufacturersController  {
         Optional<Manufacturer> manufacturer = manufacturerService.findById(id);
         if (manufacturer.isPresent()) {
             manufacturerService.deleteById(id);
-            model.addAttribute("message", "Manufacturer deleted successfully");
+            model.addAttribute("message", "Nhà sản xuất đã được xóa");
             return new ModelAndView("redirect:/vendor/manufacturers", model);
         }
-        model.addAttribute("message", "Manufacturer not found");
+        model.addAttribute("message", "Nhà sản xuất không tồn tại");
         return new ModelAndView("redirect:/vendor/manufacturers", model);
     }
 
-    @GetMapping("/manufacturer/search/{name}")
+    @GetMapping("/manufacturer/search")
     public String searchManufacturer(Model model,
-                                     @PathVariable("name") String name,
+                                     @RequestParam("name") String name,
                                      @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
                                      @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize) {
         // Đảm bảo currentPage >= 1
@@ -155,19 +155,20 @@ public class ManufacturersController  {
             model.addAttribute("pageNumbers", pageNumbers);
         }
 
+        model.addAttribute("message", manufacturers.isEmpty() ? "Không tìm thấy nhà sản xuất" : "Tìm thấy nhà sản xuất");
         model.addAttribute("manufacturers", manufacturers);
         model.addAttribute("currentPage", currentPage);  // Để view biết trang hiện tại
         model.addAttribute("pageSize", pageSize);        // Để view biết kích thước trang
         return "vendor/manufacturer/manufacturers-list";
     }
 
-    @GetMapping("/manufacturer/exist/{name}")
-    public String manufacturerIsExist(Model model, @PathVariable("name") String name) {
+    @GetMapping("/manufacturer/exist")
+    public String manufacturerIsExist(Model model, @RequestParam("name") String name) {
         Boolean check = manufacturerService.existsByName(name);
         if (check) {
-            model.addAttribute("message", "Manufacturer exists");
+            model.addAttribute("message", "Nhà sản xuất đã tồn tại");
         } else {
-            model.addAttribute("message", "Manufacturer does not exist");
+            model.addAttribute("message", "Nhà sản xuất không tồn tại");
         }
         return "vendor/manufacturer/manufacturer-list";
     }

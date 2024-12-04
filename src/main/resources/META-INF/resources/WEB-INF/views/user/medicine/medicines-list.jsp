@@ -2,6 +2,34 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:url value="/" var="URL"></c:url>
 
+<style>
+    h5 a.btn {
+        display: block; /* Hoặc inline-block nếu cần */
+        white-space: normal; /* Cho phép xuống dòng nếu quá dài */
+        text-align: center; /* Đảm bảo căn giữa */
+        overflow: hidden; /* Ngăn tràn */
+        text-overflow: ellipsis; /* Hiện dấu ... nếu bị tràn */
+        word-wrap: break-word; /* Tự động xuống dòng nếu quá dài */
+        font-size: 16px; /* Tùy chỉnh kích cỡ chữ */
+        font-weight: bold; /* Đảm bảo chữ đậm */
+        margin: 0; /* Đảm bảo không có khoảng trống dư thừa */
+        padding: 0; /* Xóa khoảng đệm */
+    }
+
+    h5 a.btn:hover {
+        color: #0d6efd; /* Màu khi hover */
+        text-decoration: underline; /* Hiệu ứng gạch chân khi hover */
+    }
+
+    .product-card h5 a {
+        white-space: normal; /* Cho phép xuống dòng */
+        overflow: hidden; /* Ngăn nội dung tràn */
+        text-overflow: ellipsis; /* Hiển thị dấu ba chấm nếu cần */
+        display: block; /* Đảm bảo tên không bị cắt ngang */
+    }
+
+</style>
+
 <div class="container mt-4">
     <div class="row">
         <!-- Filter Section (Left Sidebar) -->
@@ -49,8 +77,11 @@
                         <div class="medicine-card">
                             <img src="${pageContext.request.contextPath}/image?fileName=${medicine.image}" alt="${medicine.name}">
                             <div class="card-body">
-                                <h5><strong><a href="${pageContext.request.contextPath}/user/medicine/${medicine.id}" class="btn">${medicine.name}</a></strong></h5>
-                                <p><strong>Loại:</strong> ${medicine.categoryName}</p>
+                                <h5>
+                                    <a href="${pageContext.request.contextPath}/user/medicine/${medicine.id}" class="btn" style="height: 100px">${medicine.name}</a>
+                                </h5>
+                                <p><strong>Loại:</strong></p>
+                                <p class="manufacturer-name">${medicine.categoryName}</p>
                                 <p><strong>Nhà sản xuất:</strong></p>
                                 <p class="manufacturer-name">${medicine.manufacturerName}</p>
                                 <p><strong>Đơn vị:</strong> ${medicine.unitName}</p>

@@ -63,12 +63,10 @@ public class UnitsController {
         Optional<Unit> unit = unitService.findById(id);
 
         if (!unit.isPresent()) {
-            model.addAttribute("message", "Unit not found");
             return "redirect:/admin/units";
         }
         model.addAttribute("unit", unit.get());
-        model.addAttribute("message", "Unit found");
-        return "admin/unit/unit-detail.jsp";
+        return "admin/unit/unit-detail";
     }
 
     @PostMapping("/unit/save")
@@ -79,7 +77,7 @@ public class UnitsController {
         Unit unit = new Unit();
 
         if (result.hasErrors()) {
-            message = "Error adding or updating unit";
+            message = "Vui lòng sửa các lỗi sau đây và thử lại";
             model.addAttribute("message", message);
             return new ModelAndView("admin/unit-addOrEdit");
         }
@@ -87,13 +85,13 @@ public class UnitsController {
 
         if (unitModel.getIsEdit()) {
             unitService.save(unit);
-            message = "Unit updated successfully";
+            message = "Đơn vị đã được cập nhật thành công";
         } else {
             Unit lastUnit = unitService.findTopByOrderByIdDesc();
             String previousUnitId = (lastUnit != null) ? lastUnit.getId() : "UNT0000";
             unit.setId(unitService.generateUnitId(previousUnitId));
             unitService.save(unit);
-            message = "Unit added successfully";
+            message = "Đơn vị đã được thêm mới thành công";
         }
         model.addAttribute("message", message);
         return new ModelAndView("redirect:/admin/unit/units", model);
@@ -117,10 +115,10 @@ public class UnitsController {
             BeanUtils.copyProperties(unitEntity, unitModel);
             unitModel.setIsEdit(true);
             model.addAttribute("unit", unitModel);
-            model.addAttribute("message", "Unit is being edited");
+            model.addAttribute("message", "Đơn vị đã được tìm thấy");
             return new ModelAndView("admin/unit/unit-addOrEdit", model);
         }
-        model.addAttribute("message", "Unit not found");
+        model.addAttribute("message", "Đơn vị không tồn tại");
         return new ModelAndView("redirect:/admin/unit/units", model);
     }
 
@@ -130,16 +128,16 @@ public class UnitsController {
 
         if (unit.isPresent()) {
             unitService.deleteById(id);
-            model.addAttribute("message", "Unit deleted successfully");
+            model.addAttribute("message", "Đơn vị đã được xóa thành công");
         } else {
-            model.addAttribute("message", "Unit not found");
+            model.addAttribute("message", "Đơn vị không tồn tại");
         }
         return new ModelAndView("redirect:/admin/unit/units", model);
     }
 
-    @GetMapping("/unit/search/{name}")
+    @GetMapping("/unit/search")
     public String searchUnit(Model model,
-                             @PathVariable("name") String name,
+                             @RequestParam("name") String name,
                              @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
                              @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize) {
         currentPage = Math.max(currentPage, 1);
@@ -161,8 +159,8 @@ public class UnitsController {
         return "admin/unit/units-list";
     }
 
-    @GetMapping("/unit/exist/{name}")
-    public String unitIsExist(Model model, @PathVariable("name") String name) {
+    @GetMapping("/unit/exist")
+    public String unitIsExist(Model model, @RequestParam("name") String name) {
         Boolean exists = unitService.existsByName(name);
 
         if (exists) {

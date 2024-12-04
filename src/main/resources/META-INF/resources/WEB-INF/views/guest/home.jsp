@@ -24,57 +24,7 @@
             border-radius: 10px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             padding: 20px;
-        }
-
-        .banner {
-            background-color: #f8f9fa;
-            border-left: 5px solid #0d6efd;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .category-card,
-        .product-card {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            transition: all 0.3s ease-in-out;
-            text-align: center;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        .category-card:hover,
-        .product-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .category-card h5,
-        .product-card h5 {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .product-card img {
-            max-width: 100%;
-            border-radius: 10px;
-        }
-
-        .btn-view-more {
-            background-color: #0d6efd;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            text-transform: uppercase;
-            font-size: 14px;
-            transition: background-color 0.3s ease-in-out;
-        }
-
-        .btn-view-more:hover {
-            background-color: #004cba;
+            min-height: 500px;
         }
 
         .row {
