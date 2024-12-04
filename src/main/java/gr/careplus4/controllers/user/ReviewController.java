@@ -62,7 +62,7 @@ public class ReviewController {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return new ModelAndView("/vendor/review-list");
+        return new ModelAndView("vendor/review-list");
     }
 
     // Hiển thị chi tiết review của vendor
@@ -73,7 +73,7 @@ public class ReviewController {
         List<ReviewDetail> reviewDetails = reviewDetailService.findReviewDetailsByReview(review, PageRequest.of(0, 5));
         model.addAttribute("review", review);
         model.addAttribute("reviewDetails", reviewDetails);
-        return new ModelAndView("/vendor/review-details");
+        return new ModelAndView("vendor/review-details");
     }
 
     // Xóa review bởi vendor
