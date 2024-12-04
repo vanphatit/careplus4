@@ -113,7 +113,7 @@
                 <div class="row">
                     <div class="col-md-4 text-center">
                         <!-- Hình ảnh thuốc -->
-                        <img src="${pageContext.request.contextPath}/medicine/image?fileName=${medicine.image}&width=400&height=400"
+                        <img src="${pageContext.request.contextPath}/image?fileName=${medicine.image}&width=400&height=400"
                              alt="${medicine.name}"
                              style="max-width: 100%; height: auto; border-radius: 10px;"
                              class="medicine-img"
@@ -271,9 +271,7 @@
                                     <!-- Sao rỗng -->
                                     <span style="color: #ddd;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
                                     <!-- Sao đầy -->
-                                    <span style="color: #ffc107; position: absolute; top: 0; left: 0; width: ${review.rating * 20}%; overflow: hidden; white-space: nowrap;">
-                        &#9733;&#9733;&#9733;&#9733;&#9733;
-                    </span>
+                                    <span style="color: #ffc107; position: absolute; top: 0; left: 0; width: ${review.rating * 20}%; overflow: hidden; white-space: nowrap;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
                                 </div>
                             </div>
                             <p class="mt-2">${review.review}</p>
