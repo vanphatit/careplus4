@@ -1,61 +1,21 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Unit Details</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f9;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .details-container {
-            max-width: 500px;
-            margin: 20px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .details-container p {
-            font-size: 16px;
-            margin: 10px 0;
-        }
-        .details-container p strong {
-            color: #333;
-        }
-        .actions {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .actions a {
-            margin: 0 10px;
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .actions a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-<h1>Unit Details</h1>
-<div class="details-container">
-    <p><strong>Unit ID:</strong> ${unit.id}</p>
-    <p><strong>Unit Name:</strong> ${unit.name}</p>
-    <div class="actions">
-        <a href="/admin/unit/edit/${unit.id}">Edit</a>
-        <a href="/admin/unit/delete/${unit.id}" onclick="return confirm('Are you sure you want to delete this unit?')">Delete</a>
-        <a href="/admin/units">Back to List</a>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<c:url value="/" var="URL"></c:url>
+
+<div class="container mt-5">
+    <div class="card mx-auto shadow-lg" style="max-width: 500px;">
+        <div class="card-header text-center bg-primary text-white">
+            <h1 class="h4">Unit Details</h1>
+        </div>
+        <div class="card-body">
+            <p><strong>Unit ID:</strong> ${unit.id}</p>
+            <p><strong>Unit Name:</strong> ${unit.name}</p>
+        </div>
+        <div class="card-footer text-center">
+            <a href="/admin/unit/edit/${unit.id}" class="btn btn-warning me-2">Edit</a>
+            <a href="/admin/unit/delete/${unit.id}" class="btn btn-danger me-2"
+               onclick="return confirm('Are you sure you want to delete this unit?')">Delete</a>
+            <a href="/admin/units" class="btn btn-secondary">Back to List</a>
+        </div>
     </div>
 </div>
-<c:if test="${not empty message}">
-    <p class="message">${message}</p>
-</c:if>
-</body>
-</html>
