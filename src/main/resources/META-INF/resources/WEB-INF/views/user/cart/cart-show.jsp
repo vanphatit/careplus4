@@ -66,7 +66,7 @@
                                     <fmt:formatNumber type="number" value="${item.subTotal}" /> đ
                                 </td>
                                 <td class="cart-table__column cart-table__column--remove">
-                                    <form method="post" action="/delete-cart-detail/${item.id}">
+                                    <form method="post" action="/user/delete-cart-detail/${item.id}">
                                         <button class="btn btn-md bg-light mt-2">
                                             <i class="fa fa-times text-danger"></i>
                                         </button>
