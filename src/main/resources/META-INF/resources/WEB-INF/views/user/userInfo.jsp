@@ -1,4 +1,3 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:url value="/" var="URL"></c:url>
@@ -19,9 +18,13 @@
                            style="color: #0077b6 !important">
                             <i class="fas fa-user"></i> Hồ sơ</a></li>
                     <li class="list-group-item">
-                        <a href="#" class="text-decoration-none"
+                        <a href="${pageContext.request.contextPath}/user/reviewed" class="text-decoration-none"
                            style="color: #0077b6 !important">
-                        <i class="fas fa-calendar-alt"></i> Hoạt động gần đây</a></li>
+                        <i class="fas fa-calendar-alt"></i> Hóa đơn chưa đánh giá</a></li>
+                    <li class="list-group-item">
+                        <a href="${pageContext.request.contextPath}/user/reviews" class="text-decoration-none"
+                           style="color: #0077b6 !important">
+                            <i class="fas fa-calendar-alt"></i> Lịch sử đánh giá</a></li>
                     <li class="list-group-item">
                         <a href="${pageContext.request.contextPath}/user/updateProfile" class="text-decoration-none"
                            style="color: #0077b6 !important">
