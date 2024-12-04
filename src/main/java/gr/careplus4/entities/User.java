@@ -1,5 +1,6 @@
 package gr.careplus4.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
@@ -60,17 +61,20 @@ public class User implements UserDetails {
     private Date updatedAt;
 
     @ManyToOne
+    @ToString.Exclude
+    @JsonBackReference // Đánh dấu trường này để Jackson không chuyển đổi nó thành JSON và tránh recursion
     @JoinColumn(name = "IDRole", nullable = false)
     private Role role;
 
     @Column(name = "IsActive")
-    private boolean isActive;
+    private boolean status;
 
     @Column(name = "PointEarned")
     @Min(value = 0, message = "Points must be >= 0")
     private int pointEarned;
 
     @OneToOne(mappedBy = "user")
+    @ToString.Exclude
     private Cart cart;
 
     @Override
@@ -100,6 +104,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return isActive;
+        return status;
     }
 }

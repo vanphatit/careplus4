@@ -73,6 +73,13 @@ public class LoginController {
             // Xác thực người dùng
             User authenticatedUser = authenticationService.authenticate(loginUser);
 
+            // Kiểm tra email có đúng định dạng Gmail hay không
+            if (!authenticatedUser.getEmail().matches("^[a-zA-Z0-9._%+-]+@gmail\\.com$") || authenticatedUser.getEmail().isEmpty()) {
+                ModelAndView mav = new ModelAndView("login");
+                mav.addObject("error", "Email must be a valid Gmail address (e.g., user@gmail.com)");
+                return mav;
+            }
+
             // Tạo JWT
             long expiration = rememberMe != null ? 604800000L : 3600000L; // 7 ngày hoặc 1 giờ
             String jwtToken = jwtService.generateToken(authenticatedUser, expiration);
@@ -117,7 +124,12 @@ public class LoginController {
             return new ModelAndView( "redirect:/au/signup", model);
         }
 
-        registerUser.setIdRole(2);
+        if(!registerUser.getEmail().matches("^[a-zA-Z0-9._%+-]+@gmail\\.com$") || registerUser.getEmail().isEmpty()){
+            model.addAttribute("errorMessage", "Email phải có dạng ....@gmail.com.");
+            return new ModelAndView( "redirect:/au/signup", model);
+        }
+
+        registerUser.setIdRole(3);
 
         if(authenticationService.register(registerUser) != null){
             model.addAttribute("successMessage", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");

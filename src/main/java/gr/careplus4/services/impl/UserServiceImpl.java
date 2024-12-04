@@ -2,13 +2,11 @@ package gr.careplus4.services.impl;
 
 import gr.careplus4.entities.User;
 import gr.careplus4.repositories.UserRepository;
-import gr.careplus4.services.iRoleService;
 import gr.careplus4.services.iUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -72,6 +70,11 @@ public class UserServiceImpl implements iUserService {
     @Override
     public Page<User> findByNameContaining(String name, Pageable pageable) {
         return userRepository.findByNameContaining(name, pageable);
+    }
+
+    @Override
+    public Page<User> findByNameContainingIgnoreCaseOrPhoneNumber(String name, String phoneNumber, Pageable pageable) {
+        return userRepository.findByNameContainingIgnoreCaseOrPhoneNumber(name, phoneNumber, pageable);
     }
 
     @Override

@@ -13,6 +13,6 @@ import java.util.Date;
 public class ReviewForUserModel {
     String userName;
     Date date;
-    Float rating;
+    BigDecimal rating;
     String review;
 }

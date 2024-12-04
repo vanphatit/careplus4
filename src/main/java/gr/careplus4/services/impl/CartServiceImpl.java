@@ -56,7 +56,7 @@ public class CartServiceImpl implements iCartService {
     }
 
     @Override
-    public void handleAddProductToCart(String phone, String medicineId, HttpSession session) {
+    public void handleAddProductToCart(String phone, String medicineId, int quantity) {
        Optional<User> user = this.userRepository.findByPhoneNumber(phone);
        if (user.isPresent()) {
            // check user đã có Cart chưa ? nếu chưa -> tạo mới
@@ -80,7 +80,7 @@ public class CartServiceImpl implements iCartService {
                otherCart.setId(GeneratedId.getGeneratedId(preCardId));
                otherCart.setUser(user.get());
                otherCart.setProductCount(0);
-               // Cap nhat lai gio hang cho user
+               // Cập nhật lại giỏ hàng cho user
                user.get().setCart(otherCart);
                 try {
                     this.cartRepository.save(otherCart);
@@ -102,19 +102,18 @@ public class CartServiceImpl implements iCartService {
                    cd.setCart(cart.get());
                    cd.setMedicine(realProduct);
                    cd.setUnitCost(realProduct.getUnitCost());
-                   cd.setQuantity(1);
+                   cd.setQuantity(quantity);
                    this.cartDetailRepository.save(cd);
                    // update cart (cartCount);
                    int total = cart.get().getProductCount() + 1;
                    cart.get().setProductCount(total);
                    this.cartRepository.save(cart.get());
                } else {
-                   oldDetail.setQuantity(oldDetail.getQuantity() + 1);
+                   oldDetail.setQuantity(oldDetail.getQuantity() + quantity);
                    oldDetail.setSubTotal(oldDetail.getSubTotal().add(realProduct.getUnitCost()));
                    this.cartDetailRepository.save(oldDetail);
                }
            }
-
        }
     }
 

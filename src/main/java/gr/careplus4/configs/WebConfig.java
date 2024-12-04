@@ -43,7 +43,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new UserInterceptor(userService, jwtCookies, jwtService))
-                .addPathPatterns("/**")
+                .addPathPatterns("/**","/admin/**","/vendor/**")
                 .excludePathPatterns("/au/**", "/assets/**", "/v1/api/**", "/css/**", "/js/**", "/images/**");
         registry.addInterceptor(new CategoryInterceptor(categoryService))
                 .addPathPatterns("/**")
