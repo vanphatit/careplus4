@@ -43,11 +43,6 @@
         </nav>
     </c:if>
 
-    <!-- Nút quay lại -->
-    <div class="text-center mt-4">
-        <a href="/vendor/dashboard" class="btn btn-secondary">Quay lại Dashboard</a>
-    </div>
-
     <!-- Thêm script Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </div>
