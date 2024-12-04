@@ -482,7 +482,7 @@ public class MedicineServicesImpl implements iMedicineServices {
     }
 
     @Override
-    public List<MedicineForUserModel> findTop10SellingMedicinesFromUniqueList() {
+    public List<MedicineForUserModel> findTop9SellingMedicinesFromUniqueList() {
 
         Set<MedicineForUserModel> uniqueList = new HashSet<>(findNearestExpiryMedicines());
 
@@ -497,8 +497,127 @@ public class MedicineServicesImpl implements iMedicineServices {
                     return Map.entry(medicine, totalQuantitySold);
                 })
                 .sorted((entry1, entry2) -> Integer.compare(entry2.getValue(), entry1.getValue())) // Sắp xếp theo tổng số lượng giảm dần
-                .limit(10) // Lấy top 10 sản phẩm
+                .limit(9) // Lấy top 10 sản phẩm
                 .map(Map.Entry::getKey) // Chỉ lấy phần `MedicineForUserModel`
+                .toList();
+    }
+
+    @Override
+    public List<Map<String, Object>> findTop9FavoriteBrandsWithDetails() {
+        // Lấy toàn bộ danh sách thuốc từ database
+        List<Medicine> medicines = medicineRepository.findAll();
+
+        // Nhóm theo tên thương hiệu, tính tổng số lượng sản phẩm và tổng số lượng bán ra
+        Map<String, Map<String, Object>> manufacturerDetails = medicines.stream()
+                .collect(Collectors.groupingBy(
+                        medicine -> medicine.getManufacturer().getName(), // Nhóm theo tên thương hiệu (String)
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                brandMedicines -> {
+                                    int totalProducts = brandMedicines.size(); // Số lượng sản phẩm của thương hiệu
+                                    int totalSales = brandMedicines.stream()
+                                            .mapToInt(medicine -> billDetailRepository.findByMedicineId(medicine.getId()).stream()
+                                                    .mapToInt(BillDetail::getQuantity) // Lấy quantity từ mỗi BillDetail
+                                                    .sum())
+                                            .sum(); // Cộng dồn tổng số lượng bán ra
+
+                                    // Tạo thông tin chi tiết thương hiệu
+                                    Map<String, Object> details = new HashMap<>();
+                                    details.put("brandName", brandMedicines.get(0).getManufacturer().getName());
+                                    details.put("totalProducts", totalProducts);
+                                    details.put("totalSales", totalSales);
+                                    return details;
+                                }
+                        )
+                ));
+
+        // Chuyển Map thành List, sắp xếp giảm dần theo tổng số lượng bán ra và lấy top 9
+        return manufacturerDetails.values().stream()
+                .sorted((details1, details2) -> Integer.compare((int) details2.get("totalSales"), (int) details1.get("totalSales")))
+                .limit(9) // Lấy top 9 thương hiệu
+                .toList();
+    }
+
+    @Override
+    public List<Map<String, Object>> findTop9FavoriteCategoriesWithDetails() {
+        // Lấy toàn bộ danh sách thuốc từ database
+        List<Medicine> medicines = medicineRepository.findAll();
+
+        // Nhóm theo tên danh mục, tính tổng số lượng sản phẩm và tổng số lượng bán ra
+        Map<String, Map<String, Object>> categoryDetails = medicines.stream()
+                .collect(Collectors.groupingBy(
+                        medicine -> medicine.getCategory().getName(), // Nhóm theo tên danh mục (String)
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                categoryMedicines -> {
+                                    int totalProducts = categoryMedicines.size(); // Số lượng sản phẩm trong danh mục
+                                    int totalSales = categoryMedicines.stream()
+                                            .mapToInt(medicine -> billDetailRepository.findByMedicineId(medicine.getId()).stream()
+                                                    .mapToInt(BillDetail::getQuantity) // Lấy quantity từ mỗi BillDetail
+                                                    .sum())
+                                            .sum(); // Cộng dồn tổng số lượng bán ra
+
+                                    // Tạo thông tin chi tiết danh mục
+                                    Map<String, Object> details = new HashMap<>();
+                                    details.put("categoryName", categoryMedicines.get(0).getCategory().getName());
+                                    details.put("totalProducts", totalProducts);
+                                    details.put("totalSales", totalSales);
+                                    return details;
+                                }
+                        )
+                ));
+
+        // Chuyển Map thành List, sắp xếp giảm dần theo tổng số lượng bán ra và lấy top 9
+        return categoryDetails.values().stream()
+                .sorted((details1, details2) -> Integer.compare((int) details2.get("totalSales"), (int) details1.get("totalSales")))
+                .limit(9) // Lấy top 10 danh mục
+                .toList();
+    }
+
+    @Override
+    public List<Map<String, Object>> findTop3PopularMedicinesLast7Days() {
+        // Lấy ngày hiện tại và 7 ngày trước
+        java.sql.Date now = new java.sql.Date(System.currentTimeMillis());
+        java.sql.Date sevenDaysAgo = new java.sql.Date(System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000);
+
+        // Lấy danh sách BillDetail trong 7 ngày gần đây
+        List<BillDetail> recentBillDetails = billDetailRepository.findAllByBillDateBetween(sevenDaysAgo, now);
+
+        // Tính tổng số lượng bán ra cho mỗi sản phẩm
+        Map<String, Integer> medicineSales = recentBillDetails.stream()
+                .collect(Collectors.groupingBy(
+                        billDetail -> billDetail.getMedicine().getId(), // Nhóm theo ID thuốc
+                        Collectors.summingInt(BillDetail::getQuantity)  // Tổng số lượng bán ra
+                ));
+
+        // Sắp xếp các sản phẩm theo tổng số lượng bán được giảm dần và lấy top 5
+        List<String> topMedicineIds = medicineSales.entrySet().stream()
+                .sorted((entry1, entry2) -> Integer.compare(entry2.getValue(), entry1.getValue()))
+                .limit(3) // Lấy top 3 sản phẩm
+                .map(Map.Entry::getKey) // Lấy ID của sản phẩm
+                .toList();
+
+        // Lấy thông tin chi tiết của các sản phẩm dựa trên danh sách ID và thêm `totalSales`
+        return topMedicineIds.stream()
+                .map(medicineId -> {
+                    Medicine medicine = medicineRepository.findById(medicineId)
+                            .orElseThrow(() -> new RuntimeException("Medicine not found with ID: " + medicineId));
+                    Map<String, Object> medicineDetails = new HashMap<>();
+                    medicineDetails.put("id", medicine.getId());
+                    medicineDetails.put("name", medicine.getName());
+                    medicineDetails.put("description", medicine.getDescription());
+                    medicineDetails.put("unitCost", medicine.getUnitCost());
+                    medicineDetails.put("stockQuantity", medicine.getStockQuantity());
+                    medicineDetails.put("dosage", medicine.getDosage());
+                    medicineDetails.put("rating", medicine.getRating());
+                    medicineDetails.put("manufacturerName", medicine.getManufacturer().getName());
+                    medicineDetails.put("categoryName", medicine.getCategory().getName());
+                    medicineDetails.put("unitName", medicine.getUnit().getName());
+                    medicineDetails.put("expiryDate", medicine.getExpiryDate());
+                    medicineDetails.put("image", medicine.getImage());
+                    medicineDetails.put("totalSales", medicineSales.get(medicineId)); // Thêm tổng số lượt bán
+                    return medicineDetails;
+                })
                 .toList();
     }
 
