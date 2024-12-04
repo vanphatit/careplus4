@@ -21,7 +21,7 @@
                 <c:forEach var="category" items="${rootCategories}">
                     <li class="mobile-links__item" data-collapse-item>
                         <div class="mobile-links__item-title">
-                            <a href="/categories/${category.id}" class="mobile-links__item-link">${category.name}</a>
+                            <a href="/user/medicines?${category.id}" class="mobile-links__item-link">${category.name}</a>
                             <button class="mobile-links__item-toggle" type="button" data-collapse-trigger>
                                 <svg class="mobile-links__item-arrow" width="12px" height="7px">
                                     <use xlink:href="${URL}assets/images/sprite.svg#arrow-rounded-down-12x7"></use>
@@ -34,7 +34,7 @@
                                     <ul class="mobile-links mobile-links--level--1">
                                         <li class="mobile-links__item" data-collapse-item>
                                             <div class="mobile-links__item-title">
-                                                <a href="/categories/${subCategory.id}"
+                                                <a href="/user/medicines?${subCategory.id}"
                                                    class="mobile-links__item-link">${subCategory.name}</a>
                                             </div>
                                         </li>

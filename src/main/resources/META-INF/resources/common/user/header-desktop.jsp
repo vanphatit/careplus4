@@ -80,7 +80,7 @@
                                                 <ul class="menu menu--layout--classic">
                                                     <c:forEach var="subCategory" items="${category.subCategories}">
                                                         <li>
-                                                            <a href="/user/medicine?${subCategory.id}">
+                                                            <a href="/user/medicines?${subCategory.id}">
                                                                     ${subCategory.name}
                                                             </a>
                                                         </li>

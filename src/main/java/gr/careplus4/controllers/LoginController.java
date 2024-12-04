@@ -124,7 +124,12 @@ public class LoginController {
             return new ModelAndView( "redirect:/au/signup", model);
         }
 
-        registerUser.setIdRole(2);
+        if(!registerUser.getEmail().matches("^[a-zA-Z0-9._%+-]+@gmail\\.com$") || registerUser.getEmail().isEmpty()){
+            model.addAttribute("errorMessage", "Email phải có dạng ....@gmail.com.");
+            return new ModelAndView( "redirect:/au/signup", model);
+        }
+
+        registerUser.setIdRole(3);
 
         if(authenticationService.register(registerUser) != null){
             model.addAttribute("successMessage", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");
