@@ -1,12 +1,11 @@
 package gr.careplus4.models;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -15,9 +14,9 @@ public class ReviewDetailModel {
     @NotNull
     private String medicineId;
 
-    @Min(1)
-    @Max(5)
-    private Integer rating;
+    @DecimalMin("0.0")
+    @DecimalMax("5.0")
+    private BigDecimal rating;
 
     @NotBlank
     private String comment;

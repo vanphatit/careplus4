@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="${URL}assets/vendor/bootstrap-4.2.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="${URL}assets/vendor/owl-carousel-2.3.4/assets/owl.carousel.min.css">
     <link rel="stylesheet" href="${URL}assets/css/style.css"><!-- js -->
-    <link rel="stylesheet" href="${URL}assets/css/main.css">
+    <link rel="stylesheet" href="${URL}assets/css/main.css"> <!-- trỏ đến file main.css -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <script src="${URL}assets/vendor/jquery-3.3.1/jquery.min.js"></script>
     <script src="${URL}assets/vendor/bootstrap-4.2.1/js/bootstrap.bundle.min.js"></script>

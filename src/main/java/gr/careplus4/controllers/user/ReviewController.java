@@ -3,6 +3,8 @@ package gr.careplus4.controllers.user;
 import gr.careplus4.entities.*;
 import gr.careplus4.models.ReviewDetailModel;
 import gr.careplus4.services.impl.*;
+import gr.careplus4.services.security.JwtCookies;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +42,9 @@ public class ReviewController {
     @Autowired
     private UserServiceImpl userServiceImpl;
 
+    @Autowired
+    private JwtCookies jwtCookies;
+
     // Hiển thị danh sách review của vendor
     @GetMapping("/vendor/reviews")
     public ModelAndView showReviews(Model model, @RequestParam("page") Optional<Integer> page,
@@ -57,17 +62,18 @@ public class ReviewController {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return new ModelAndView("/vendor/review-list");
+        return new ModelAndView("vendor/review-list");
     }
 
     // Hiển thị chi tiết review của vendor
     @GetMapping("/vendor/reviews/{id}")
     public ModelAndView showReviewDetails(@PathVariable("id") String id, Model model) {
+
         Review review = reviewService.findById(id).get();
         List<ReviewDetail> reviewDetails = reviewDetailService.findReviewDetailsByReview(review, PageRequest.of(0, 5));
         model.addAttribute("review", review);
         model.addAttribute("reviewDetails", reviewDetails);
-        return new ModelAndView("/vendor/review-details");
+        return new ModelAndView("vendor/review-details");
     }
 
     // Xóa review bởi vendor
@@ -84,8 +90,11 @@ public class ReviewController {
     }
 
     // Hiển thị danh sách chưa review của user và chọn bill để review
-    @GetMapping("/user/{id}/reviewed")
-    public ModelAndView showReviewForm(@PathVariable("id") String id, Model model) {
+    @GetMapping("/user/reviewed")
+    public ModelAndView showReviewForm(HttpServletRequest request, Model model) {
+
+        String id = jwtCookies.getUserPhoneFromJwt(request);
+
         // check and list all bill that not in review about 14 days ago
         User user = userServiceImpl.findByPhoneNumber(id).get();
         Date currentDate = new Date(); // current date
@@ -101,25 +110,17 @@ public class ReviewController {
 
         model.addAttribute("bills", billsNotReviewed);
 
-        return new ModelAndView("/user/not-reviewed-list");
+        return new ModelAndView("user/not-reviewed-list");
     }
 
     // Hiển thị danh sách review của user
-    @GetMapping("/user/{id}/reviews")
-    public ModelAndView showUserReviews(@PathVariable("id") String id,
-                                        @RequestParam(defaultValue = "0") int page,
+    @GetMapping("/user/reviews")
+    public ModelAndView showUserReviews(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "5") int size,
+                                        HttpServletRequest request,
                                         Model model) {
 
-        // Lấy thông tin từ SecurityContext
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName(); // username (hoặc phoneNumber)
-
-        // Kiểm tra nếu id không khớp và người dùng không phải ADMIN
-        if (!currentUsername.equals(id) || !authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
-            throw new AccessDeniedException("You do not have permission to view this resource.");
-        }
+        String id = jwtCookies.getUserPhoneFromJwt(request);
 
         User user = userServiceImpl.findByPhoneNumber(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -148,9 +149,10 @@ public class ReviewController {
     }
 
     // Hiển thị form review của user cho bill đã chọn
-    @GetMapping("/user/{id}/review/{billId}")
-    public ModelAndView reviewForBill(Model model, @PathVariable("id") String id,
+    @GetMapping("/user/review/{billId}")
+    public ModelAndView reviewForBill(Model model, HttpServletRequest request,
                                       @PathVariable("billId") String billId) {
+        String id = jwtCookies.getUserPhoneFromJwt(request);
         User user = userServiceImpl.findByPhoneNumber(id).get();
         Bill bill = billService.findById(billId).get();
 
@@ -174,14 +176,15 @@ public class ReviewController {
         model.addAttribute("bill", bill);
         model.addAttribute("medicines", medicinesNotReviewed);
 
-        return new ModelAndView("/user/review-form");
+        return new ModelAndView("user/review-form");
     }
 
     // Lưu review của user cho bill đã chọn
-    @PostMapping("/user/{id}/review/{billId}")
-    public ModelAndView saveReview(@PathVariable("id") String id,
+    @PostMapping("/user/review/{billId}")
+    public ModelAndView saveReview(HttpServletRequest request,
                                    @PathVariable("billId") String billId,
                                    @ModelAttribute("reviewDetails") ReviewDetailModel model) {
+        String id = jwtCookies.getUserPhoneFromJwt(request);
         User user = userServiceImpl.findByPhoneNumber(id).orElseThrow(() -> new IllegalArgumentException("Invalid User"));
         Bill bill = billService.findById(billId).orElseThrow(() -> new IllegalArgumentException("Invalid Bill"));
 
@@ -202,20 +205,25 @@ public class ReviewController {
             throw new IllegalArgumentException("Product already reviewed!");
         }
 
+        Medicine medicine = medicineService.findById(model.getMedicineId()).orElseThrow(() -> new IllegalArgumentException("Invalid Medicine"));
+
         // Tạo chi tiết review mới
         ReviewDetail reviewDetail = new ReviewDetail();
         reviewDetail.setReview(review);
-        reviewDetail.setMedicine(medicineService.findById(model.getMedicineId()).orElseThrow(() -> new IllegalArgumentException("Invalid Medicine")));
+        reviewDetail.setMedicine(medicine);
         reviewDetail.setRating(model.getRating());
         reviewDetail.setText(model.getComment());
         reviewDetailService.save(reviewDetail);
 
-        return new ModelAndView("redirect:/user/" + id + "/review/" + bill.getId());
+        medicineService.updateTotalRatingForMedicine(medicine.getName(), medicine.getManufacturer().getName(), model.getRating());
+
+        return new ModelAndView("redirect:/user/review/" + bill.getId());
     }
 
     // Xoá review của user cho bill đã chọn
-    @GetMapping("/user/{id}/review/{billId}/delete")
-    public ModelAndView deleteReview(@PathVariable("id") String id, @PathVariable("billId") String billId) {
+    @GetMapping("/user/review/{billId}/delete")
+    public ModelAndView deleteReview(HttpServletRequest request, @PathVariable("billId") String billId) {
+        String id = jwtCookies.getUserPhoneFromJwt(request);
         User user = userServiceImpl.findByPhoneNumber(id).get();
         Bill bill = billService.findById(billId).get();
         Review review = reviewService.findReviewByUserAndBill(user, bill);
@@ -224,7 +232,6 @@ public class ReviewController {
             reviewDetailService.delete(rd);
         }
         reviewService.delete(review);
-        return new ModelAndView("redirect:/user/" + id + "/reviews");
+        return new ModelAndView("redirect:/user/reviews");
     }
-
 }

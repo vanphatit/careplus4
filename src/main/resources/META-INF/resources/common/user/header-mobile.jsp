@@ -21,7 +21,7 @@
                 <c:forEach var="category" items="${rootCategories}">
                     <li class="mobile-links__item" data-collapse-item>
                         <div class="mobile-links__item-title">
-                            <a href="/categories/${category.id}" class="mobile-links__item-link">${category.name}</a>
+                            <a href="/user/medicines?${category.id}" class="mobile-links__item-link">${category.name}</a>
                             <button class="mobile-links__item-toggle" type="button" data-collapse-trigger>
                                 <svg class="mobile-links__item-arrow" width="12px" height="7px">
                                     <use xlink:href="${URL}assets/images/sprite.svg#arrow-rounded-down-12x7"></use>
@@ -34,7 +34,7 @@
                                     <ul class="mobile-links mobile-links--level--1">
                                         <li class="mobile-links__item" data-collapse-item>
                                             <div class="mobile-links__item-title">
-                                                <a href="/categories/${subCategory.id}"
+                                                <a href="/user/medicines?${subCategory.id}"
                                                    class="mobile-links__item-link">${subCategory.name}</a>
                                             </div>
                                         </li>
@@ -45,19 +45,28 @@
                     </li>
                 </c:forEach>
 
-                <li class="mobile-links__item">
-                    <div class="mobile-links__item-title">
-                        <a href="${URL}assets/about-us.html" class="mobile-links__item-link">Về chúng tôi</a>
-                    </div>
-                </li>
-                <li class="mobile-links__item">
-                    <div class="mobile-links__item-title">
-                        <a href="${URL}assets/track-order.html" class="mobile-links__item-link">Theo dõi đơn hàng</a>
-                    </div>
-                </li>
+<%--                <li class="mobile-links__item">--%>
+<%--                    <div class="mobile-links__item-title">--%>
+<%--                        <a href="${URL}assets/about-us.html" class="mobile-links__item-link">Về chúng tôi</a>--%>
+<%--                    </div>--%>
+<%--                </li>--%>
+<%--                <li class="mobile-links__item">--%>
+<%--                    <div class="mobile-links__item-title">--%>
+<%--                        <a href="${URL}assets/track-order.html" class="mobile-links__item-link">Theo dõi đơn hàng</a>--%>
+<%--                    </div>--%>
+<%--                </li>--%>
                 <li class="mobile-links__item" data-collapse-item>
                     <div class="mobile-links__item-title">
-                        <a href="#" class="mobile-links__item-link">Tài khoản</a>
+                        <a href="#" class="mobile-links__item-link">
+                            <c:choose>
+                                <c:when test="${not empty user}">
+                                    ${user.name} <!-- Hiển thị tên người dùng -->
+                                </c:when>
+                                <c:otherwise>
+                                    Tài khoản
+                                </c:otherwise>
+                            </c:choose>
+                        </a>
                         <button class="mobile-links__item-toggle" type="button" data-collapse-trigger>
                             <svg class="mobile-links__item-arrow" width="12px" height="7px">
                                 <use xlink:href="${URL}assets/images/sprite.svg#arrow-rounded-down-12x7"></use>
@@ -65,38 +74,63 @@
                         </button>
                     </div>
                     <div class="mobile-links__item-sub-links" data-collapse-content>
-                        <ul class="mobile-links mobile-links--level--1">
-                            <li class="mobile-links__item" data-collapse-item>
-                                <div class="mobile-links__item-title">
-                                    <a href="#"
-                                       class="mobile-links__item-link">Thông tin cá nhân</a>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="mobile-links mobile-links--level--1">
-                            <li class="mobile-links__item" data-collapse-item>
-                                <div class="mobile-links__item-title">
-                                    <a href="#"
-                                       class="mobile-links__item-link">Đơn hàng</a>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="mobile-links mobile-links--level--1">
-                            <li class="mobile-links__item" data-collapse-item>
-                                <div class="mobile-links__item-title">
-                                    <a href="/au/login"
-                                       class="mobile-links__item-link">Đăng nhập</a>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="mobile-links mobile-links--level--1">
-                            <li class="mobile-links__item" data-collapse-item>
-                                <div class="mobile-links__item-title">
-                                    <a href="/au/logout"
-                                       class="mobile-links__item-link">Đăng xuất</a>
-                                </div>
-                            </li>
-                        </ul>
+                        <c:if test="${not empty user}">
+                            <ul class="mobile-links mobile-links--level--1">
+                                <li class="mobile-links__item" data-collapse-item>
+                                    <div class="mobile-links__item-title">
+                                        <a href="${pageContext.request.contextPath}/user/userInfo"
+                                           class="mobile-links__item-link">Tài khoản của tôi</a>
+                                    </div>
+                                </li>
+                            </ul>
+                            <ul class="mobile-links mobile-links--level--1">
+                                <li class="mobile-links__item" data-collapse-item>
+                                    <div class="mobile-links__item-title">
+                                        <a href="${pageContext.request.contextPath}/user/order-history"
+                                           class="mobile-links__item-link">Đơn hàng</a>
+                                    </div>
+                                </li>
+                            </ul>
+                            <ul class="mobile-links mobile-links--level--1">
+                                <li class="mobile-links__item" data-collapse-item>
+                                    <div class="mobile-links__item-title">
+                                        <a href="${pageContext.request.contextPath}/user/reviews"
+                                           class="mobile-links__item-link">Đánh giá</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </c:if>
+
+                        <c:choose>
+                            <c:when test="${not empty user}">
+                                <ul class="mobile-links mobile-links--level--1">
+                                    <li class="mobile-links__item" data-collapse-item>
+                                        <div class="mobile-links__item-title">
+                                            <a href="/au/logout"
+                                               class="mobile-links__item-link">Đăng xuất</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </c:when>
+                            <c:otherwise>
+                                <ul class="mobile-links mobile-links--level--1">
+                                    <li class="mobile-links__item" data-collapse-item>
+                                        <div class="mobile-links__item-title">
+                                            <a href="/au/login"
+                                               class="mobile-links__item-link">Đăng nhập</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ul class="mobile-links mobile-links--level--1">
+                                    <li class="mobile-links__item" data-collapse-item>
+                                        <div class="mobile-links__item-title">
+                                            <a href="/au/signup"
+                                               class="mobile-links__item-link">Đăng ký</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </li>
             </ul>
@@ -119,8 +153,8 @@
                         <img src="${URL}assets/images/careplus4-high-resolution-logo-transparent.png"
                              width="120px" height="20px"></a>
                     <div class="mobile-header__search">
-                        <form class="mobile-header__search-form" action="#"><input
-                                class="mobile-header__search-input" name="search"
+                        <form class="mobile-header__search-form" method="post" action="/user/medicine/search">
+                            <input class="mobile-header__search-input" name="keyword" style="color: #000000"
                                 placeholder="Tìm kiếm ..." aria-label="Site search" type="text"
                                 autocomplete="off">
                             <button
@@ -148,18 +182,18 @@
                                                 <use xlink:href="${URL}assets/images/sprite.svg#search-20"></use>
                                             </svg></span></button>
                         </div>
-                        <div class="indicator indicator--mobile d-sm-flex d-none"><a href="${URL}assets/wishlist.html"
-                                                                                     class="indicator__button"><span
-                                class="indicator__area"><svg width="20px"
-                                                             height="20px">
-                                                <use xlink:href="${URL}assets/images/sprite.svg#heart-20"></use>
-                                            </svg> <span class="indicator__value">0</span></span></a></div>
+<%--                        <div class="indicator indicator--mobile d-sm-flex d-none"><a href="${URL}assets/wishlist.html"--%>
+<%--                                                                                     class="indicator__button"><span--%>
+<%--                                class="indicator__area"><svg width="20px"--%>
+<%--                                                             height="20px">--%>
+<%--                                                <use xlink:href="${URL}assets/images/sprite.svg#heart-20"></use>--%>
+<%--                                            </svg> <span class="indicator__value">0</span></span></a></div>--%>
                         <div class="indicator indicator--mobile"><a href="${URL}assets/cart.html"
                                                                     class="indicator__button"><span
                                 class="indicator__area"><svg width="20px"
                                                              height="20px">
                                                 <use xlink:href="${URL}assets/images/sprite.svg#cart-20"></use>
-                                            </svg> <span class="indicator__value">3</span></span></a></div>
+                                            </svg> <span class="indicator__value">${user.cart.productCount}</span></span></a></div>
                     </div>
                 </div>
             </div>

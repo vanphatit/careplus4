@@ -5,12 +5,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách Import</title>
+    <title>Danh sách phiếu nhập</title>
     <link rel="stylesheet" href="/resources/css/style.css"> <!-- Đường dẫn tới CSS -->
 </head>
 <body>
 <div class="container">
-    <h1>Danh sách Import</h1>
+    <h1>Danh sách phiếu nhập</h1>
 
     <!-- Thông báo lỗi hoặc thành công -->
     <c:if test="${not empty error}">
@@ -22,20 +22,32 @@
 
     <!-- Thanh tìm kiếm -->
     <form action="/vendor/import/searchpaginated" method="get" class="form-inline">
-        <input type="text" name="id" placeholder="Tìm theo ID Import" value="${id}" class="form-control"/>
-        <input type="text" name="providerId" placeholder="Tìm theo ID Provider" value="${providerId}" class="form-control"/>
-        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        <div class="input-group w-50"> <!-- Sử dụng w-50 để tăng chiều rộng -->
+            <input
+                    type="text"
+                    name="id"
+                    placeholder="Tìm theo ID Import"
+                    value="${id}"
+                    class="form-control"
+                    style="flex: 2;"
+            />
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </div>
     </form>
 
+    <!-- Nút thêm mới -->
+    <a href="/vendor/import/add" class="btn btn-success">Thêm phiếu nhập mới</a>
+    <a href="/vendor/medicine/add" class="btn btn-success">Thêm thuốc mới</a>
     <!-- Bảng danh sách Import -->
+
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Provider</th>
+            <th>Mã phiếu nhập </th>
+            <th>Nhà cung cấp</th>
             <th>Ngày nhập</th>
             <th>Tổng tiền</th>
-            <th>Hành động</th>
+            <th>Thao tác</th>
         </tr>
         </thead>
         <tbody>
@@ -75,9 +87,6 @@
         </nav>
     </c:if>
 
-    <!-- Nút thêm mới -->
-    <a href="/vendor/import/add" class="btn btn-success">Thêm Import mới</a>
-    <a href="/vendor/medicine/add" class="btn btn-success">Thêm Medicine mới</a>
 </div>
 </body>
 </html>

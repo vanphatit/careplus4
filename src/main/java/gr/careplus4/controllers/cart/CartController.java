@@ -39,12 +39,22 @@ public class CartController {
 
     @PostMapping("/add-medicine-to-cart/{id}")
     public String addMedicineToCart(@PathVariable String id, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
 
         String phone = jwtCookies.getUserPhoneFromJwt(request);
 
-        this.cartService.handleAddProductToCart(phone, id, session);
-        return "redirect:/";
+        this.cartService.handleAddProductToCart(phone, id, 1);
+        return "redirect:/user/medicines";
+    }
+
+    @PostMapping("/add-medicine-from-view-detail")
+    public String handleAddMedicineFromViewDetail(
+            @RequestParam("id") String id,
+            @RequestParam("quantity") int quantity,
+            HttpServletRequest request) {
+        String phone = jwtCookies.getUserPhoneFromJwt(request);
+
+        this.cartService.handleAddProductToCart(phone, id, quantity);
+        return "redirect:/user/medicine/" + id;
     }
 
     @GetMapping("/cart")

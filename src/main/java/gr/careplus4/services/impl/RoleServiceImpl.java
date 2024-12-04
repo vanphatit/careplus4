@@ -30,6 +30,11 @@ public class RoleServiceImpl implements iRoleService {
     }
 
     @Override
+    public Optional<Role> findByName(String name) {
+        return roleRepository.findByName(name);
+    }
+
+    @Override
     public boolean existsById(Integer integer) {
         return roleRepository.existsById(integer);
     }
