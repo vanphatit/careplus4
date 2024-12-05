@@ -20,21 +20,31 @@
         <div class="alert alert-success">${message}</div>
     </c:if>
 
-    <!-- Thanh tìm kiếm -->
-    <form action="/vendor/import/searchpaginated" method="get" class="form-inline">
-        <div class="input-group w-50"> <!-- Sử dụng w-50 để tăng chiều rộng -->
-            <input
-                    type="text"
-                    name="id"
-                    placeholder="Tìm theo ID Import"
-                    value="${id}"
-                    class="form-control"
-                    style="flex: 2;"
-            />
-            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+<%--    <!-- Thanh tìm kiếm -->--%>
+<%--    <form action="/vendor/import/searchpaginated" method="get" class="form-inline">--%>
+<%--&lt;%&ndash;        <div class="input-group w-50"> <!-- Sử dụng w-50 để tăng chiều rộng -->&ndash;%&gt;--%>
+<%--            <input--%>
+<%--                    type="text"--%>
+<%--                    name="id"--%>
+<%--                    placeholder="Tìm theo ID Import"--%>
+<%--                    value="${id}"--%>
+<%--                    class="form-control"--%>
+<%--                    style="flex: 2;"--%>
+<%--            />--%>
+<%--            <button type="submit" class="btn btn-primary">Tìm kiếm</button>--%>
+<%--&lt;%&ndash;        </div>&ndash;%&gt;--%>
+<%--    </form>--%>
+
+    <form action="${pageContext.request.contextPath}/vendor/import/searchpaginated" method="get" class="row mb-3">
+        <div class="col-md-7 mb-2">
+            <input type="text" name="id" id="id" placeholder="Nhập từ khóa để tìm" value="${param.id}"
+                   class="form-control" />
+        </div>
+        <div class="col-md-2 mb-2">
+            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Tìm kiếm
+            </button>
         </div>
     </form>
-
     <!-- Nút thêm mới -->
     <a href="/vendor/import/add" class="btn btn-success">Thêm phiếu nhập mới</a>
     <a href="/vendor/medicine/add" class="btn btn-success">Thêm thuốc mới</a>
