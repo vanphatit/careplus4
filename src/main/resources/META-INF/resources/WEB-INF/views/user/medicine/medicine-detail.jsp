@@ -87,7 +87,7 @@
                 <div class="row">
                     <div class="col-md-4 text-center">
                         <!-- Hình ảnh thuốc -->
-                        <img src="${pageContext.request.contextPath}/image?fileName=${medicine.image}&width=400&height=400"
+                        <img src="${pageContext.request.contextPath}/images/image?fileName=${medicine.image}&width=400&height=400"
                              alt="${medicine.name}"
                              style="max-width: 100%; height: auto; border-radius: 10px;"
                              class="medicine-img"
@@ -265,7 +265,7 @@
                                 <c:forEach var="product" items="${chunk}">
                                     <div class="col-md-4 col-sm-6"> <!-- Điều chỉnh kích thước cột -->
                                         <div class="product-card">
-                                            <img src="${pageContext.request.contextPath}/image?fileName=${product.image}" class="d-block w-100" alt="${product.name}">
+                                            <img src="${pageContext.request.contextPath}/images/image?fileName=${product.image}" class="d-block w-100" alt="${product.name}">
                                             <div class="product-info">
                                                 <p>${product.name}</p>
                                                 <p>${product.unitCost} VND</p>

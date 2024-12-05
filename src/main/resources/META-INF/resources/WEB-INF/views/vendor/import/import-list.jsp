@@ -22,7 +22,7 @@
 
     <!-- Thanh tìm kiếm -->
     <form action="/vendor/import/searchpaginated" method="get" class="form-inline">
-        <div class="input-group w-50"> <!-- Sử dụng w-50 để tăng chiều rộng -->
+<%--        <div class="input-group w-50"> <!-- Sử dụng w-50 để tăng chiều rộng -->--%>
             <input
                     type="text"
                     name="id"
@@ -32,7 +32,7 @@
                     style="flex: 2;"
             />
             <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-        </div>
+<%--        </div>--%>
     </form>
 
     <!-- Nút thêm mới -->
