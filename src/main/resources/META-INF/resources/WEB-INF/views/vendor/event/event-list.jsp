@@ -15,30 +15,31 @@
 <div class="container mt-5">
     <h1 class="mb-4">Danh sách sự kiện</h1>
 
-    <!-- Form tìm kiếm danh mục -->
-    <form action="${pageContext.request.contextPath}/vendor/event/searchpaginated" method="get" class="row mb-3">
-        <div class="col-md-5 mb-2">
-            <input type="text" name="name" id="name" placeholder="Nhập từ khóa để tìm" value="${param.name}"
-                   class="form-control" />
-        </div>
-<%--        <div class="col-md-5 mb-2">--%>
-<%--            <input type="text" name="id" id="id" placeholder="Nhập ID để tìm" value="${param.id}" class="form-control" />--%>
-<%--        </div>--%>
-        <div class="col-md-2 mb-2">
-            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Tìm kiếm
-            </button>
-        </div>
-    </form>
-
-<%--    <form action="${pageContext.request.contextPath}/vendor/event/active" method="get" class="row mb-3">--%>
-<%--        <div class="col-md-10 mb-2">--%>
-<%--            <input type="text" name="date" id="date" placeholder="Nhập ngày để tìm active list" value="${param.date}"--%>
-<%--                   class="form-control" />--%>
-<%--        </div>--%>
-<%--        <div class="col-md-2 mb-2">--%>
-<%--            <button type="submit" class="btn btn-success w-100"><i class="fas fa-calendar-alt"></i> Search</button>--%>
+<%--    <!-- Form tìm kiếm danh mục -->--%>
+<%--    <form action="${pageContext.request.contextPath}/vendor/event/searchpaginated" method="get" class="row mb-3">--%>
+<%--        <div class="d-flex align-items-center gap-2 mb-3">--%>
+<%--            <input type="text" name="name" id="name" placeholder="Nhập từ khóa để tìm" value="${param.name}"--%>
+<%--                   class="form-control" style="width: 250px;"/>--%>
+<%--            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Tìm kiếm--%>
+<%--            </button>--%>
 <%--        </div>--%>
 <%--    </form>--%>
+
+    <!-- Form tìm kiếm -->
+    <div class="d-flex align-items-center gap-2 mb-3">
+        <input
+                type="text"
+                name="name"
+                class="form-control"
+                placeholder="Nhập từ khóa để tìm"
+                value="${param.name}"
+                style="width: 250px;"
+        />
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i> Tìm kiếm
+        </button>
+    </div>
+
     <div class="mb-3">
         <a href="${pageContext.request.contextPath}/vendor/event/add" class="btn btn-success"><i class="fas fa-plus"></i> Thêm sự kiện mới
         </a>
