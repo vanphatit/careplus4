@@ -149,7 +149,7 @@
                             <use xlink:href="${URL}assets/images/sprite.svg#menu-18x14"></use>
                         </svg>
                     </button>
-                    <a class="mobile-header__logo" href="${URL}assets/index.html">
+                    <a class="mobile-header__logo" href="/">
                         <img src="${URL}assets/images/careplus4-high-resolution-logo-transparent.png"
                              width="120px" height="20px"></a>
                     <div class="mobile-header__search">
@@ -192,7 +192,7 @@
                                                                     class="indicator__button"><span
                                 class="indicator__area"><svg width="20px"
                                                              height="20px">
-                                                <use xlink:href="${URL}assets/images/sprite.svg#cart-20"></use>
+                                                <use xlink:href="/user/cart"></use>
                                             </svg> <span class="indicator__value">${user.cart.productCount}</span></span></a></div>
                     </div>
                 </div>
