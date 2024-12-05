@@ -38,11 +38,11 @@ public class CartController {
     private JwtCookies jwtCookies;
 
     @PostMapping("/add-medicine-to-cart/{id}")
-    public String addMedicineToCart(@PathVariable String id, HttpServletRequest request) {
+    public String addMedicineToCart(@PathVariable String id, @RequestParam("quantity") int quantity, HttpServletRequest request) {
 
         String phone = jwtCookies.getUserPhoneFromJwt(request);
 
-        this.cartService.handleAddProductToCart(phone, id, 1);
+        this.cartService.handleAddProductToCart(phone, id, quantity);
         return "redirect:/user/medicines";
     }
 

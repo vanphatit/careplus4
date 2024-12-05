@@ -45,7 +45,7 @@
                         <c:forEach var="item" items="${cartDetails}" varStatus="status">
                             <tr class="cart-table__row" data-index="${status.index}">
                                 <td class="cart-table__column cart-table__column--image">
-                                    <img src="${pageContext.request.contextPath}/image?fileName=${item.medicine.image}"
+                                    <img src="${pageContext.request.contextPath}/images/image?fileName=${item.medicine.image}"
                                          alt="${item.medicine.name}"
                                     />
                                 </td>
