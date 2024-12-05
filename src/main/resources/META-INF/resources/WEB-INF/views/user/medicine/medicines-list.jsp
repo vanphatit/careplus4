@@ -75,7 +75,7 @@
                 <c:forEach var="medicine" items="${medicines}">
                     <div class="col-md-4 mb-4">
                         <div class="medicine-card">
-                            <img src="${pageContext.request.contextPath}/image?fileName=${medicine.image}" alt="${medicine.name}">
+                            <img src="${pageContext.request.contextPath}/images/image?fileName=${medicine.image}" alt="${medicine.name}">
                             <div class="card-body">
                                 <h5>
                                     <a href="${pageContext.request.contextPath}/user/medicine/${medicine.id}" class="btn" style="height: 100px">${medicine.name}</a>

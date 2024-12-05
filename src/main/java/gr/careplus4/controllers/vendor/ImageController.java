@@ -17,7 +17,7 @@ public class ImageController {
     @Value("${upload.directory:uploads/medicines}") // Đường dẫn thư mục chứa ảnh
     private String uploadDirectory;
 
-    @GetMapping("/image")
+    @GetMapping("/images/image")
     public ResponseEntity<byte[]> getImage(@RequestParam String fileName) throws IOException {
         File file = new File(uploadDirectory, fileName);
 

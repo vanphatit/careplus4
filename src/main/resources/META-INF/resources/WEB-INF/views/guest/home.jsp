@@ -165,7 +165,7 @@
                         <c:forEach var="medicine" items="${topProducts}">
                             <div class="col-md-4 col-sm-6">
                                 <div class="product-card shadow-sm rounded p-3">
-                                    <img src="${pageContext.request.contextPath}/image?fileName=${medicine.image}" class="img-fluid rounded" alt="${medicine.name}">
+                                    <img src="${pageContext.request.contextPath}/images/image?fileName=${medicine.image}" class="img-fluid rounded" alt="${medicine.name}">
                                     <h5 class="mt-3">${medicine.name}</h5>
                                     <p><strong>Giá:</strong> ${medicine.unitCost} VND</p>
                                     <p><strong>Đánh giá:</strong> ${medicine.rating}</p>
@@ -191,7 +191,7 @@
                             <c:forEach var="medicine" items="${topSelling}">
                                 <div class="col-md-4 col-sm-6">
                                     <div class="product-card shadow-sm rounded p-3">
-                                        <img src="${pageContext.request.contextPath}/image?fileName=${medicine.image}" class="img-fluid rounded" alt="${medicine.name}">
+                                        <img src="${pageContext.request.contextPath}/images/image?fileName=${medicine.image}" class="img-fluid rounded" alt="${medicine.name}">
                                         <h5 class="mt-3">${medicine.name}</h5>
                                         <p><strong>Giá:</strong> ${medicine.unitCost} VND</p>
                                         <p><strong>Đánh giá:</strong> ${medicine.rating}</p>

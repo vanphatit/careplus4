@@ -21,7 +21,6 @@
     <c:if test="${not empty message}">
         <div class="alert alert-success">${message}</div>
     </c:if>
-
     <!-- Form tìm kiếm -->
     <div class="d-flex align-items-center gap-2 mb-3">
         <input
@@ -36,7 +35,6 @@
             <i class="fas fa-search"></i> Tìm kiếm
         </button>
     </div>
-
 
     <!-- Nút thêm mới -->
     <div class="d-flex gap-2 mb-3">
