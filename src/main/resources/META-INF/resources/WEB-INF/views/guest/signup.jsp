@@ -16,7 +16,7 @@
             <div class="signup-form">
                 <h2 class="form-title">Đăng ký</h2>
 
-                <form action="/au/signup/signup-submit" method="POST" class="register-form" id="register-form">
+                <form action="/au/signup/signup-submit" method="post" class="register-form" id="register-form">
 
                     <!-- Phone Number -->
                     <div class="form-group">
@@ -27,7 +27,14 @@
                     <!-- Name -->
                     <div class="form-group">
                         <label for="fullName"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                        <input type="text" name="fullName" id="fullName" placeholder="Tên của bạn" required maxlength="255"/>
+                        <c:choose>
+                            <c:when test="${not empty name}">
+                                <input type="text" name="fullName" id="fullName" placeholder="Tên của bạn" required maxlength="255" value="${name}"/>
+                            </c:when>
+                            <c:otherwise>
+                                <input type="text" name="fullName" id="fullName" placeholder="Tên của bạn" required maxlength="255"/>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
 
                     <!-- Password -->
@@ -54,7 +61,14 @@
                     <!-- Email -->
                     <div class="form-group">
                         <label for="email"><i class="zmdi zmdi-email"></i></label>
-                        <input type="email" name="email" id="email" placeholder="Email của bạn" required maxlength="255"/>
+                        <c:choose>
+                            <c:when test="${not empty email}">
+                                <input type="email" name="email" id="email" placeholder="Email của bạn" required maxlength="255" value="${email}" readonly/>
+                            </c:when>
+                            <c:otherwise>
+                                <input type="email" name="email" id="email" placeholder="Email của bạn" required maxlength="255"/>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
 
                     <!-- Address (Optional) -->

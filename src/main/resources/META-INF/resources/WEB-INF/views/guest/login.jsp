@@ -46,12 +46,12 @@
                                class="form-submit" value="Đăng nhập" />
                     </div>
                 </form>
-<%--                <div class="social-login">--%>
-<%--                    <span class="social-label">Hoặc đăng nhập bằng</span>--%>
-<%--                    <ul class="socials">--%>
-<%--                        <li><a href="${URL}assets/#" title="Đăng nhập với Google"><i class="display-flex-center zmdi zmdi-google"></i></a></li>--%>
-<%--                    </ul>--%>
-<%--                </div>--%>
+                <div class="social-login">
+                    <span class="social-label">Hoặc đăng nhập bằng</span>
+                    <ul class="socials">
+                        <li><a href="/oauth2/authorization/google" title="Đăng nhập với Google"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
