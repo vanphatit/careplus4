@@ -11,10 +11,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,6 +77,73 @@ public class UserManagerController {
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("seachText", text);
         return "admin/user/user-list";
+    }
+
+    @GetMapping("/user/new")
+    public String newUser(Model model, @RequestParam(value = "errorMessage", required = false) String error,
+                                @RequestParam(value = "successMessage", required = false) String success) {
+        if (error != null)
+            model.addAttribute("errorMessage", error);
+        if (success != null)
+            model.addAttribute("successMessage", success);
+        return "admin/user/user-create";
+    }
+
+    @PostMapping("/user/new")
+    public ModelAndView createUser(
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam("address") String address,
+            @RequestParam("gender") String gender,
+            @RequestParam("role") String role,
+            @RequestParam("password") String password,
+            @RequestParam("confirmPassword") String confirmPassword,
+            ModelMap model) {
+
+        // Kiểm tra mật khẩu khớp nhau
+        if (!password.equals(confirmPassword)) {
+            model.addAttribute("errorMessage", "Mật khẩu và xác nhận mật khẩu không khớp!");
+            return new ModelAndView("redirect:/admin/user/new", model);
+        }
+
+        // Kiểm tra email tồn tại
+        if (userService.findByEmail(email).isPresent()) {
+            model.addAttribute("errorMessage", "Email đã được sử dụng!");
+            return new ModelAndView("redirect:/admin/user/new", model);
+        }
+
+        // Kiểm tra số điện thoại tồn tại
+        if (userService.findByPhoneNumber(phoneNumber).isPresent()) {
+            model.addAttribute("errorMessage", "Số điện thoại đã được sử dụng!");
+            return new ModelAndView("redirect:/admin/user/new", model);
+        }
+
+        try{
+            // Tạo mới user
+            User user = new User();
+            user.setPhoneNumber(phoneNumber);
+            user.setName(name);
+            user.setAddress(address);
+            user.setPassword(passwordEncoder.encode(password));
+            user.setGender(gender);
+            user.setEmail(email);
+            user.setRole(roleService.findByName(role).get());
+            user.setCreatedAt(Date.from(new Date().toInstant()));
+            user.setUpdatedAt(Date.from(new Date().toInstant()));
+            user.setStatus(true);
+            user.setPointEarned(0);
+            user.setStatus(true);
+
+            // Lưu vào cơ sở dữ liệu
+            userService.save(user);
+
+            model.addAttribute("successMessage", "Tạo người dùng thành công!");
+            return new ModelAndView("redirect:/admin/users", model);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Lỗi tạo người dùng!");
+            return new ModelAndView("redirect:/admin/user/new", model);
+        }
     }
 
     @GetMapping("/user/delete/{phoneNumber}")
