@@ -1,6 +1,7 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <c:url value="/" var="URL"></c:url>
+
 <div class="container mt-5" style="padding-bottom: 20px !important">
     <div class="row">
         <div class="col-md-6 offset-md-3">
@@ -10,7 +11,12 @@
                 </div>
 
                 <div class="card-body">
-                    <form id="updatePasswordForm" action="${pageContext.request.contextPath}/user/changePassword" method="post">
+                    <form id="updatePasswordForm" action="${pageContext.request.contextPath}/au/forgot-password" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+
                         <!-- Mật khẩu mới -->
                         <div class="mb-3">
                             <label for="password" class="form-label">Mật khẩu mới</label>
@@ -19,7 +25,7 @@
                         <!-- Nhập lại mật khẩu -->
                         <div class="mb-3">
                             <label for="repassword" class="form-label">Nhập lại mật khẩu</label>
-                            <input type="password" class="form-control" id="repassword" name="repassword" required>
+                            <input type="password" class="form-control" id="repassword" name="repassword" required >
                         </div>
                         <!-- Nhập OTP -->
                         <div class="mb-3">
@@ -30,7 +36,7 @@
                         <!-- Nút lưu thay đổi -->
                         <div class="text-end">
                             <button type="submit" class="btn btn-primary" id="updatePasswordButton" disabled>Đổi mật khẩu</button>
-                            <a href="${pageContext.request.contextPath}/user/userInfo" class="btn btn-secondary">Hủy</a>
+                            <a href="${pageContext.request.contextPath}/au/login" class="btn btn-secondary">Hủy</a>
                         </div>
                     </form>
                 </div>
@@ -40,11 +46,9 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Lấy email từ đối tượng user.email (giả định user được thêm vào trong scope JSP)
-    const email = "${user.email}";
-
     // Xử lý sự kiện Gửi OTP
     document.getElementById("sendOtpButton").addEventListener("click", function () {
+        const email = "${user.email}" || document.getElementById("email").value;
         if (!email) {
             alert("Không tìm thấy email của bạn. Vui lòng kiểm tra lại.");
             return;
@@ -74,6 +78,7 @@
 
     // Xử lý sự kiện Xác minh OTP
     document.getElementById("otp").addEventListener("blur", function () {
+        const email = "${user.email}" || document.getElementById("email").value;
         const otp = document.getElementById("otp").value;
         if (!otp) {
             alert("Vui lòng nhập mã OTP.");
@@ -98,6 +103,7 @@
                     // Hiển thị các ô nhập mật khẩu
                     document.getElementById("password").closest('.mb-3').style.display = "block";
                     document.getElementById("repassword").closest('.mb-3').style.display = "block";
+                    document.getElementById("email").readOnly = true;
                     document.getElementById("otp").disabled = true;
                     document.getElementById("sendOtpButton").disabled = true;
                 } else {

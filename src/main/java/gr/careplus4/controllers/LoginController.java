@@ -14,6 +14,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.eclipse.tags.shaded.org.apache.xpath.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -23,6 +24,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +51,9 @@ public class LoginController {
     @Autowired
     private JwtCookies jwtCookies;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public LoginController(AuthenticationService authenticationService, JwtService jwtService) {
         this.authenticationService = authenticationService;
         this.jwtService = jwtService;
@@ -71,6 +76,45 @@ public class LoginController {
         }
 
         return "guest/login";
+    }
+
+    @GetMapping("/forgot-password")
+    public String forgotPassword(@RequestParam(value = "errorMessage", required = false) String error,
+                                 @RequestParam(value = "successMessage", required = false) String success,
+                                 Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", error);
+        }
+        if (success != null) {
+            model.addAttribute("successMessage", success);
+        }
+        return "guest/forgot-password";
+    }
+
+    @PostMapping("/forgot-password")
+    public ModelAndView forgotPassword(@RequestParam("email") String email,
+                              @RequestParam("password") String password,
+                              @RequestParam("repassword") String rePassword, Model model) {
+        if (email.isEmpty() || password.isEmpty() || rePassword.isEmpty()) {
+            model.addAttribute("errorMessage", "Vui lòng điền đầy đủ thông tin.");
+            return new ModelAndView("redirect:/au/forgot-password");
+        }
+
+        if (!password.equals(rePassword)) {
+            model.addAttribute("errorMessage", "Mật khẩu và xác nhận mật khẩu không khớp.");
+            return new ModelAndView("redirect:/au/forgot-password");
+        }
+
+        User user = userService.findByEmail(email).orElse(null);
+        if (user == null) {
+            model.addAttribute("errorMessage", "Email không tồn tại.");
+            return new ModelAndView("redirect:/au/forgot-password");
+        }
+
+        user.setPassword(passwordEncoder.encode(password));
+        userService.save(user);
+        model.addAttribute("successMessage", "Đổi mật khẩu thành công! Bạn có thể đăng nhập ngay.");
+        return new ModelAndView("redirect:/au/login");
     }
 
     @Autowired

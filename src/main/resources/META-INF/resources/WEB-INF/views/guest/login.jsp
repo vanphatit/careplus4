@@ -44,6 +44,7 @@
                     <div class="form-group form-button">
                         <input type="submit" name="signin" id="signin"
                                class="form-submit" value="Đăng nhập" />
+                        <a href="/au/forgot-password" class="forgot-pwd">Quên mật khẩu?</a>
                     </div>
                 </form>
                 <div class="social-login">
