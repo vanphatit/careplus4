@@ -39,8 +39,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home/**", "/error/**", "/au/**", "/user/medicine/**"
                                 , "/user/medicines/**", "/WEB-INF/views/user/medicine/**",
-                                "/oauth2/authorization/google").permitAll()
-                        .requestMatchers("/user/**", "/api/**",
+                                "/oauth2/authorization/google", "/api/**", "/user/changePassword/**").permitAll()
+                        .requestMatchers("/user/**",
                                 "/WEB-INF/views/user/**").hasAnyAuthority("USER", "VENDOR", "ADMIN")
                         .requestMatchers("/vendor/**",
                                 "/WEB-INF/views/vendor/**").hasAnyAuthority("VENDOR", "ADMIN")
