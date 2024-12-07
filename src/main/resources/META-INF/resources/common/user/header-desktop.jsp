@@ -138,13 +138,23 @@
                             <%--                                    class="indicator__area"><svg width="20px" height="20px">--%>
                             <%--                                                    <use href="${URL}assets/images/sprite.svg#heart-20"></use>--%>
                             <%--                                                </svg> <span class="indicator__value">0</span></span></a></div>--%>
-                            <div class="indicator"><a href="${pageContext.request.contextPath}/user/cart"
-                                                      class="indicator__button"><span
-                                    class="indicator__area"><svg width="20px"
-                                                                 height="20px">
-                                                    <use href="${URL}assets/images/sprite.svg#cart-20"></use>
-                                                </svg> <span
-                                    class="indicator__value">${user.cart.productCount}</span></span></a>
+                            <div class="indicator">
+                                <a href="${pageContext.request.contextPath}/user/cart" class="indicator__button">
+                                    <span
+                                        class="indicator__area"><svg width="20px"
+                                                                     height="20px">
+                                                        <use href="${URL}assets/images/sprite.svg#cart-20"></use>
+                                                    </svg>
+                                        <c:choose>
+                                            <c:when test="${user.cart.productCount > 0}">
+                                                <span class="indicator__value">${user.cart.productCount} </span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="indicator__value">0</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </span>
+                                </a>
                             </div>
                         </div>
                     </div>
