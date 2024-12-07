@@ -4,7 +4,6 @@ import gr.careplus4.entities.*;
 import gr.careplus4.repositories.*;
 import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.IBillService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +35,9 @@ public class BillServiceImpl implements IBillService {
 
     @Autowired
     private EventServiceImpl eventService;
+
+    @Autowired
+    private MedicineRepository medicineRepository;
 
     @Override
     public Page<Bill> fetchAllBills(Pageable pageable) {
@@ -98,7 +100,7 @@ public class BillServiceImpl implements IBillService {
     @Override
     public void handlePlaceOrder(String receiverName, String receiverAddress,
                                  String phone,  int usedPoint, String eventCode, boolean accumulate) {
-        // step 1:
+
         Optional<Cart> cart = this.cartRepository.findByUser_PhoneNumber(phone);
         Optional<User> user = this.userService.findByPhoneNumber(phone);
         Optional<Event> event = this.eventService.findById(eventCode);
@@ -154,7 +156,15 @@ public class BillServiceImpl implements IBillService {
                     this.userService.save(user.get());
                 }
 
-                // step 2: delete cart_detail and cart
+                // update stock
+                for (CartDetail cd : cartDetails) {
+                    Optional<Medicine> medicine = this.medicineRepository.findById(cd.getMedicine().getId());
+                    int quantity = medicine.get().getStockQuantity() - cd.getQuantity();
+                    medicine.get().setStockQuantity(quantity);
+                    this.medicineRepository.save(medicine.get());
+                }
+
+                // delete cart_detail and cart
                 for (CartDetail cd : cartDetails) {
                     this.cartDetailRepository.deleteById(cd.getId());
                 }

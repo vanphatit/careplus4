@@ -59,7 +59,7 @@
                                             <c:when test="${bill.status == 'COMPLETED'}">
                                                 <span class="badge bg-success">COMPLETED</span>
                                                 <br />
-                                                <a href="/user/${id}/review/${bill.id}" class="btn btn-sm btn-primary mt-2">Đánh giá</a>
+                                                <a href="/user/review/${bill.id}" class="btn btn-sm btn-primary mt-2">Đánh giá</a>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="badge bg-warning">${bill.status}</span>
@@ -71,7 +71,7 @@
                                     <tr>
                                         <th scope="row">
                                             <div class="d-flex align-items-center">
-                                                <img src="${pageContext.request.contextPath}/medicine/image?fileName=${medicine.image}"
+                                                <img src="${pageContext.request.contextPath}/images/image?fileName=${billDetail.medicine.image}"
                                                      class="img-fluid me-5 rounded-circle"
                                                      style="width: 80px; height: 80px;" alt="">
                                             </div>

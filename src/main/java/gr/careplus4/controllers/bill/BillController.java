@@ -39,12 +39,12 @@ public class BillController {
         this.billService.handlePlaceOrder(receiverName, receiverAddress, phone, usedPoint,
                 eventCode, accumulate);
 
-        return "redirect:/thanks";
+        return "redirect:/user/thanks";
     }
 
     @GetMapping("/thanks")
     public String getThanksPage(Model model) {
-        return "user/cart/thanks";
+        return "user/thanks";
     }
 
     @GetMapping("/order-history")
