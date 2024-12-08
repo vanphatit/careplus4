@@ -41,7 +41,24 @@ public class DashboardController {
         List<RevenueRecordModel> revenueRecordForWeek = statisticsService.getRevenueRecordForWeek();
         List<RevenueRecordModel> revenueRecordForMonth = statisticsService.getRevenueRecordForMonth();
         List<RevenueRecordModel> revenueRecordForSeason = statisticsService.getRevenueRecordForSeason();
-        List<TransactionHistoryModel> transactionHistory = packageService.findAllTransactionHistory();
+
+        try {
+            List<TransactionHistoryModel> transactionHistory = packageService.findAllTransactionHistory();
+
+            for (TransactionHistoryModel transaction : transactionHistory) {
+                if (transaction.getStatus().equals("SHIPPING")) {
+                    transaction.setStatus("Đang giao hàng");
+                } else if (transaction.getStatus().equals("SHIPPED")) {
+                    transaction.setStatus("Đã giao hàng");
+                } else if (transaction.getStatus().equals("CANCELED")) {
+                    transaction.setStatus("Đã hủy");
+                }
+            }
+
+            model.addAttribute("transactionHistory", transactionHistory);
+        } catch (Exception e) {
+            model.addAttribute("error", "Lỗi khi lấy dữ liệu từ API");
+        }
 
         model.addAttribute("totalUser", totalUser);
         model.addAttribute("totalStockQuantity", totalStockQuantity);
@@ -56,8 +73,6 @@ public class DashboardController {
         model.addAttribute("revenueRecordForWeek", objectMapper.writeValueAsString(revenueRecordForWeek));
         model.addAttribute("revenueRecordForMonth", objectMapper.writeValueAsString(revenueRecordForMonth));
         model.addAttribute("revenueRecordForSeason", objectMapper.writeValueAsString(revenueRecordForSeason));
-
-        model.addAttribute("transactionHistory", transactionHistory);
 
         model.addAttribute("top3BestSellerForLast7Days", top3BestSellerForLast7Days);
 
