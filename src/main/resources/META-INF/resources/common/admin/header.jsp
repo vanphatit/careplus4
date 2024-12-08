@@ -43,18 +43,18 @@
     </div>
     <hr>
     <ul class="app-menu">
-        <c:if test="${user.role.name=='ADMIN'}">
+
             <li>
-                <a class="app-menu__item haha" href="<c:url value='/admin/bills' />">
-                    <i class='app-menu__icon bx bx-receipt'></i>
-                    <span class="app-menu__label">Quản lý bán hàng</span>
+                <a class="app-menu__item haha" href="<c:url value='/admin/dashboard' />">
+                    <i class='app-menu__icon bx bx-tachometer'></i>
+                    <span class="app-menu__label">Dashboard</span>
                 </a>
             </li>
-        </c:if>
+
 
         <c:if test="${user.role.name=='VENDOR'}">
             <li>
-                <a class="app-menu__item haha" href="<c:url value='/vendor/bills' />">
+                <a class="app-menu__item" href="<c:url value='/vendor/bills' />">
                     <i class='app-menu__icon bx bx-receipt'></i>
                     <span class="app-menu__label">Quản lý bán hàng</span>
                 </a>
@@ -63,10 +63,16 @@
 
         <!-- Các thẻ dành cho ADMIN -->
         <c:if test="${user.role.name=='ADMIN'}">
+<%--            <li>--%>
+<%--                <a class="app-menu__item haha" href="<c:url value='/admin' />">--%>
+<%--                    <i class='app-menu__icon bx bx-tachometer'></i>--%>
+<%--                    <span class="app-menu__label">Dashboard</span>--%>
+<%--                </a>--%>
+<%--            </li>--%>
             <li>
-                <a class="app-menu__item active" href="<c:url value='/admin' />">
-                    <i class='app-menu__icon bx bx-tachometer'></i>
-                    <span class="app-menu__label">Dashboard</span>
+                <a class="app-menu__item" href="<c:url value='/admin/bills' />">
+                    <i class='app-menu__icon bx bx-receipt'></i>
+                    <span class="app-menu__label">Quản lý bán hàng</span>
                 </a>
             </li>
             <li>
@@ -129,5 +135,6 @@
         </c:if>
     </ul>
 </aside>
+
 
 
