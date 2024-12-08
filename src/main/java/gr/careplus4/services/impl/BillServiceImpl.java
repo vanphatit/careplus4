@@ -105,7 +105,7 @@ public class BillServiceImpl implements IBillService {
 
     @Override
     public void handlePlaceOrder(String receiverName, String receiverAddress,
-                                 String phone,  int usedPoint, String eventCode, boolean accumulate) {
+                                 String phone, int usedPoint, String eventCode, boolean accumulate, float shipping) {
 
         Optional<Cart> cart = this.cartRepository.findByUser_PhoneNumber(phone);
         Optional<User> user = this.userService.findByPhoneNumber(phone);
@@ -124,6 +124,11 @@ public class BillServiceImpl implements IBillService {
                 }
 
                 float totalPrice = getTotalPrice(usedPoint, cartDetails, event, user);
+
+                // Cộng tiền ship nếu có
+                if(shipping > 0) {
+                    totalPrice += shipping;
+                }
 
                 Date date = new Date();
                 Bill order = new Bill();
@@ -193,6 +198,9 @@ public class BillServiceImpl implements IBillService {
             if (usedPoint > 0) {
                 // (Số điểm sử dụng / 10) × 1.000
                 discount += (float) (usedPoint * 1000) / 10;
+                if (discount > (totalPrice * 0.3)) {
+                    discount = (float) (totalPrice * 0.3);
+                }
                 // Cập nhật ngay lại số điểm mà người dùng đã sử dụng
                 user.get().setPointEarned(0);
                 this.userService.save(user.get());
@@ -202,7 +210,7 @@ public class BillServiceImpl implements IBillService {
                 discount += totalPrice * event.get().getDiscount().floatValue() / 100;
             }
 
-            totalPrice = totalPrice - discount;
+            totalPrice -= discount;
         }
         return totalPrice;
     }
