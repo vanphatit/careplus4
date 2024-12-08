@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,6 +82,17 @@ public class PackageService {
 
     public String checkStatus(String idBill) {
         return checkStatusAPI(idBill);
+    }
+
+    public List<Map<String, String>> getIdBillAndStatus() {
+        List<TransactionHistoryModel> transactionHistory = findAllTransactionHistory();
+        return transactionHistory.stream().map(transaction -> {
+            Map<String, String> map = Map.of(
+                    "idBill", transaction.getIdBill(),
+                    "status", transaction.getStatus()
+            );
+            return map;
+        }).collect(Collectors.toList());
     }
 }
 

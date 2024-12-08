@@ -104,12 +104,12 @@
                     </h5>
                     <h3>
                         <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
-                            <a href="${URL}admin/bills" class="text-decoration-none text-dark">
+                            <a href="${URL}admin/bill/today" class="text-decoration-none text-dark">
                                 <span id="revenueToday">${revenueToday}</span> VND
                             </a>
                         </c:if>
                         <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
-                            <a href="${URL}vendor/bills" class="text-decoration-none text-dark">
+                            <a href="${URL}vendor/bill/today" class="text-decoration-none text-dark">
                                 <span id="revenueToday">${revenueToday}</span> VND
                             </a>
                         </c:if>
@@ -126,12 +126,12 @@
                     </h5>
                     <h3>
                         <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
-                            <a href="${URL}admin/bills" class="text-decoration-none text-dark">
+                            <a href="${URL}admin/bill/week" class="text-decoration-none text-dark">
                                 <span id="revenueForWeek">${revenueForWeek}</span> VND
                             </a>
                         </c:if>
                         <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
-                            <a href="${URL}vendor/bills" class="text-decoration-none text-dark">
+                            <a href="${URL}vendor/bill/week" class="text-decoration-none text-dark">
                                 <span id="revenueForWeek">${revenueForWeek}</span> VND
                             </a>
                         </c:if>
