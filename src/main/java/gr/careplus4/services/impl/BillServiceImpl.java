@@ -1,6 +1,7 @@
 package gr.careplus4.services.impl;
 
 import gr.careplus4.entities.*;
+import gr.careplus4.models.RevenueRecordModel;
 import gr.careplus4.repositories.*;
 import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.IBillService;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +41,9 @@ public class BillServiceImpl implements IBillService {
 
     @Autowired
     private MedicineRepository medicineRepository;
+
+    @Autowired
+    private ImportRepository importRepository;
 
     @Override
     public Page<Bill> fetchAllBills(Pageable pageable) {
@@ -221,5 +227,268 @@ public class BillServiceImpl implements IBillService {
     @Override
     public Page<Bill> findAll(Pageable pageable) {
         return this.billRepository.findAll(pageable);
+    }
+
+    @Override
+    public BigDecimal getRevenueToday() {
+        LocalDate today = LocalDate.now();
+        Date startDate = java.sql.Date.valueOf(today);
+
+        List<Bill> bills = billRepository.findBillsByDate(startDate);
+
+        if (bills.isEmpty()) {
+            return new BigDecimal(0);
+        }
+
+        BigDecimal revenue = new BigDecimal(0);
+        for (Bill bill : bills) {
+            revenue = revenue.add(bill.getTotalAmount());
+        }
+        return revenue;
+    }
+
+    @Override
+    public BigDecimal getRevenueForWeek() {
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.with(DayOfWeek.MONDAY);
+        LocalDate endDate = today.with(DayOfWeek.SUNDAY);
+
+        List<Bill> bills = billRepository.findBillsByDateBetween(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
+
+        if (bills.isEmpty()) {
+            return new BigDecimal(0);
+        }
+
+        BigDecimal revenue = new BigDecimal(0);
+        for (Bill bill : bills) {
+            revenue = revenue.add(bill.getTotalAmount());
+        }
+
+        return revenue;
+    }
+
+    @Override
+    public BigDecimal getRevenueForMonth() {
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.withDayOfMonth(1);
+        LocalDate endDate = today.withDayOfMonth(today.lengthOfMonth());
+
+        List<Bill> bills = billRepository.findBillsByDateBetween(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
+
+        if (bills.isEmpty()) {
+            return new BigDecimal(0);
+        }
+
+        BigDecimal revenue = new BigDecimal(0);
+        for (Bill bill : bills) {
+            revenue = revenue.add(bill.getTotalAmount());
+        }
+
+        return revenue;
+    }
+
+    @Override
+    public BigDecimal getRevenueForSeason() {
+        LocalDate today = LocalDate.now();
+        int month = today.getMonthValue();
+        int season = (month - 1) / 3 + 1;
+
+        LocalDate startDate = today.withMonth((season - 1) * 3 + 1).withDayOfMonth(1);
+        LocalDate endDate = today.withMonth(season * 3).withDayOfMonth(today.withMonth(season * 3).lengthOfMonth());
+
+        List<Bill> bills = billRepository.findBillsByDateBetween(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
+
+        if (bills.isEmpty()) {
+            return new BigDecimal(0);
+        }
+
+        BigDecimal revenue = new BigDecimal(0);
+        for (Bill bill : bills) {
+            revenue = revenue.add(bill.getTotalAmount());
+        }
+
+        return revenue;
+    }
+
+    @Override
+    public BigDecimal getRevenueForPeriod(java.sql.Date startDate, java.sql.Date endDate) {
+        List<Bill> bills = billRepository.findBillsByDateBetween(startDate, endDate);
+
+        if (bills.isEmpty()) {
+            return new BigDecimal(0);
+        }
+
+        BigDecimal revenue = new BigDecimal(0);
+        for (Bill bill : bills) {
+            revenue = revenue.add(bill.getTotalAmount());
+        }
+
+        return revenue;
+    }
+
+    @Override
+    public BigDecimal getProfitForPeriod(java.sql.Date startDate, java.sql.Date endDate) {
+        List<Import> imports = importRepository.findImportByDateBetween(startDate, endDate);
+
+        if (imports.isEmpty()) {
+            return new BigDecimal(0);
+        }
+
+        BigDecimal profit = new BigDecimal(0);
+        for (Import anImport : imports) {
+            profit = profit.add(anImport.getTotalAmount());
+        }
+
+        return profit;
+    }
+
+    @Override
+    public BigDecimal getRevenueDaily(java.sql.Date date) {
+        List<Bill> bills = billRepository.findBillsByDate(date);
+
+        if (bills.isEmpty()) {
+            return new BigDecimal(0);
+        }
+
+        BigDecimal revenue = new BigDecimal(0);
+        for (Bill bill : bills) {
+            revenue = revenue.add(bill.getTotalAmount());
+        }
+        return revenue;
+    }
+
+    @Override
+    public BigDecimal getDailyProfit(java.sql.Date date) {
+        List<Import> imports = importRepository.findImportByDate(date);
+
+        if (imports.isEmpty()) {
+            return new BigDecimal(0);
+        }
+
+        BigDecimal profit = new BigDecimal(0);
+
+        for (Import anImport : imports) {
+            profit = profit.add(anImport.getTotalAmount());
+        }
+
+        return profit;
+    }
+
+    @Override
+    public List<RevenueRecordModel> getRevenueRecordForWeek() {
+        // Lấy ngày hôm nay
+        LocalDate today = LocalDate.now();
+
+        // Tìm ngày Thứ Hai của tuần hiện tại
+        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
+
+        // Tìm ngày Chủ Nhật của tuần hiện tại
+        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+
+        // Khởi tạo danh sách để chứa kết quả
+        List<RevenueRecordModel> revenueRecords = new ArrayList<>();
+
+        // Lặp qua từng ngày từ Thứ Hai đến Chủ Nhật
+        for (LocalDate date = startOfWeek; !date.isAfter(endOfWeek); date = date.plusDays(1)) {
+            // Chuyển LocalDate sang java.sql.Date
+            java.sql.Date sqlDate = java.sql.Date.valueOf(date);
+
+            // Tạo một bản ghi doanh thu
+            RevenueRecordModel record = new RevenueRecordModel(
+                    sqlDate,
+                    getRevenueDaily(sqlDate),   // Hàm tính doanh thu hàng ngày
+                    getDailyProfit(sqlDate)     // Hàm tính lợi nhuận hàng ngày
+            );
+
+            // Thêm bản ghi vào danh sách
+            revenueRecords.add(record);
+        }
+
+        return revenueRecords;
+    }
+
+    @Override
+    public List<RevenueRecordModel> getRevenueRecordForMonth() {
+        // Lấy ngày hôm nay
+        LocalDate today = LocalDate.now();
+
+        // Tìm ngày đầu tiên của tháng hiện tại
+        LocalDate startOfMonth = today.withDayOfMonth(1);
+
+        // Tìm ngày cuối cùng của tháng hiện tại
+        LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+        // Khởi tạo danh sách để chứa kết quả
+        List<RevenueRecordModel> revenueRecords = new ArrayList<>();
+
+        // Lặp qua từng ngày từ ngày đầu tiên đến ngày cuối cùng của tháng
+        for (LocalDate date = startOfMonth; !date.isAfter(endOfMonth); date = date.plusDays(1)) {
+            // Chuyển LocalDate sang java.sql.Date
+            java.sql.Date sqlDate = java.sql.Date.valueOf(date);
+
+            // Tạo một bản ghi doanh thu
+            RevenueRecordModel record = new RevenueRecordModel(
+                    sqlDate,
+                    getRevenueDaily(sqlDate),   // Hàm tính doanh thu hàng ngày
+                    getDailyProfit(sqlDate)     // Hàm tính lợi nhuận hàng ngày
+            );
+
+            // Thêm bản ghi vào danh sách
+            revenueRecords.add(record);
+
+        }
+
+        return revenueRecords;
+    }
+
+    @Override
+    public List<RevenueRecordModel> getRevenueRecordForSeason() {
+        // Lấy ngày hôm nay
+        LocalDate today = LocalDate.now();
+
+        // Tính mùa hiện tại
+        int month = today.getMonthValue();
+        int season = (month - 1) / 3 + 1;
+
+        // Tìm ngày đầu tiên của mùa hiện tại
+        LocalDate startOfSeason = today.withMonth((season - 1) * 3 + 1).withDayOfMonth(1);
+
+        // Tìm ngày cuối cùng của mùa hiện tại
+        LocalDate endOfSeason = today.withMonth(season * 3).withDayOfMonth(today.withMonth(season * 3).lengthOfMonth());
+
+        // Khởi tạo danh sách để chứa kết quả
+        List<RevenueRecordModel> revenueRecords = new ArrayList<>();
+
+        // Nhóm dữ liệu theo tuần
+        LocalDate startOfWeek = startOfSeason;
+        while (!startOfWeek.isAfter(endOfSeason)) {
+            // Ngày cuối tuần (Chủ nhật)
+            LocalDate endOfWeek = startOfWeek.plusDays(6);
+            if (endOfWeek.isAfter(endOfSeason)) {
+                endOfWeek = endOfSeason; // Giới hạn trong mùa
+            }
+
+            // Tính tổng doanh thu và lợi nhuận trong tuần
+            java.sql.Date sqlStartOfWeek = java.sql.Date.valueOf(startOfWeek);
+            java.sql.Date sqlEndOfWeek = java.sql.Date.valueOf(endOfWeek);
+
+            BigDecimal weeklyRevenue = getRevenueForPeriod(sqlStartOfWeek, sqlEndOfWeek); // Hàm lấy doanh thu trong tuần
+            BigDecimal weeklyProfit = getProfitForPeriod(sqlStartOfWeek, sqlEndOfWeek);   // Hàm lấy lợi nhuận trong tuần
+
+            // Tạo một bản ghi doanh thu
+            RevenueRecordModel record = new RevenueRecordModel(
+                    java.sql.Date.valueOf(startOfWeek), // Tuần bắt đầu
+                    weeklyRevenue,
+                    weeklyProfit
+            );
+
+            // Thêm bản ghi vào danh sách
+            revenueRecords.add(record);
+
+            // Chuyển sang tuần tiếp theo
+            startOfWeek = startOfWeek.plusWeeks(1);
+        }
+
+        return revenueRecords;
     }
 }

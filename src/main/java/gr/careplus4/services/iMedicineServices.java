@@ -72,6 +72,8 @@ public interface iMedicineServices {
 
     String generateMedicineId(String previousId);
 
+    int countAllStockQuantity();
+
     List<Medicine> findByImportDateBetween(Date min, Date max);
 
     List<Medicine> findByImportDateBetween(Date min, Date max, Pageable pageable);
@@ -89,6 +91,8 @@ public interface iMedicineServices {
     void updateTotalRatingForMedicine(String name, String manufacturerName, BigDecimal rating);
 
     List<Medicine> findMedicinesByNameAndManufacturer_NameAndDosage(String name, String manufacturerName, String dosage);
+
+    List<Medicine> getTop5BestSellerForMonth();
 
     List<MedicineForUserModel> findNearestExpiryMedicines();
 

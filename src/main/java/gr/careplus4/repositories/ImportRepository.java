@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
+import java.util.List;
 import java.util.Optional;
 @Repository
 public interface ImportRepository extends JpaRepository<Import, String> {
@@ -17,4 +19,6 @@ public interface ImportRepository extends JpaRepository<Import, String> {
     Page<Import> findByIdContaining(String id, Pageable pageable);
     @Query("SELECT i FROM Import i WHERE i.provider.id = :providerId")
     Page<Import> findByProviderIdContaining(@Param("providerId") String providerId, Pageable pageable);
+    List<Import> findImportByDate(java.sql.Date date);
+    List<Import> findImportByDateBetween(java.sql.Date startDate, java.sql.Date endDate);
 }
