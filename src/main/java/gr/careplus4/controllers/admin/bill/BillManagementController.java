@@ -57,6 +57,16 @@ public class BillManagementController {
         return "redirect:/admin/bill/" + bill.getId();
     }
 
+    @PostMapping("bill/updateStatus")
+    public String handleUpdateBillStatus(
+            @ModelAttribute("newBill") @Valid Bill bill,
+            BindingResult newProductBindingResult) {
+
+        this.billService.saveBill(bill);
+
+        return "redirect:/admin/bills";
+    }
+
     @GetMapping("/bill/{id}")
     public String getBillDetailPage(Model model, @PathVariable String id) {
         Optional<Bill> bill = this.billService.findById(id);
