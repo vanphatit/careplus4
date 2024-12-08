@@ -36,7 +36,6 @@ public class getPackages {
             model.setUserPhone(pkg.getUserPhone());          // Mapping Số điện thoại người dùng
             model.setReceiverName(pkg.getReceiverName());    // Mapping Tên người nhận
             model.setTotalAmount(pkg.getTotalAmount());      // Mapping Tổng tiền
-            model.setDate(pkg.getDate());                    // Mapping Ngày tạo đơn
             model.setDeliveryDate(pkg.getUpdateDate());    // Mapping Ngày giao hàng
             model.setStatus(pkg.getStatus());                // Mapping Trạng thái
             return model;

@@ -208,7 +208,6 @@
                     <th>Số Điện Thoại</th>
                     <th>Tên Người Nhận</th>
                     <th>Tổng Tiền</th>
-                    <th>Ngày Tạo</th>
                     <th>Ngày Giao</th>
                     <th>Trạng Thái</th>
                 </tr>
@@ -226,7 +225,6 @@
                         <td>
                             <span class="total-amount">${transaction.totalAmount}</span> VND
                         </td>
-                        <td>${transaction.date}</td>
                         <td>${transaction.deliveryDate}</td>
                         <td>${transaction.status}</td>
                     </tr>

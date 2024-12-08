@@ -2,10 +2,12 @@ package gr.careplus4.controllers.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.careplus4.entities.Bill;
 import gr.careplus4.entities.Medicine;
 import gr.careplus4.models.RevenueRecordModel;
 import gr.careplus4.models.TransactionHistoryModel;
 import gr.careplus4.services.PackageService;
+import gr.careplus4.services.impl.BillServiceImpl;
 import gr.careplus4.services.impl.StatisticsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping({"/admin", "/vendor"})
@@ -25,6 +28,9 @@ public class DashboardController {
 
     @Autowired
     public PackageService packageService;
+
+    @Autowired
+    public BillServiceImpl billService;
 
     @RequestMapping({"/", "/dashboard"})
     public String dashboard(Model model) throws JsonProcessingException {
@@ -46,6 +52,12 @@ public class DashboardController {
             List<TransactionHistoryModel> transactionHistory = packageService.findAllTransactionHistory();
 
             for (TransactionHistoryModel transaction : transactionHistory) {
+                Optional<Bill> bill = billService.findById(transaction.getIdBill());
+                if (bill.isPresent()) {
+                    bill.get().setStatus(transaction.getStatus());
+                    billService.saveBill(bill.get());
+                }
+
                 if (transaction.getStatus().equals("SHIPPING")) {
                     transaction.setStatus("Đang giao hàng");
                 } else if (transaction.getStatus().equals("SHIPPED")) {
