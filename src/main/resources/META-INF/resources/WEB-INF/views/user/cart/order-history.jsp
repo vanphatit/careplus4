@@ -56,13 +56,39 @@
                                     <td colspan="2"></td>
                                     <td colspan="1">
                                         <c:choose>
-                                            <c:when test="${bill.status == 'COMPLETED'}">
-                                                <span class="badge bg-success">COMPLETED</span>
+                                            <c:when test="${bill.status == 'SHIPPED'}">
+                                                <span class="badge bg-success">Đã giao hàng</span>
                                                 <br />
                                                 <a href="/user/review/${bill.id}" class="btn btn-sm btn-primary mt-2">Đánh giá</a>
                                             </c:when>
+                                            <c:when test="${bill.status == 'SHIPPING'}">
+                                                <span class="badge bg-primary">Đang giao hàng</span>
+                                            </c:when>
+                                            <c:when test="${bill.status == 'CANCELED'}">
+                                                <span class="badge bg-danger">Đã bị hủy</span>
+                                            </c:when>
+                                            <c:when test="${bill.status == 'RETURNED'}">
+                                                <span class="badge bg-danger">Hoàn đơn</span>
+                                            </c:when>
                                             <c:otherwise>
-                                                <span class="badge bg-warning">${bill.status}</span>
+                                                <span class="badge bg-warning">Chờ lấy hàng</span>
+                                                <br/>
+                                                <form method="POST" action="/user/updateStatus" class="row">
+                                                    <!-- ID -->
+                                                    <div class="mb-3 col-12" hidden>
+                                                        <input type="text" class="form-control" name="id" value="${bill.id}"/>
+                                                    </div>
+
+                                                    <!-- Status -->
+                                                    <div class="mb-3 col-12" hidden>
+                                                        <input type="text" class="form-control" name="status" value="CANCELED"/>
+                                                    </div>
+
+                                                    <!-- Submit Button -->
+                                                    <div class="col-12">
+                                                        <button type="submit" class="tn btn-sm btn-danger mt-2">Hủy đơn</button>
+                                                    </div>
+                                                </form>
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
@@ -144,4 +170,79 @@
             </div>
         </div><!-- site__body / end -->
     </div><!-- site / end -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEJ2Q7nPvu6bU3pKpP8E4e28do2tW3b0Zn8J6gxGnD01p3DghvGqkkmXlPMd0" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            function updateBillStatus() {
+                $.ajax({
+                    url: 'http://localhost:8080/v1/api/packages/getIdBillAndStatus',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.status) {
+                            response.data.forEach(function (bill) {
+                                const row = $('tr').filter(function () {
+                                    return $(this).find('th').text().trim() === bill.idBill;
+                                });
+
+                                if (row.length > 0) {
+                                    // Lấy trạng thái hiện tại của hóa đơn từ giao diện
+                                    const currentStatusText = row.find('td:nth-child(6) span').text().trim();
+
+                                    // Xác định trạng thái mới từ API
+                                    let newStatusText = '';
+                                    let statusBadge = '';
+                                    if (bill.status === 'SHIPPED') {
+                                        statusBadge = '<span class="badge bg-success">Đã giao</span>';
+                                        newStatusText = 'Đã giao';
+                                    } else if (bill.status === 'SHIPPING') {
+                                        statusBadge = '<span class="badge bg-info">Đang giao</span>';
+                                        newStatusText = 'Đang giao';
+                                    } else if (bill.status === 'CANCELED') {
+                                        statusBadge = '<span class="badge bg-danger">Đã hủy</span>';
+                                        newStatusText = 'Đã hủy';
+                                    } else if (bill.status === 'RETURNED') {
+                                        statusBadge = '<span class="badge bg-danger">Hoàn đơn</span>';
+                                        newStatusText = 'Hoàn đơn';
+                                    } else {
+                                        statusBadge = '<span class="badge bg-warning">Chờ</span>';
+                                        newStatusText = 'Chờ';
+                                    }
+
+                                    // Nếu trạng thái trên giao diện khác với trạng thái từ API thì cập nhật
+                                    if (currentStatusText !== newStatusText) {
+                                        row.find('td:nth-child(6)').html(statusBadge); // Cập nhật cột trạng thái
+
+                                        // **Tự động nộp form nếu trạng thái thay đổi**
+                                        autoSubmitForm(bill.idBill, bill.status);
+                                    }
+                                }
+                            });
+                        } else {
+                            console.warn('Không thể lấy dữ liệu từ API:', response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Không thể tải trạng thái hóa đơn:', error);
+                    }
+                });
+            }
+
+            // Hàm tự động điền thông tin và nộp form
+            function autoSubmitForm(id, status) {
+                const form = $('form'); // Tìm form mặc định
+                const inputId = form.find('input[name="id"]');
+                const inputStatus = form.find('input[name="status"]');
+
+                // Gán giá trị cho các input trong form
+                inputId.val(id);
+                inputStatus.val(status);
+
+                form.submit();
+            }
+            updateBillStatus();
+        });
+    </script>
 </body>
