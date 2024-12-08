@@ -138,7 +138,7 @@ public class BillServiceImpl implements IBillService {
                 order.setName(receiverName);
                 order.setAddress(receiverAddress);
                 order.setMethod("COD");
-                order.setStatus("PENDING");
+                order.setStatus("AWAIT");
                 order.setPointUsed(usedPoint);
                 if (event.isPresent()) {
                     order.setEvent(event.get());
