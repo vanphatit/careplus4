@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home/**", "/error/**", "/au/**", "/user/medicine/**"
-                                , "/user/medicines/**", "/WEB-INF/views/user/medicine/**",
+                                , "/user/medicines/**", "/WEB-INF/views/user/medicine/**", "/error/**",
                                 "/oauth2/authorization/google", "/api/**", "/user/changePassword/**").permitAll()
                         .requestMatchers("/user/**",
                                 "/WEB-INF/views/user/**").hasAnyAuthority("USER", "VENDOR", "ADMIN")
@@ -46,7 +46,7 @@ public class SecurityConfig {
                                 "/WEB-INF/views/vendor/**").hasAnyAuthority("VENDOR", "ADMIN")
                         .requestMatchers("/admin/**",
                                 "/WEB-INF/views/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/WEB-INF/decorators/**",
+                        .requestMatchers("/WEB-INF/decorators/**", "/WEB-INF/views/exception/**",
                                 "/WEB-INF/views/guest/**").permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/assets/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/css/**")).permitAll()
@@ -65,6 +65,7 @@ public class SecurityConfig {
                 //.formLogin(login -> login.loginPage("/au/login").permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Chạy trước UsernamePasswordAuthenticationFilter
                 .authenticationProvider(authenticationProvider)
+                .exceptionHandling(handling -> handling.accessDeniedPage("/403"))
                 .build();
     }
 
