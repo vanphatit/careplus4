@@ -37,6 +37,22 @@
             padding: 5px;
             max-width: 200px;
         }
+        .custom-select {
+            width: 25%;
+            margin: 0 auto; /* Căn giữa */
+            font-size: 16px;
+            border-radius: 8px; /* Bo góc */
+            padding: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+            background-color: #f9f9f9; /* Màu nền nhạt */
+            transition: all 0.3s ease-in-out;
+        }
+
+        .custom-select:hover {
+            border-color: #007bff; /* Đổi màu viền khi hover */
+            background-color: #ffffff; /* Màu nền khi hover */
+        }
     </style>
 </head>
 <body>
@@ -97,10 +113,10 @@
 
         <div class="row">
             <!-- Manufacturer -->
-            <div class="col-md-6 mb-3">
+            <div class="col-md-4 mb-3">
                 <label for="manufacturerId" class="form-label">Nhà sản xuất:</label>
                 <br>
-                <select id="manufacturerId" name="manufacturerId" class="form-select" required>
+                <select id="manufacturerId" name="manufacturerId" class="form-select custom-select" required>
                     <c:forEach var="manufacturer" items="${manufacturers}">
                         <option value="${manufacturer.id}"
                                 <c:if test="${manufacturer.id == medicine.manufacturerId}">selected</c:if>>
@@ -113,7 +129,7 @@
                 <div class="col-md-4 mb-3">
                     <label for="categoryId" class="form-label">Loại thuốc:</label>
                     <br>
-                    <select id="categoryId" name="categoryId" class="form-select" required>
+                    <select id="categoryId" name="categoryId" class="form-select custom-select" required>
                         <c:forEach var="category" items="${categories}">
                             <option value="${category.id}"
                                     <c:if test="${category.id == medicine.categoryId}">selected</c:if>>
@@ -123,10 +139,10 @@
                     </select>
                 </div>
                 <!-- Unit -->
-                <div class="col-md-2 mb-3">
+                <div class="col-md-4 mb-3">
                     <label for="unitId" class="form-label">Đơn vị:</label>
                     <br>
-                    <select id="unitId" name="unitId" class="form-select" required>
+                    <select id="unitId" name="unitId" class="form-select custom-select" required>
                         <c:forEach var="unit" items="${units}">
                             <option value="${unit.id}"
                                     <c:if test="${unit.id == medicine.unitId}">selected</c:if>>
