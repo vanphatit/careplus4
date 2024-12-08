@@ -1,9 +1,8 @@
-package gr.careplus4.controllers.admin;
+package gr.careplus4.controllers.vendor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.careplus4.entities.Bill;
-import gr.careplus4.entities.Medicine;
 import gr.careplus4.models.RevenueRecordModel;
 import gr.careplus4.models.TransactionHistoryModel;
 import gr.careplus4.services.PackageService;
@@ -88,6 +87,6 @@ public class DashboardController {
 
         model.addAttribute("top3BestSellerForLast7Days", top3BestSellerForLast7Days);
 
-        return "admin/dashboard";
+        return "vendor/dashboard";
     }
 }

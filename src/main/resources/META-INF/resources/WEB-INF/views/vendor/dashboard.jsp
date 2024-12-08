@@ -103,9 +103,16 @@
                         <i class="fas fa-dollar-sign text-warning"></i> Doanh thu hôm nay
                     </h5>
                     <h3>
-                        <a href="${URL}admin/bills" class="text-decoration-none text-dark">
-                            <span id="revenueToday">${revenueToday}</span> VND
-                        </a>
+                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
+                            <a href="${URL}admin/bills" class="text-decoration-none text-dark">
+                                <span id="revenueToday">${revenueToday}</span> VND
+                            </a>
+                        </c:if>
+                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
+                            <a href="${URL}vendor/bills" class="text-decoration-none text-dark">
+                                <span id="revenueToday">${revenueToday}</span> VND
+                            </a>
+                        </c:if>
                     </h3>
                 </div>
             </div>
@@ -118,9 +125,16 @@
                         <i class="fas fa-chart-line text-danger"></i> Doanh thu tuần
                     </h5>
                     <h3>
-                        <a href="${URL}admin/bills" class="text-decoration-none text-dark">
-                            <span id="revenueForWeek">${revenueForWeek}</span> VND
-                        </a>
+                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
+                            <a href="${URL}admin/bills" class="text-decoration-none text-dark">
+                                <span id="revenueForWeek">${revenueForWeek}</span> VND
+                            </a>
+                        </c:if>
+                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
+                            <a href="${URL}vendor/bills" class="text-decoration-none text-dark">
+                                <span id="revenueForWeek">${revenueForWeek}</span> VND
+                            </a>
+                        </c:if>
                     </h3>
                 </div>
             </div>
@@ -216,9 +230,16 @@
                 <c:forEach var="transaction" items="${transactionHistory}">
                     <tr>
                         <td>
-                            <a href="${URL}vendor/bill/${transaction.idBill}" class="text-decoration-none">
-                                ${transaction.idBill}
-                            </a>
+                            <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
+                                <a href="${URL}admin/bill/${transaction.idBill}" class="text-decoration-none">
+                                        ${transaction.idBill}
+                                </a>
+                            </c:if>
+                            <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
+                                <a href="${URL}vendor/bill/${transaction.idBill}" class="text-decoration-none">
+                                        ${transaction.idBill}
+                                </a>
+                            </c:if>
                         </td>
                         <td>${transaction.userPhone}</td>
                         <td>${transaction.receiverName}</td>
