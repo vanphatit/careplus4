@@ -243,36 +243,37 @@ public class MedicineServicesImpl implements iMedicineServices {
     }
 
     @Override
-    public void updateTotalRatingForMedicine(String name, String manufacturerName, BigDecimal rating) {
+    public void updateTotalRatingForMedicine(String name, String manufacturerName, BigDecimal newRating) {
+        // Tìm danh sách thuốc theo tên và nhà sản xuất
         List<Medicine> medicines = medicineRepository.findByNameAndManufacturer_Name(name, manufacturerName);
 
         if (!medicines.isEmpty()) {
-            // Lưu tổng điểm đánh giá và số lượng đánh giá
             BigDecimal totalRatings = BigDecimal.ZERO;
-            int totalReviews = 0;
+            int totalMedicines = medicines.size(); // Số lượng thuốc có cùng tên và nhà sản xuất
 
-            // Duyệt qua danh sách để tính tổng điểm đánh giá và số lượng đánh giá
+            // Tính tổng điểm đánh giá hiện có
             for (Medicine medicine : medicines) {
                 if (medicine.getRating() != null) {
                     totalRatings = totalRatings.add(medicine.getRating());
-                    totalReviews++;
                 }
             }
 
-            // Cộng thêm đánh giá mới
-            totalRatings = totalRatings.add(rating);
-            totalReviews++;
+            // Thêm điểm đánh giá mới vào tổng
+            totalRatings = totalRatings.add(newRating);
 
-            // Tính trung bình đánh giá
-            BigDecimal averageRating = totalRatings.divide(BigDecimal.valueOf(totalReviews), 2, RoundingMode.HALF_UP);
+            // Tính điểm trung bình
+            BigDecimal averageRating = totalRatings.divide(BigDecimal.valueOf(totalMedicines + 1), 2, RoundingMode.HALF_UP);
 
-            // Cập nhật đánh giá cho từng thuốc
+            // Cập nhật lại tất cả thuốc có cùng tên và nhà sản xuất
             for (Medicine medicine : medicines) {
                 medicine.setRating(averageRating);
                 medicineRepository.save(medicine);
             }
+
+            System.out.println("Đánh giá trung bình mới đã được cập nhật cho các thuốc tên: "
+                    + name + " của nhà sản xuất: " + manufacturerName);
         } else {
-            System.out.println("Medicine not found");
+            System.out.println("Không tìm thấy thuốc với tên: " + name + " và nhà sản xuất: " + manufacturerName);
         }
     }
 

@@ -70,7 +70,13 @@
                 <div class="card-body">
                     <h5 class="card-title">Tổng số người dùng</h5>
                     <h3>
-                        <a href="${URL}admin/users" class="text-decoration-none">${totalUser}</a>
+                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
+                            <a href="${URL}admin/users" class="text-decoration-none">${totalUser}</a>
+                        </c:if>
+                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
+                            <strong>${totalUser}</strong>
+                        </c:if>
+
                     </h3>
                 </div>
             </div>
@@ -80,7 +86,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Tổng hàng trong kho</h5>
                     <h3>
-                        <a href="${URL}admin/medicine" class="text-decoration-none">${totalStockQuantity}</a>
+                        <a href="${URL}vendor/medicines" class="text-decoration-none">${totalStockQuantity}</a>
                     </h3>
                 </div>
             </div>

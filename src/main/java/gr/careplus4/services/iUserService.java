@@ -41,4 +41,6 @@ public interface iUserService {
     void deleteAll();
 
     Page<User> findAll(Pageable pageable);
+
+    int countUsersWithRoleUserIsActive();
 }
