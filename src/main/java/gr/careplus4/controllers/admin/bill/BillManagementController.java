@@ -3,6 +3,7 @@ package gr.careplus4.controllers.admin.bill;
 import gr.careplus4.entities.Bill;
 import gr.careplus4.services.impl.BillServiceImpl;
 import jakarta.validation.Valid;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -110,6 +113,22 @@ public class BillManagementController {
         model.addAttribute("pageNo", totalPages);
         model.addAttribute("currentPage", page);
 
+        return "admin/bill/bill-list";
+    }
+
+    @GetMapping("/bill/today")
+    public String getBillToday(Model model) {
+        LocalDate localDate = LocalDate.now();
+        java.sql.Date date = java.sql.Date.valueOf(localDate);
+        List<Bill> bills = this.billService.findBillsByDate(date);
+        model.addAttribute("bills", bills);
+        return "admin/bill/bill-list";
+    }
+
+    @GetMapping("/bill/week")
+    public String getBillForWeek(Model model) {
+        List<Bill> bills = this.billService.findBillsForWeek();
+        model.addAttribute("bills", bills);
         return "admin/bill/bill-list";
     }
 }

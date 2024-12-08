@@ -233,6 +233,25 @@ public class BillServiceImpl implements IBillService {
     }
 
     @Override
+    public List<Bill> findBillsByDate(Date date) {
+        return billRepository.findBillsByDate(date);
+    }
+
+    @Override
+    public List<Bill> findBillsByDateBetween(Date startDate, Date endDate) {
+        return billRepository.findBillsByDateBetween(startDate, endDate);
+    }
+
+    @Override
+    public List<Bill> findBillsForWeek() {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+
+        return billRepository.findBillsByDateBetween(java.sql.Date.valueOf(startOfWeek), java.sql.Date.valueOf(endOfWeek));
+    }
+
+    @Override
     public Page<Bill> findAll(Pageable pageable) {
         return this.billRepository.findAll(pageable);
     }
