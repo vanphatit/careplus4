@@ -56,5 +56,31 @@ public class PackageService {
             return model;
         }).collect(Collectors.toList());
     }
+
+    public String checkStatusAPI(String idBill) {
+        String externalApiUrl = "http://localhost:8080/v1/api/packages/checkStatus?idBill=" + idBill;
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Ánh xạ JSON phản hồi thành ApiResponse
+        ResponseEntity<ApiResponse<String>> response = restTemplate.exchange(
+                externalApiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<ApiResponse<String>>() {}
+        );
+
+        ApiResponse<String> apiResponse = response.getBody();
+
+        if (apiResponse != null && apiResponse.isStatus()) {
+            return apiResponse.getData();
+        } else {
+            throw new RuntimeException("Không thể lấy dữ liệu từ API: " + (apiResponse != null ? apiResponse.getMessage() : "Không có phản hồi"));
+        }
+    }
+
+    public String checkStatus(String idBill) {
+        return checkStatusAPI(idBill);
+    }
 }
 

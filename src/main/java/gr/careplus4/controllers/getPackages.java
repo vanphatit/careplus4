@@ -1,4 +1,4 @@
-package gr.careplus4.controllers.admin;
+package gr.careplus4.controllers;
 
 import gr.careplus4.models.PackageModel;
 import gr.careplus4.models.Response;
@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -36,7 +35,6 @@ public class getPackages {
             model.setUserPhone(pkg.getUserPhone());          // Mapping Số điện thoại người dùng
             model.setReceiverName(pkg.getReceiverName());    // Mapping Tên người nhận
             model.setTotalAmount(pkg.getTotalAmount());      // Mapping Tổng tiền
-            model.setDate(pkg.getDate());                    // Mapping Ngày tạo đơn
             model.setDeliveryDate(pkg.getUpdateDate());    // Mapping Ngày giao hàng
             model.setStatus(pkg.getStatus());                // Mapping Trạng thái
             return model;
