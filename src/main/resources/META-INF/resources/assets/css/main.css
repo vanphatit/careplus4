@@ -5324,8 +5324,8 @@ input[type="button"].btn-block {
 }
 
 .alert-danger {
-    color: #721c24;
-    background-color: #f8d7da;
+    color: #721c24 !important;
+    background-color: #f8d7da !important;
     border-color: #f5c6cb;
 }
 

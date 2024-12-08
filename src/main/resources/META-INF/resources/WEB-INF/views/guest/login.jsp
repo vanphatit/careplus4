@@ -44,12 +44,13 @@
                     <div class="form-group form-button">
                         <input type="submit" name="signin" id="signin"
                                class="form-submit" value="Đăng nhập" />
+                        <a href="/au/forgot-password" class="forgot-pwd">Quên mật khẩu?</a>
                     </div>
                 </form>
                 <div class="social-login">
                     <span class="social-label">Hoặc đăng nhập bằng</span>
                     <ul class="socials">
-                        <li><a href="${URL}assets/#" title="Đăng nhập với Google"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
+                        <li><a href="/oauth2/authorization/google" title="Đăng nhập với Google"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
                     </ul>
                 </div>
             </div>

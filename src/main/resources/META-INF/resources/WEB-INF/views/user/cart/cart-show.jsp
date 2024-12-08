@@ -45,7 +45,7 @@
                         <c:forEach var="item" items="${cartDetails}" varStatus="status">
                             <tr class="cart-table__row" data-index="${status.index}">
                                 <td class="cart-table__column cart-table__column--image">
-                                    <img src="${pageContext.request.contextPath}/image?fileName=${item.medicine.image}"
+                                    <img src="${pageContext.request.contextPath}/images/image?fileName=${item.medicine.image}"
                                          alt="${item.medicine.name}"
                                     />
                                 </td>
@@ -66,7 +66,7 @@
                                     <fmt:formatNumber type="number" value="${item.subTotal}" /> đ
                                 </td>
                                 <td class="cart-table__column cart-table__column--remove">
-                                    <form method="post" action="/delete-cart-detail/${item.id}">
+                                    <form method="post" action="/user/delete-cart-detail/${item.id}">
                                         <button class="btn btn-md bg-light mt-2">
                                             <i class="fa fa-times text-danger"></i>
                                         </button>

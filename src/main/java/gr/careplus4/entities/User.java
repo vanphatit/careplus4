@@ -67,7 +67,7 @@ public class User implements UserDetails {
     private Role role;
 
     @Column(name = "IsActive")
-    private boolean isActive;
+    private boolean status;
 
     @Column(name = "PointEarned")
     @Min(value = 0, message = "Points must be >= 0")
@@ -104,6 +104,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return isActive;
+        return status;
     }
 }

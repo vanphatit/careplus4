@@ -40,7 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/v1/api/**",
             "/css/**",
             "/js/**",
-            "/images/**"
+            "/images/**",
+            "/image"
     );
 
     public JwtAuthenticationFilter(

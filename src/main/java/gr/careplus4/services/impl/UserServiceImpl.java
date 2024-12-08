@@ -2,13 +2,11 @@ package gr.careplus4.services.impl;
 
 import gr.careplus4.entities.User;
 import gr.careplus4.repositories.UserRepository;
-import gr.careplus4.services.iRoleService;
 import gr.careplus4.services.iUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,6 +73,11 @@ public class UserServiceImpl implements iUserService {
     }
 
     @Override
+    public Page<User> findByNameContainingIgnoreCaseOrPhoneNumber(String name, String phoneNumber, Pageable pageable) {
+        return userRepository.findByNameContainingIgnoreCaseOrPhoneNumber(name, phoneNumber, pageable);
+    }
+
+    @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
@@ -97,5 +100,17 @@ public class UserServiceImpl implements iUserService {
     @Override
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public int countUsersWithRoleUserIsActive() {
+        List<User> users = userRepository.findByRoleName("USER");
+        int count = 0;
+        for (User user : users) {
+            if (user.isStatus()) {
+                count++;
+            }
+        }
+        return count;
     }
 }

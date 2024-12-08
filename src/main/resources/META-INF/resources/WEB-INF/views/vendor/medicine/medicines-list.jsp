@@ -159,11 +159,11 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label hidden="hidden" for="unitCostMin" class="form-label">Unit Cost Min</label>
-                                <input type="number" name="unitCostMin" id="unitCostMin" class="form-control shadow-sm" placeholder="Từ" value="${unitCostMin}">
+                                <input type="number" name="unitCostMin" id="unitCostMin" class="form-control shadow-sm" min="0" step="10000" placeholder="Từ" value="${unitCostMin}">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label hidden="hidden" for="unitCostMax" class="form-label">Unit Cost Max</label>
-                                <input type="number" name="unitCostMax" id="unitCostMax" class="form-control shadow-sm" placeholder="Đến" value="${unitCostMax}">
+                                <input type="number" name="unitCostMax" id="unitCostMax" class="form-control shadow-sm" min="0" step="10000" placeholder="Đến" value="${unitCostMax}">
                             </div>
                         </div>
                     </div>

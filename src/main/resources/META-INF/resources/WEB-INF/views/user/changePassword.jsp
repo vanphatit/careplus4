@@ -95,6 +95,11 @@
                 if (data === "success") {
                     alert("OTP hợp lệ! Bạn có thể đổi mật khẩu.");
                     document.getElementById("updatePasswordButton").disabled = false;
+                    // Hiển thị các ô nhập mật khẩu
+                    document.getElementById("password").closest('.mb-3').style.display = "block";
+                    document.getElementById("repassword").closest('.mb-3').style.display = "block";
+                    document.getElementById("otp").disabled = true;
+                    document.getElementById("sendOtpButton").disabled = true;
                 } else {
                     alert("OTP không hợp lệ! Vui lòng kiểm tra lại.");
                 }
@@ -120,5 +125,11 @@
             alert("Mật khẩu và nhập lại mật khẩu không khớp. Vui lòng kiểm tra lại.");
             document.getElementById("updatePasswordButton").disabled = true;
         }
+    });
+
+    // Ẩn các ô nhập mật khẩu mới ban đầu
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("password").closest('.mb-3').style.display = "none";
+        document.getElementById("repassword").closest('.mb-3').style.display = "none";
     });
 </script>

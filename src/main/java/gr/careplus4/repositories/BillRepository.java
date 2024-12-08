@@ -23,4 +23,6 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     List<Bill> findBillsByDate(Date date);
     List<Bill> findBillsByDate(Date date, Pageable pageable);
+
+    List<Bill> findBillsByDateBetween(Date startDate, Date endDate);
 }

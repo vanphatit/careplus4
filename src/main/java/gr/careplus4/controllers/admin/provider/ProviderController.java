@@ -33,7 +33,7 @@ public class ProviderController {
     public String all(Model model, @RequestParam("page") Optional<Integer> page,
                       @RequestParam("size") Optional<Integer> size) {
         int currentPage = page.orElse(1);
-        int pageSize = size.orElse(10);
+        int pageSize = 10;
 
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("id")); // Thay đổi nếu cần
         Page<Provider> providerPage = providerService.findAll(pageable); // Lấy đối tượng Page<Provider>
@@ -48,14 +48,14 @@ public class ProviderController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "admin/provider-list";
+        return "admin/provider/provider-list";
     }
 
     @GetMapping("/add")
     public String add(Model model) {
         ProviderModel pro = new ProviderModel();
         model.addAttribute("pro", pro);
-        return "admin/provider-add";
+        return "admin/provider/provider-add";
     }
 
     @PostMapping("/save")
@@ -63,7 +63,7 @@ public class ProviderController {
                              BindingResult result) {
         if (result.hasErrors()) {
             System.out.println("Errors: " + result.getAllErrors());
-            return new ModelAndView("admin/provider-add");
+            return new ModelAndView("admin/provider/provider-add");
         }
         Provider entity = new Provider();
         BeanUtils.copyProperties(providerModel, entity);
@@ -83,10 +83,10 @@ public class ProviderController {
             Provider entity = optionalProvider.get();
             BeanUtils.copyProperties(entity, pro);
             model.addAttribute("pro", pro);
-            return new ModelAndView("admin/provider-add", model);
+            return new ModelAndView("admin/provider/provider-add", model);
         }
         model.addAttribute("mess", "Provider not found");
-        return new ModelAndView("forward:/admin/provider-list", model);
+        return new ModelAndView("forward:/admin/provider/provider-list", model);
     }
 
     @GetMapping("/delete/{id}")
@@ -94,7 +94,7 @@ public class ProviderController {
         Optional<Provider> optionalProvider = providerService.findById(id);
         if (optionalProvider.isPresent()) {
             model.addAttribute("pro", optionalProvider.get());
-            return "admin/provider-delete"; // Hiển thị trang xác nhận xóa
+            return "admin/provider/provider-delete"; // Hiển thị trang xác nhận xóa
         }
         return "redirect:/admin/provider";
     }
@@ -139,7 +139,7 @@ public class ProviderController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "admin/provider-list";
+        return "admin/provider/provider-list";
     }
 
     @GetMapping("/show/{id}")
@@ -148,7 +148,7 @@ public class ProviderController {
         if (optionalProvider.isPresent()) {
             Provider provider = optionalProvider.get();
             model.addAttribute("provider", provider); // Truyền dữ liệu provider sang view
-            return new ModelAndView("admin/provider-show", model); // Hiển thị trang chi tiết provider
+            return new ModelAndView("admin/provider/provider-show", model); // Hiển thị trang chi tiết provider
         }
         model.addAttribute("mess", "Provider not found");
         return new ModelAndView("redirect:/admin/provider", model); // Quay lại danh sách nếu không tìm thấy

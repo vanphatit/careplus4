@@ -3,7 +3,9 @@ package gr.careplus4.configs;
 import gr.careplus4.filters.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -35,8 +37,10 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home/**", "/error/**", "/au/**").permitAll()
-                        .requestMatchers("/user/**", "/api/**",
+                        .requestMatchers("/", "/home/**", "/error/**", "/au/**", "/user/medicine/**"
+                                , "/user/medicines/**", "/WEB-INF/views/user/medicine/**",
+                                "/oauth2/authorization/google", "/api/**", "/user/changePassword/**").permitAll()
+                        .requestMatchers("/user/**",
                                 "/WEB-INF/views/user/**").hasAnyAuthority("USER", "VENDOR", "ADMIN")
                         .requestMatchers("/vendor/**",
                                 "/WEB-INF/views/vendor/**").hasAnyAuthority("VENDOR", "ADMIN")
@@ -53,7 +57,12 @@ public class SecurityConfig {
                 .sessionManagement(management -> management
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .formLogin(login -> login.loginPage("/au/login").permitAll())
+                .oauth2Login(login -> login
+                        .loginPage("/au/login")
+                        .successHandler((request, response, authentication)
+                                -> request.getRequestDispatcher("/au/login/oauth2Google-submit").forward(request, response))
+                        .permitAll())
+                //.formLogin(login -> login.loginPage("/au/login").permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Chạy trước UsernamePasswordAuthenticationFilter
                 .authenticationProvider(authenticationProvider)
                 .build();

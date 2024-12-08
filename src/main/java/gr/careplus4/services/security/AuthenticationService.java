@@ -43,7 +43,7 @@ public class AuthenticationService {
         user.setRole(roleService.findById(registerUserModel.getIdRole()).get());
         user.setCreatedAt(Date.from(new Date().toInstant()));
         user.setUpdatedAt(Date.from(new Date().toInstant()));
-        user.setActive(true);
+        user.setStatus(true);
         user.setPointEarned(0);
         System.out.println(user);
         return userRepository.save(user);

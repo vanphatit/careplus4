@@ -1,89 +1,41 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
-<html>
-<head>
-    <title>${manufacturer.isEdit ? 'Chỉnh sửa Nhà Sản Xuất' : 'Thêm mới Nhà Sản Xuất'}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f9f9f9;
-        }
-        h1 {
-            color: #333;
-        }
-        form {
-            max-width: 400px;
-            margin: auto;
-        }
-        table {
-            width: 100%;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            text-align: right;
-            vertical-align: top;
-        }
-        input[type="text"], input[type="hidden"] {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        a {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-left: 5px;
-        }
-        a:hover {
-            background-color: #5a6268;
-        }
-    </style>
-</head>
-<body>
-<h1>${manufacturer.isEdit ? 'Chỉnh sửa Nhà Sản Xuất' : 'Thêm mới Nhà Sản Xuất'}</h1>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<c:url value="/" var="URL"></c:url>
 
-<c:if test="${not empty message}">
-    <p style="color: red;">${message}</p>
-</c:if>
+<div class="container">
+    <div class="form-container">
+        <h1>${manufacturer.isEdit ? 'Chỉnh sửa Nhà Sản Xuất' : 'Thêm mới Nhà Sản Xuất'}</h1>
 
-<form action="/vendor/manufacturer/save" method="post">
-    <table>
-        <tr>
-            <c:if test="${manufacturer.isEdit}">
-                <th>ID:</th>
-                <td>${manufacturer.id}</td>
-            </c:if>
-        </tr>
-        <tr>
-            <th>Tên:</th>
-            <td>
-                <input type="text" name="name" value="${manufacturer.name}" required />
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="isEdit" value="${manufacturer.isEdit}" />
-    <button type="submit">${manufacturer.isEdit ? 'Cập nhật' : 'Thêm mới'}</button>
-    <a href="/vendor/manufacturers">Hủy</a>
-</form>
-</body>
-</html>
+        <!-- Thông báo lỗi -->
+        <c:if test="${not empty message}">
+            <div class="alert alert-danger" role="alert">
+                    ${message}
+            </div>
+        </c:if>
+
+        <!-- Form -->
+        <form action="/vendor/manufacturer/save" method="post">
+            <div class="mb-3">
+                <c:if test="${manufacturer.isEdit}">
+                    <label for="id" class="form-label">ID:</label>
+                    <input type="text" class="form-control" id="id" value="${manufacturer.id}" readonly />
+                </c:if>
+            </div>
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Tên:</label>
+                <input type="text" class="form-control" id="name" name="name" value="${manufacturer.name}" required />
+            </div>
+
+            <input type="hidden" name="isEdit" value="${manufacturer.isEdit}" />
+
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">${manufacturer.isEdit ? 'Cập nhật' : 'Thêm mới'}</button>
+                <a href="/vendor/manufacturers" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

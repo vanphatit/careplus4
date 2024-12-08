@@ -1,89 +1,41 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>${unit.isEdit ? "Edit Unit" : "Add Unit"}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f9;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        form {
-            max-width: 400px;
-            margin: 20px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        form div {
-            margin-bottom: 15px;
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        a {
-            text-decoration: none;
-            color: #007bff;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .message {
-            text-align: center;
-            margin-top: 20px;
-            color: green;
-        }
-    </style>
-</head>
-<body>
-<h1>${unit.isEdit ? "Edit Unit" : "Add Unit"}</h1>
-<form action="/admin/unit/save" method="post">
-    <input type="hidden" name="isEdit" value="${unit.isEdit}" />
-    <div>
-        <c:if test="${unit.isEdit}">
-            <label for="id">Unit ID</label>
-            <input type="text" id="id" name="id" value="${unit.id}" readonly />
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<c:url value="/" var="URL"></c:url>
+
+<div class="container mt-5">
+    <div class="card mx-auto shadow-lg" style="max-width: 500px;">
+        <div class="card-header bg-primary text-white text-center">
+            <h1 class="h4">${unit.isEdit ? "Edit Unit" : "Add Unit"}</h1>
+        </div>
+        <div class="card-body">
+            <form action="/admin/unit/save" method="post">
+                <input type="hidden" name="isEdit" value="${unit.isEdit}" />
+
+                <c:if test="${unit.isEdit}">
+                    <div class="mb-3">
+                        <label for="id" class="form-label">Unit ID</label>
+                        <input type="text" id="id" name="id" value="${unit.id}" class="form-control" readonly />
+                    </div>
+                </c:if>
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Unit Name</label>
+                    <input type="text" id="name" name="name" value="${unit.name}" class="form-control" required />
+                    <c:if test="${not empty errors['name']}">
+                        <div class="text-danger mt-1">${errors['name']}</div>
+                    </c:if>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary">${unit.isEdit ? "Update" : "Save"}</button>
+                    <a href="/admin/units" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+        <c:if test="${not empty message}">
+            <div class="card-footer text-center text-success">
+                    ${message}
+            </div>
         </c:if>
     </div>
-    <div>
-        <label for="name">Unit Name</label>
-        <input type="text" id="name" name="name" value="${unit.name}" required />
-        <c:if test="${not empty errors['name']}">
-            <span>${errors['name']}</span>
-        </c:if>
-    </div>
-    <div>
-        <button type="submit">${unit.isEdit ? "Update" : "Save"}</button>
-        <a href="/admin/units">Cancel</a>
-    </div>
-</form>
-<c:if test="${not empty message}">
-    <p class="message">${message}</p>
-</c:if>
-</body>
-</html>
+</div>

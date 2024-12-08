@@ -38,7 +38,7 @@ public class EventController {
     public String all(Model model, @RequestParam("page") Optional<Integer> page,
                       @RequestParam("size") Optional<Integer> size) {
         int currentPage = page.orElse(1);
-        int pageSize = size.orElse(10);
+        int pageSize = 10;
 
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("id")); // Thay đổi nếu cần
         Page<Event> eventPage = eventService.findAll(pageable); // Lấy đối tượng Page<Event>
@@ -53,7 +53,7 @@ public class EventController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "vendor/event-list";
+        return "vendor/event/event-list";
     }
 
     @InitBinder
@@ -80,7 +80,7 @@ public class EventController {
     public String add(Model model) {
         EventModel eve = new EventModel();
         model.addAttribute("eve", eve);
-        return "vendor/event-add";
+        return "vendor/event/event-add";
     }
 
     @PostMapping("/save")
@@ -88,7 +88,7 @@ public class EventController {
                              BindingResult result) {
         if (result.hasErrors()) {
             System.out.println("Errors: " + result.getAllErrors());
-            return new ModelAndView("vendor/event-add");
+            return new ModelAndView("vendor/event/event-add");
         }
         Event entity = new Event();
         BeanUtils.copyProperties(eventModel, entity);
@@ -107,10 +107,10 @@ public class EventController {
             Event entity = optionalEvent.get();
             BeanUtils.copyProperties(entity, eve);
             model.addAttribute("eve", eve);
-            return new ModelAndView("vendor/event-add", model);
+            return new ModelAndView("vendor/event/event-add", model);
         }
         model.addAttribute("mess", "Event not found");
-        return new ModelAndView("forward:/vendor/event-list", model);
+        return new ModelAndView("forward:/vendor/event/event-list", model);
     }
 
     @GetMapping("/delete/{id}")
@@ -118,7 +118,7 @@ public class EventController {
         Optional<Event> optionalEvent = eventService.findById(id);
         if (optionalEvent.isPresent()) {
             model.addAttribute("event", optionalEvent.get());
-            return "vendor/event-delete"; // Hiển thị trang xác nhận xóa
+            return "vendor/event/event-delete"; // Hiển thị trang xác nhận xóa
         }
         return "redirect:/vendor/event";
     }
@@ -163,7 +163,7 @@ public class EventController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "vendor/event-list";
+        return "vendor/event/event-list";
     }
 
     @GetMapping("/active")
@@ -171,7 +171,7 @@ public class EventController {
         List<Event> activeEvents = eventService.getActiveEvents(inputDate);
         model.addAttribute("inputDate", inputDate);
         model.addAttribute("activeEvents", activeEvents);
-        return "vendor/event-active-list"; // Tên file JSP
+        return "vendor/event/event-active-list"; // Tên file JSP
     }
 
 }

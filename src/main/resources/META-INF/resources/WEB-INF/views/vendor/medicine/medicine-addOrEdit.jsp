@@ -64,7 +64,7 @@
             </div>
             <!-- Dosage -->
             <div class="col-md-6 mb-3">
-                <label for="dosage" class="form-label">Dosage:</label>
+                <label for="dosage" class="form-label">Liều dùng:</label>
                 <input type="text" id="dosage" name="dosage" class="form-control" placeholder="Nhập liều dùng" value="${medicine.dosage}">
             </div>
         </div>
@@ -139,7 +139,7 @@
 
         <div class="row">
             <div class="col-md-12 mb-3">
-                <label for="description" class="form-label">Description:</label>
+                <label for="description" class="form-label">Mô tả:</label>
                 <textarea id="description" name="description" class="form-control" rows="10" cols="50" placeholder="Nhập mô tả về thuốc">${medicine.description}</textarea>
             </div>
         </div>
@@ -152,7 +152,7 @@
                     <!-- Hiển thị ảnh hiện có nếu có -->
                     <c:if test="${not empty medicine.imageUrl}">
                         <div class="mt-2">
-                            <img src="${pageContext.request.contextPath}/medicine/image?fileName=${medicine.imageUrl}"
+                            <img src="${pageContext.request.contextPath}/images/image?filename=${medicine.imageUrl}"
                                  alt="Medicine Image"
                                  class="img-thumbnail"
                                  style="max-width: 200px;">
@@ -183,15 +183,6 @@
 </div>
 
 <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    const submitButton = document.querySelector('button[type="submit"]');
-    submitButton.addEventListener("click", function () {
-        submitButton.innerHTML = "Submitting...";
-        submitButton.disabled = true;
-    });
-</script>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const form = document.querySelector("form");
