@@ -186,6 +186,14 @@ public class MedicineServicesImpl implements iMedicineServices {
     }
 
     @Override
+    public int countAllStockQuantity() {
+        List<Medicine> medicines = medicineRepository.findAll();
+        return medicines.stream()
+                .mapToInt(Medicine::getStockQuantity)
+                .sum();
+    }
+
+    @Override
     public List<Medicine> findByImportDateBetween(Date min, Date max) {
         return medicineRepository.findByImportDateBetween(min, max);
     }
@@ -268,10 +276,36 @@ public class MedicineServicesImpl implements iMedicineServices {
         }
     }
 
-
     @Override
     public List<Medicine> findMedicinesByNameAndManufacturer_NameAndDosage(String name, String manufacturerName, String dosage) {
         return medicineRepository.findMedicinesByNameAndManufacturer_NameAndDosage(name, manufacturerName, dosage);
+    }
+
+    @Override
+    public List<Medicine> getTop5BestSellerForMonth() {
+        // Lấy ngày hiện tại và 30 ngày trước
+        java.sql.Date now = new java.sql.Date(System.currentTimeMillis());
+        java.sql.Date thirtyDaysAgo = new java.sql.Date(System.currentTimeMillis() - 30 * 24 * 60 * 60 * 1000);
+
+        // Lấy danh sách BillDetail trong 30 ngày gần đây
+        List<BillDetail> recentBillDetails = billDetailRepository.findAllByBillDateBetween(thirtyDaysAgo, now);
+
+        // Tính tổng số lượng bán ra cho mỗi sản phẩm
+        Map<String, Integer> medicineSales = recentBillDetails.stream()
+                .collect(Collectors.groupingBy(
+                        billDetail -> billDetail.getMedicine().getId(), // Nhóm theo ID thuốc
+                        Collectors.summingInt(BillDetail::getQuantity)  // Tổng số lượng bán ra
+                ));
+
+        // Sắp xếp các sản phẩm theo tổng số lượng bán được giảm dần và lấy top 5
+        List<String> topMedicineIds = medicineSales.entrySet().stream()
+                .sorted((entry1, entry2) -> Integer.compare(entry2.getValue(), entry1.getValue()))
+                .limit(3) // Lấy top 5 sản phẩm
+                .map(Map.Entry::getKey) // Chỉ lấy ID
+                .toList();
+
+        // Lấy thông tin chi tiết của các sản phẩm
+        return medicineRepository.findAllById(topMedicineIds);
     }
 
     @Override

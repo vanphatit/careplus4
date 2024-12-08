@@ -101,4 +101,16 @@ public class UserServiceImpl implements iUserService {
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
+
+    @Override
+    public int countUsersWithRoleUserIsActive() {
+        List<User> users = userRepository.findByRoleName("USER");
+        int count = 0;
+        for (User user : users) {
+            if (user.isStatus()) {
+                count++;
+            }
+        }
+        return count;
+    }
 }
