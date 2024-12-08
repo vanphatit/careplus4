@@ -54,7 +54,7 @@ public class BillManagementController {
 
         this.billService.saveBill(bill);
 
-        return "redirect:/admin/bills";
+        return "redirect:/admin/bill/" + bill.getId();
     }
 
     @GetMapping("/bill/{id}")

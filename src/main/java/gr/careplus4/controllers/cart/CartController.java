@@ -9,6 +9,7 @@ import gr.careplus4.services.impl.CartServiceImpl;
 import gr.careplus4.services.impl.EventServiceImpl;
 import gr.careplus4.services.impl.UserServiceImpl;
 import gr.careplus4.services.security.JwtCookies;
+import gr.careplus4.ultilities.Province;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,12 +154,17 @@ public class CartController {
                 usedPoints = currentUser.get().getPointEarned();
                 //(Số điểm sử dụng / 10) × 1.000
                 discount += (float) (currentUser.get().getPointEarned() * 1000) / 10;
+                if (discount > (subPrice * 0.3)) {
+                    discount = (float) (subPrice * 0.3);
+                }
             }
 
             if (event.isPresent() && event.get().getDiscount().intValue() != 0) {
                 percentage = event.get().getDiscount().intValue();
                 discount += subPrice * event.get().getDiscount().floatValue() / 100;
+
             }
+
             totalPrice = subPrice - discount;
 
         } else {
@@ -171,6 +177,7 @@ public class CartController {
         model.addAttribute("percentageDiscount", percentage);
         model.addAttribute("usedPoints", usedPoints);
         model.addAttribute("code", cart.getCouponCode());
+        model.addAttribute("provinces", Province.provinces);
 
         return "user/cart/checkout";
     }

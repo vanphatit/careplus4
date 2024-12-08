@@ -54,7 +54,7 @@ public class BillVendorController {
 
         this.billService.saveBill(bill);
 
-        return "redirect:/vendor/bills";
+        return "redirect:/vendor/bill/" + bill.getId();
     }
 
     @GetMapping("/bill/{id}")

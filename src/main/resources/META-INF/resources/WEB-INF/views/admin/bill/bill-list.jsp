@@ -48,24 +48,49 @@
                                         <td>${bill.method}</td>
                                         <td>
                                             <c:choose>
-                                                <c:when test="${bill.status == 'COMPLETED'}">
-                                                    <span class="badge bg-success">COMPLETED</span>
+                                                <c:when test="${bill.status == 'SHIPPED'}">
+                                                    <span class="badge bg-success">Đã giao</span>
                                                 </c:when>
-                                                <c:when test="${bill.status == 'PROCESSING'}">
-                                                    <span class="badge bg-primary">PROCESSING</span>
+                                                <c:when test="${bill.status == 'SHIPPING'}">
+                                                    <span class="badge bg-info">Đang giao</span>
+                                                </c:when>
+                                                <c:when test="${bill.status == 'CANCELED'}">
+                                                    <span class="badge bg-danger">Đã hủy</span>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <span class="badge bg-warning">${bill.status}</span>
+                                                    <span class="badge bg-warning">Chờ</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
                                         <td>
-                                            <a href="/admin/bill/${bill.id}"
-                                               class="btn btn-success">Chi tiết </a>
-                                            <a href="/admin/bill/update/${bill.id}"
-                                               class="btn btn-warning  mx-2">Cập nhật</a>
-                                            <a href="/admin/bill/delete/${bill.id}"
-                                               class="btn btn-danger">Xóa</a>
+                                            <c:choose>
+                                                <c:when test="${bill.status == 'CANCELED'}">
+                                                    <a href="/admin/bill/${bill.id}"
+                                                       class="btn btn-success">Chi tiết </a>
+                                                    <a href="/admin/bill/update/${bill.id}"
+                                                       class="btn btn-warning mx-2" hidden>Cập nhật</a>
+                                                    <a href="/admin/bill/delete/${bill.id}"
+                                                       class="btn btn-danger">Xóa</a>
+                                                </c:when>
+
+                                                <c:when test="${bill.status == 'SHIPPED'}">
+                                                    <a href="/admin/bill/${bill.id}"
+                                                       class="btn btn-success">Chi tiết </a>
+                                                    <a href="/admin/bill/update/${bill.id}"
+                                                       class="btn btn-warning mx-2" hidden>Cập nhật</a>
+                                                    <a href="/admin/bill/delete/${bill.id}"
+                                                       class="btn btn-danger">Xóa</a>
+                                                </c:when>
+
+                                                <c:otherwise>
+                                                    <a href="/admin/bill/${bill.id}"
+                                                       class="btn btn-success">Chi tiết </a>
+                                                    <a href="/admin/bill/update/${bill.id}"
+                                                       class="btn btn-warning mx-2">Cập nhật</a>
+                                                    <a href="/admin/bill/delete/${bill.id}"
+                                                       class="btn btn-danger">Xóa</a>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
                                     </tr>
 

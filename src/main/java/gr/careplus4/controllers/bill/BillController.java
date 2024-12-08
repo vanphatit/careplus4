@@ -32,12 +32,20 @@ public class BillController {
                                    @RequestParam("receiverAddress") String receiverAddress,
                                    @RequestParam("usedPoint") int usedPoint,
                                    @RequestParam("eventCode") String eventCode,
-                                   @RequestParam("accumulate") boolean accumulate
-                                   ) {
+                                   @RequestParam("province") String province,
+                                   @RequestParam("shippingFee") String shippingFee,
+                                   @RequestParam("accumulate") boolean accumulate) {
         String phone = jwtCookies.getUserPhoneFromJwt(request);
 
-        this.billService.handlePlaceOrder(receiverName, receiverAddress, phone, usedPoint,
-                eventCode, accumulate);
+        String address = receiverAddress + ", " + province;
+
+        float shipping = 0;
+        if (shippingFee != null) {
+            shipping = Float.parseFloat(shippingFee);
+        }
+
+        this.billService.handlePlaceOrder(receiverName, address, phone, usedPoint,
+                eventCode, accumulate, shipping);
 
         return "redirect:/user/thanks";
     }
