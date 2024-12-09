@@ -45,13 +45,13 @@
                     </div>
                     <c:if test="${user.role.name == 'ADMIN'}">
                         <div class="topbar__item topbar__item--link"><a class="topbar-link"
-                                                                        href="${pageContext.request.contextPath}/admin/users">Quản
+                                                                        href="${pageContext.request.contextPath}/admin/dashboard">Quản
                             lý</a>
                         </div>
                     </c:if>
                     <c:if test="${user.role.name == 'VENDOR'}">
                         <div class="topbar__item topbar__item--link"><a class="topbar-link"
-                                                                        href="${pageContext.request.contextPath}/vendor/medicines">Quản
+                                                                        href="${pageContext.request.contextPath}/vendor/dashboard">Quản
                             lý</a>
                         </div>
                     </c:if>
