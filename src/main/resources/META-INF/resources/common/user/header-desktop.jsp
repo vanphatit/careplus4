@@ -84,7 +84,7 @@
                             <ul class="nav-links__list">
                                 <c:forEach var="category" items="${rootCategories}">
                                     <li class="nav-links__item nav-links__item--with-submenu">
-                                        <a href="/user/medicines?${category.id}">
+                                        <a href="/user/medicines?categoryId=${category.id}">
                                             <span>${category.name}
                                             <svg class="nav-links__arrow" width="9px" height="6px">
                                                 <use href="images/sprite.svg#arrow-rounded-down-9x6"></use>
@@ -95,7 +95,7 @@
                                                 <ul class="menu menu--layout--classic">
                                                     <c:forEach var="subCategory" items="${category.subCategories}">
                                                         <li>
-                                                            <a href="/user/medicines?${subCategory.id}">
+                                                            <a href="/user/medicines?categoryId=${subCategory.id}">
                                                                     ${subCategory.name}
                                                             </a>
                                                         </li>
