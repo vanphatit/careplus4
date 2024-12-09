@@ -168,7 +168,7 @@
                     <!-- Hiển thị ảnh hiện có nếu có -->
                     <c:if test="${not empty medicine.imageUrl}">
                         <div class="mt-2">
-                            <img src="${pageContext.request.contextPath}/images/image?filename=${medicine.imageUrl}"
+                            <img src="${pageContext.request.contextPath}/images/image?fileName=${medicine.imageUrl}"
                                  alt="Medicine Image"
                                  class="img-thumbnail"
                                  style="max-width: 200px;">
