@@ -74,9 +74,6 @@
                     <td class="text-center">
                         <a href="<c:url value='/vendor/manufacturer/${manufacturer.id}'/>" class="btn btn-info btn-sm btn-action">Chi tiết</a>
                         <a href="<c:url value='/vendor/manufacturer/edit/${manufacturer.id}'/>" class="btn btn-warning btn-sm btn-action">Sửa</a>
-                        <a href="<c:url value='/vendor/manufacturer/delete/${manufacturer.id}'/>"
-                           class="btn btn-danger btn-sm btn-action"
-                           onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
                     </td>
                 </tr>
             </c:forEach>

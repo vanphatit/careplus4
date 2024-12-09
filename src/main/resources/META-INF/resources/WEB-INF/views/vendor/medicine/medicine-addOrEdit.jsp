@@ -106,8 +106,14 @@
         <div class="row">
             <!-- Stock Quantity -->
             <div class="col-md-6 mb-3">
-                <label for="stockQuantity" class="form-label">Lượng tồn kho:</label>
-                <input type="number" id="stockQuantity" name="stockQuantity" min="0" placeholder="Nhập lượng tồn kho" class="form-control" value="${medicine.stockQuantity}" required>
+                <c:if test="${medicine.id == null}">
+                    <input type="number" id="stockQuantity" name="stockQuantity" class="form-control" hidden="hidden" value="0" required>
+                    <input type="text" id="importId" name="importId" hidden="hidden" class="form-control" value="${importId}">
+                </c:if>
+                <c:if test="${medicine.id != null}">
+                    <label for="stockQuantity" class="form-label">Số lượng tồn:</label>
+                    <input type="number" id="stockQuantity" name="stockQuantity" class="form-control" value="${medicine.stockQuantity}" required disabled>
+                </c:if>
             </div>
         </div>
 
@@ -168,7 +174,7 @@
                     <!-- Hiển thị ảnh hiện có nếu có -->
                     <c:if test="${not empty medicine.imageUrl}">
                         <div class="mt-2">
-                            <img src="${pageContext.request.contextPath}/images/image?filename=${medicine.imageUrl}"
+                            <img src="${pageContext.request.contextPath}/images/image?fileName=${medicine.imageUrl}"
                                  alt="Medicine Image"
                                  class="img-thumbnail"
                                  style="max-width: 200px;">
