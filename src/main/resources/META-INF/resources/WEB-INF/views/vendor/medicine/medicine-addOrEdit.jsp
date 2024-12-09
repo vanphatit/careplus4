@@ -112,7 +112,7 @@
                 </c:if>
                 <c:if test="${medicine.id != null}">
                     <label for="stockQuantity" class="form-label">Số lượng tồn:</label>
-                    <input type="number" id="stockQuantity" name="stockQuantity" class="form-control" value="${medicine.stockQuantity}" required disabled>
+                    <input type="number" id="stockQuantity" name="stockQuantity" class="form-control" value="${medicine.stockQuantity}" readonly required disabled>
                 </c:if>
             </div>
         </div>
