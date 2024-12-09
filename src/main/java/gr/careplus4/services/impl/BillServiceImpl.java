@@ -358,12 +358,12 @@ public class BillServiceImpl implements IBillService {
         List<Import> imports = importRepository.findImportByDateBetween(startDate, endDate);
 
         if (imports.isEmpty()) {
-            return new BigDecimal(0);
+            return getRevenueForPeriod(startDate, endDate);
         }
 
-        BigDecimal profit = new BigDecimal(0);
+        BigDecimal profit = getRevenueForPeriod(startDate, endDate);
         for (Import anImport : imports) {
-            profit = profit.add(anImport.getTotalAmount());
+            profit = profit.subtract(anImport.getTotalAmount());
         }
 
         return profit;
@@ -389,13 +389,13 @@ public class BillServiceImpl implements IBillService {
         List<Import> imports = importRepository.findImportByDate(date);
 
         if (imports.isEmpty()) {
-            return new BigDecimal(0);
+            return getRevenueDaily(date);
         }
 
-        BigDecimal profit = new BigDecimal(0);
+        BigDecimal profit = getRevenueDaily(date);
 
         for (Import anImport : imports) {
-            profit = profit.add(anImport.getTotalAmount());
+            profit = profit.subtract(anImport.getTotalAmount());
         }
 
         return profit;

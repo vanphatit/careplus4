@@ -504,6 +504,29 @@ public class MedicineServicesImpl implements iMedicineServices {
     }
 
     @Override
+    public Page<MedicineForUserModel> getMedicineForUserByCategoryName(String categoryName, Pageable pageable) {
+        List<MedicineForUserModel> medicines = findNearestExpiryMedicines();
+
+        List<MedicineForUserModel> filteredMedicines = medicines.stream()
+                .filter(medicine -> medicine.getCategoryName().equalsIgnoreCase(categoryName))
+                .toList();
+
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+
+        List<MedicineForUserModel> pagedMedicines;
+        if (startItem >= filteredMedicines.size()) {
+            pagedMedicines = new ArrayList<>(); // Nếu vượt quá phạm vi, trả về danh sách rỗng
+        } else {
+            int toIndex = Math.min(startItem + pageSize, filteredMedicines.size());
+            pagedMedicines = filteredMedicines.subList(startItem, toIndex);
+        }
+
+        return new PageImpl<>(pagedMedicines, pageable, filteredMedicines.size());
+    }
+
+    @Override
     public Page<MedicineForUserModel> filterMedicineFlexibleForUser(
             String manufacturerName, String categoryName, String unitName,
             BigDecimal unitCostMin, BigDecimal unitCostMax,

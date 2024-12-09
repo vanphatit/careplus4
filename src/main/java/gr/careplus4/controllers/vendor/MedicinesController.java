@@ -538,14 +538,15 @@ public class MedicinesController {
     public String getListMedicinesUser(Model model,
                                    @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
                                    @RequestParam(value = "size", required = false, defaultValue = "12") int pageSize,
-                                   @RequestParam(value = "categoryid", required = false) String categoryId
+                                   @RequestParam(value = "categoryId", required = false) String categoryId
                                        ) {
         // Đảm bảo currentPage >= 1
         currentPage = Math.max(currentPage, 1);
         Page<MedicineForUserModel> medicines = null;
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("name").ascending());
         if (categoryId != null) {
-            medicines = medicineService.searchMedicineByKeywordForUser(categoryId, pageable);
+            String categoryName = categoryService.findById(categoryId).get().getName();
+            medicines = medicineService.getMedicineForUserByCategoryName(categoryName, pageable);
         } else{
             medicines = medicineService.getMedicinesForUser(pageable);
         }

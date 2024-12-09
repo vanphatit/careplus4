@@ -31,7 +31,7 @@ public class DashboardController {
     @Autowired
     public BillServiceImpl billService;
 
-    @RequestMapping({"/", "/dashboard"})
+    @RequestMapping({"/", "/dashboard", ""})
     public String dashboard(Model model) throws JsonProcessingException {
 
         int totalUser = statisticsService.getTotalUsertWithRoleUser();

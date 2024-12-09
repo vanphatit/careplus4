@@ -114,6 +114,8 @@ public interface iMedicineServices {
             BigDecimal ratingMin, BigDecimal ratingMax
     );
 
+    Page<MedicineForUserModel> getMedicineForUserByCategoryName(String categoryName, Pageable pageable);
+
     Page<MedicineForUserModel> filterMedicineFlexibleForUser(
             String manufacturerName, String categoryName, String unitName,
             BigDecimal unitCostMin, BigDecimal unitCostMax,

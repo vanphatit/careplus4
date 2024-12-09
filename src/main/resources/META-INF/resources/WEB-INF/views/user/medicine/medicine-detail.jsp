@@ -77,7 +77,7 @@
 <div class="container mt-5">
     <!-- Tiêu đề -->
     <div class="text-center mb-4">
-        <h1 class="text-primary">Medicine Details</h1>
+        <h1 class="text-primary">Chi tiết thuốc</h1>
     </div>
 
     <!-- Chi tiết thuốc -->
