@@ -11108,13 +11108,14 @@ hr {
 /* Đảm bảo lưới sản phẩm hiển thị đẹp */
 .carousel-inner .row {
     gap: 20px; /* Tăng khoảng cách giữa các sản phẩm */
-}.product-card {
+}
+
+.product-card {
      background-color: #fff;
      padding: 20px;
      border-radius: 10px;
      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
      text-align: center;
-     min-height: 500px; /* Tăng chiều cao */
      height: auto;
      display: flex;
      flex-direction: column;

@@ -265,7 +265,7 @@
                                 <c:forEach var="product" items="${chunk}">
                                     <div class="col-md-4 col-sm-6"> <!-- Điều chỉnh kích thước cột -->
                                         <div class="product-card">
-                                            <img src="${pageContext.request.contextPath}/images/image?fileName=${product.image}" class="d-block w-100" alt="${product.name}">
+                                            <img src="${pageContext.request.contextPath}/images/image?fileName=${product.image}" style="height: 150px" class="d-block w-100" alt="${product.name}">
                                             <div class="product-info">
                                                 <p>${product.name}</p>
                                                 <p>${product.unitCost} VND</p>
