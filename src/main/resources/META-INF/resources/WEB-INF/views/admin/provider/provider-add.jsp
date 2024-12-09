@@ -15,17 +15,20 @@
     <h1 class="mb-4">${pro.id == null ? "Thêm Nhà Cung Cấp" : "Chỉnh Sửa Nhà Cung Cấp"}</h1>
 
     <form action="${pageContext.request.contextPath}/admin/provider/save" method="post" class="shadow p-4 rounded bg-white">
+        <input type="hidden" name="isEdit" value="${pro.isEdit}">
         <!-- ID Field -->
-<%--        <div class="mb-3">--%>
-<%--            <label for="id" class="form-label">ID:</label>--%>
-<%--            <input--%>
-<%--                    type="text"--%>
-<%--                    class="form-control"--%>
-<%--                    id="id"--%>
-<%--                    name="id"--%>
-<%--                    value="${pro.id}"--%>
-<%--            ${pro.id != null ? "readonly" : "hidden"} />--%>
-<%--        </div>--%>
+        <div class="mb-3">
+            <c:if test="${pro.isEdit}">
+            <label for="id" class="form-label">ID:</label>
+            <input
+                    type="text"
+                    class="form-control"
+                    id="id"
+                    name="id"
+                    value="${pro.id}" readonly
+             />
+            </c:if>
+        </div>
 
         <!-- Name Field -->
         <div class="mb-3">
@@ -77,3 +80,4 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 </html>
+

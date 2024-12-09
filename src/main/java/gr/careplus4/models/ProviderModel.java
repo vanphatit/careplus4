@@ -12,4 +12,5 @@ public class ProviderModel {
     private String name;
     private String address;
     private String phone;
+    private Boolean isEdit;
 }
