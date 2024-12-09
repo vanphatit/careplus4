@@ -167,11 +167,11 @@ public class MedicinesController {
 
         model.addAttribute("reviews", reviews);
         if (!medicine.isPresent()) {
-            String message = "Medicine not found";
+            String message = "Không tìm thấy thuốc";
             model.addAttribute("message", message);
             return "redirect:/vendor/medicines";
         }
-        String message = "Medicine found";
+        String message = "Đã tìm thấy thuốc " + medicine.get().getName();
         model.addAttribute("medicine", medicine.get());
         model.addAttribute("message", message);
         model.addAttribute("currentPage", currentPage); // Để view biết trang hiện tại
@@ -370,7 +370,7 @@ public class MedicinesController {
     public String editMedicine(Model model, @PathVariable("id") String id) {
         Optional<Medicine> medicineO = medicineService.findById(id);
         if (!medicineO.isPresent()) {
-            String message = "Medicine not found";
+            String message = "Không tìm thấy thuốc";
             model.addAttribute("message", message);
             return "redirect:/vendor/medicines";
         }
@@ -407,10 +407,10 @@ public class MedicinesController {
         Optional<Medicine> medicine = medicineService.findById(id);
         if (medicine.isPresent()) {
             medicineService.deleteById(id);
-            model.addAttribute("message", "Medicine deleted successfully");
+            model.addAttribute("message", "Thuốc đã được xóa");
             return new ModelAndView("redirect:/vendor/medicines", model);
         }
-        model.addAttribute("message", "Medicine not found");
+        model.addAttribute("message", "Không tìm thấy thuốc");
         return new ModelAndView("redirect:/vendor/medicines", model);
     }
 
@@ -528,7 +528,7 @@ public class MedicinesController {
     public String medicineIsExist(Model model, @PathVariable("name") String name, @PathVariable("expiryDate") Date expiryDate, @PathVariable("manufacturerName") String manufacturerName, @PathVariable("importDate") Date importDate, RedirectAttributes redirectAttributes) {
         Boolean check = medicineService.medicineIsExist(name, expiryDate, manufacturerName, importDate);
         if (check) {
-            model.addAttribute("message", "Medicine exists");
+            model.addAttribute("message", "Thuốc " + name + " đã tồn tại");
         } else {
            redirectAttributes.addFlashAttribute("message", "Medicine not found");
         }
