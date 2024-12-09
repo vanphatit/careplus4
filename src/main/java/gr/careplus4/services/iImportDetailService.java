@@ -33,4 +33,8 @@ public interface iImportDetailService {
     List<ImportDetail> findImportDetailByImportId(String importId);
 
     <S extends ImportDetail> S save(S entity);
+
+    boolean checkDelete(Long id);
+
+    boolean checkMedicineInBillOrReviewOrCart(String id);
 }

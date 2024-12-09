@@ -14,7 +14,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Optional;
 
@@ -32,12 +34,16 @@ public class ImportDetailController {
 
 
     @GetMapping("/add-detail/{importId}")
-    public String showAddDetailForm(@PathVariable("importId") String importId, Model model) {
+    public String showAddDetailForm(@PathVariable("importId") String importId,
+                                    @RequestParam(value = "medicineId", required = false) String medicineId,
+                                    ModelMap model) {
         Optional<Import> importOptional = importService.findById(importId);
+
         if (importOptional.isPresent()) {
             ImportDetailModel detailModel = new ImportDetailModel();
             detailModel.setMedicineId(""); // Giá trị mặc định
             model.addAttribute("importId", importId);
+            model.addAttribute("medicineId", medicineId);
             model.addAttribute("detail", detailModel);
             return "vendor/import/import-detail-add"; // JSP Form
         }
@@ -78,6 +84,9 @@ public class ImportDetailController {
         importDetail.setUnitPrice(detailModel.getUnitPrice());
         importDetailService.save(importDetail); // Lưu ImportDetail
 
+        // Cập nhật totalAmount của Import
+        importService.updateTotalAmount(importId, importDetail.getSubTotal());
+
         // Gọi hàm cập nhật giá bán (unitPrice)
         medicineService.updateUnitPriceFollowUniCost(
                 medicine.getName(),
@@ -101,22 +110,125 @@ public class ImportDetailController {
     }
 
     @GetMapping("/delete-detail/{id}")
-    public String deleteImportDetail(@PathVariable("id") Long id, ModelMap model) {
-        // Kiểm tra sự tồn tại của ImportDetail
+    public String deleteImportDetail(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         Optional<ImportDetail> importDetailOptional = importDetailService.findById(id);
         if (importDetailOptional.isEmpty()) {
-            model.addAttribute("error", "Import Detail không tồn tại!");
+            redirectAttributes.addFlashAttribute("error", "Import Detail không tồn tại!");
             return "redirect:/vendor/import";
         }
 
+        boolean checkDelete = importDetailService.checkDelete(id);
+
         try {
-            importDetailService.deleteById(id); // Xóa ImportDetail
-            model.addAttribute("message", "Import Detail deleted successfully.");
+            if (checkDelete) {
+                ImportDetail importDetail = importDetailOptional.get();
+
+                boolean checkMedicineInBillOrReviewOrCart = importDetailService.checkMedicineInBillOrReviewOrCart(importDetail.getMedicine().getId());
+
+                if (checkMedicineInBillOrReviewOrCart) {
+                    redirectAttributes.addFlashAttribute("error", "Không thể xóa Import Detail: Medicine đã được sử dụng trong Bill hoặc Review hoặc Cart!");
+                    return "redirect:/vendor/import/show/" + importDetail.getImportRecord().getId();
+                }
+
+                importDetailService.deleteById(id); // Xóa ImportDetail
+                importService.updateTotalAmount(importDetail.getImportRecord().getId(), importDetail.getSubTotal().negate());
+                medicineService.deleteById(importDetail.getMedicine().getId());
+                redirectAttributes.addFlashAttribute("message", "Xóa Import Detail thành công!");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Không thể xóa Import Detail: Số lượng tồn kho không đủ!");
+            }
         } catch (Exception e) {
-            model.addAttribute("error", "Không thể xóa Import Detail: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa Import Detail: " + e.getMessage());
         }
 
-        return "redirect:/vendor/import";
+        return "redirect:/vendor/import/show/" + importDetailOptional.get().getImportRecord().getId();
+    }
+
+    @GetMapping("/edit-detail/{id}")
+    public String editImportDetail(@PathVariable("id") Long id, ModelMap model) {
+        Optional<ImportDetail> optionalDetail = importDetailService.findImportDetailById(id);
+
+        if (optionalDetail.isPresent()) {
+            ImportDetail entity = optionalDetail.get();
+            ImportDetailModel detailModel = new ImportDetailModel();
+
+            // Sao chép dữ liệu từ entity sang model
+            detailModel.setImportDetailId(entity.getId());
+            detailModel.setImportId(entity.getImportRecord().getId());
+            detailModel.setMedicineId(entity.getMedicine().getId());
+            detailModel.setQuantity(entity.getQuantity());
+            detailModel.setUnitPrice(entity.getUnitPrice());
+            detailModel.setSubTotal(entity.getSubTotal());
+
+
+            // Kiểm tra xem Import có tồn tại không
+            Optional<Import> importOptional = importService.findById(entity.getImportRecord().getId());
+            if (importOptional.isEmpty()) {
+                model.addAttribute("error", "Import không tồn tại cho ImportDetail này!");
+                return "redirect:/vendor/import";
+            }
+
+            // Kiểm tra xem Medicine có tồn tại không
+            Optional<Medicine> medicineOptional = medicineService.findById(entity.getMedicine().getId());
+            if (medicineOptional.isEmpty()) {
+                model.addAttribute("error", "Medicine không tồn tại cho ImportDetail này!");
+                return "redirect:/vendor/import/show/" + entity.getImportRecord().getId();
+            }
+
+            // Truyền dữ liệu vào model để hiển thị ở giao diện chỉnh sửa
+            model.addAttribute("detail", detailModel);
+            model.addAttribute("importId", entity.getImportRecord().getId());
+            return "vendor/import/import-detail-add"; // Tên JSP được sử dụng cho cả thêm và chỉnh sửa
+        }
+
+        model.addAttribute("error", "ImportDetail không tồn tại!");
+        return "redirect:/vendor/import/show/" + optionalDetail.get().getImportRecord().getId();
+    }
+
+    @PostMapping("/edit-detail/{id}")
+    public String updateImportDetail(
+            @PathVariable("id") Long id,
+            @Valid @ModelAttribute("detail") ImportDetailModel detailModel,
+            BindingResult result,
+            RedirectAttributes redirectAttributes) {
+
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Dữ liệu không hợp lệ!");
+            return "redirect:/vendor/import-detail/edit-detail/" + id;
+        }
+
+        Optional<ImportDetail> optionalDetail = importDetailService.findImportDetailById(id);
+        if (optionalDetail.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Import Detail không tồn tại!");
+            return "redirect:/vendor/import/show" + optionalDetail.get().getImportRecord().getId();
+        }
+
+        // Kiểm tra số lượng tồn kho
+        boolean checkDelete = importDetailService.checkDelete(id);
+        if (!checkDelete) {
+            redirectAttributes.addFlashAttribute("error", "Không thể chỉnh sửa Import Detail: Số lượng tồn kho không đủ!");
+            return "redirect:/vendor/import/show/" + optionalDetail.get().getImportRecord().getId();
+        }
+
+        ImportDetail importDetail = optionalDetail.get();
+        importDetail.setQuantity(detailModel.getQuantity());
+        importDetail.setUnitPrice(detailModel.getUnitPrice());
+        BigDecimal quantity = new BigDecimal(detailModel.getQuantity());
+        importDetail.setSubTotal(quantity.multiply(detailModel.getUnitPrice()));
+
+        try {
+            importDetailService.save(importDetail);
+
+            // Cập nhật lại totalAmount của Import
+            importService.updateTotalAmount(importDetail.getImportRecord().getId(),
+                    importDetail.getSubTotal().subtract(importDetail.getSubTotal()));
+
+            redirectAttributes.addFlashAttribute("message", "Chỉnh sửa Import Detail thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi chỉnh sửa Import Detail: " + e.getMessage());
+        }
+
+        return "redirect:/vendor/import/show/" + importDetail.getImportRecord().getId();
     }
 
 //    @GetMapping("/edit-detail/{id}")

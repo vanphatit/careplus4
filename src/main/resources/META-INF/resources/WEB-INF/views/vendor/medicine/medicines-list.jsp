@@ -235,14 +235,6 @@
                 </form>
             </div>
 
-            <!-- Notification -->
-            <c:if test="${not empty message}">
-                <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <strong>${message}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> Đóng </button>
-                </div>
-            </c:if>
-
             <!-- Table Section -->
             <div class="table-container">
                 <table class="table table-bordered table-striped">
@@ -290,13 +282,31 @@
                     </c:forEach>
                 </ul>
             </nav>
-
         </div>
     </div>
 </div>
 
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <c:if test="${not empty message}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: '${message}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+    <c:if test="${not empty error}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: '${error}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+</script>
 </body>
 </html>

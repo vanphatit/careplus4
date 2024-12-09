@@ -13,4 +13,5 @@ public interface BillDetailRepository extends JpaRepository<BillDetail, Long> {
     List<BillDetail> findByMedicineName(String medicineName);
     List<BillDetail> findByMedicineId(String medicineId);
     List<BillDetail> findAllByBillDateBetween(Date startDate, Date endDate);
+    Boolean existsByMedicineId(String medicineId);
 }

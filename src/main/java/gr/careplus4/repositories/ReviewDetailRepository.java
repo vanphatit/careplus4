@@ -26,4 +26,6 @@ public interface ReviewDetailRepository extends JpaRepository<ReviewDetail, Long
     int countReviewDetailsByReview_Bill_Id(String reviewBillId);
 
     boolean existsReviewDetailByReviewAndMedicine_Id(Review review, @Size(max = 7) String medicineId);
+
+    boolean existsReviewDetailByMedicine_Id (@Size(max = 7) String medicineId);
 }

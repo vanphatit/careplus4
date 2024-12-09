@@ -16,4 +16,6 @@ public interface CartDetailRepository extends JpaRepository<CartDetail, Long> {
     List<CartDetail> findAllByCart(Optional<Cart> cart);
 
     void deleteAllByCart(Cart cart);
+
+    Boolean existsByMedicine_Id(String medicineId);
 }

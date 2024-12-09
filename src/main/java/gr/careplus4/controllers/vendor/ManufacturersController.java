@@ -117,7 +117,7 @@ public class ManufacturersController  {
             manufacturerModel.setIsEdit(true);
             model.addAttribute("message", "Chỉnh sửa nhà sản xuất " + manufacturerModel.getName());
             model.addAttribute("manufacturer", manufacturerModel);
-            return new ModelAndView("vendor/manufacturer-addOrEdit", model);
+            return new ModelAndView("vendor/manufacturer/manufacturer-addOrEdit", model);
         }
         model.addAttribute("message", "Nhà sản xuất không tồn tại");
         return new ModelAndView("redirect:/vendor/manufacturers", model);

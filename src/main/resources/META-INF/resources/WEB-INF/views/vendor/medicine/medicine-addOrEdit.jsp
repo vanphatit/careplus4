@@ -59,11 +59,6 @@
 <div class="container mt-5">
     <h1 class="text-center text-primary">${medicine.id != null ? 'Cập nhật thông tin thuốc' : 'Thêm thuốc mới'}</h1>
 
-    <!-- Hiển thị thông báo lỗi nếu có -->
-    <c:if test="${not empty message}">
-        <div class="alert alert-danger text-center">${message}</div>
-    </c:if>
-
     <form method="post" action="${pageContext.request.contextPath}/vendor/medicine/save" enctype="multipart/form-data" class="mt-4">
         <!-- Hidden Field: ID -->
         <input type="hidden" name="id" value="${medicine.id}">
@@ -112,7 +107,7 @@
                 </c:if>
                 <c:if test="${medicine.id != null}">
                     <label for="stockQuantity" class="form-label">Số lượng tồn:</label>
-                    <input type="number" id="stockQuantity" name="stockQuantity" class="form-control" value="${medicine.stockQuantity}" required disabled>
+                    <input type="number" id="stockQuantity" name="stockQuantity" class="form-control" value="${medicine.stockQuantity}" readonly required disabled>
                 </c:if>
             </div>
         </div>
@@ -205,6 +200,25 @@
 </div>
 
 <!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <c:if test="${not empty message}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: '${message}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+    <c:if test="${not empty error}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: '${error}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const form = document.querySelector("form");

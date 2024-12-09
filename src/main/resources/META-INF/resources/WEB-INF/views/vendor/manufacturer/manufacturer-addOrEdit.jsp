@@ -7,11 +7,17 @@
         <h1>${manufacturer.isEdit ? 'Chỉnh sửa Nhà Sản Xuất' : 'Thêm mới Nhà Sản Xuất'}</h1>
 
         <!-- Thông báo lỗi -->
-        <c:if test="${not empty message}">
-            <div class="alert alert-danger" role="alert">
-                    ${message}
-            </div>
-        </c:if>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            <c:if test="${not empty message}">
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '${message}',
+                confirmButtonText: 'OK'
+            });
+            </c:if>
+        </script>
 
         <!-- Form -->
         <form action="/vendor/manufacturer/save" method="post">

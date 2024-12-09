@@ -203,14 +203,6 @@
         </div>
     </div>
 
-    <!-- Thong bao loi khong ket noi api -->
-    <c:if test="${error != null}">
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>${error}</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> Đóng</button>
-        </div>
-    </c:if>
-
     <!-- Bảng giao dịch -->
     <div class="row mt-5">
         <div class="col-md-12">
@@ -395,6 +387,26 @@
             alert(`Ngày: ${label}\nDoanh thu: ${revenue} VND\nLợi nhuận: ${profit} VND`);
         }
     };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <c:if test="${not empty message}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: '${message}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+    <c:if test="${not empty error}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Thất bại!',
+        text: '${error}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
 </script>
 
 </body>

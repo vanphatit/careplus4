@@ -21,4 +21,5 @@ public interface ImportRepository extends JpaRepository<Import, String> {
     Page<Import> findByProviderIdContaining(@Param("providerId") String providerId, Pageable pageable);
     List<Import> findImportByDate(java.sql.Date date);
     List<Import> findImportByDateBetween(java.sql.Date startDate, java.sql.Date endDate);
+    Import findTopByOrderByIdDesc();
 }
