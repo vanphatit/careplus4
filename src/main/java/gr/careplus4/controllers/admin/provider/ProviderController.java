@@ -1,6 +1,7 @@
 package gr.careplus4.controllers.admin.provider;
 
 import gr.careplus4.entities.Provider;
+import gr.careplus4.entities.Unit;
 import gr.careplus4.models.ProviderModel;
 import gr.careplus4.services.impl.ProviderServiceImpl;
 import jakarta.validation.Valid;
@@ -54,22 +55,32 @@ public class ProviderController {
     @GetMapping("/add")
     public String add(Model model) {
         ProviderModel pro = new ProviderModel();
+        pro.setIsEdit(false);
         model.addAttribute("pro", pro);
         return "admin/provider/provider-add";
     }
 
+
     @PostMapping("/save")
     public ModelAndView save(ModelMap model, @Valid @ModelAttribute("pro") ProviderModel providerModel,
                              BindingResult result) {
+        String message = "";
         if (result.hasErrors()) {
             System.out.println("Errors: " + result.getAllErrors());
             return new ModelAndView("admin/provider/provider-add");
         }
         Provider entity = new Provider();
         BeanUtils.copyProperties(providerModel, entity);
-        entity.setId(null); // Đặt lại để chắc chắn ID được tự động generate
-        providerService.save(entity);
-        String message = "Provider added successfully";
+        if (providerModel.getIsEdit()) { // Đặt lại để chắc chắn ID được tự động generate
+            providerService.save(entity);
+            message = "Provider updated successfully";
+        } else {
+            Provider previousProvider = providerService.findTopByOrderByIdDesc();
+            String previousProviderId = (previousProvider != null) ? previousProvider.getId() : "PR0000";
+            entity.setId(providerService.generateProviderId(previousProviderId));
+            providerService.save(entity);
+            message = "Provider added successfully";
+        }
         model.addAttribute("message", message);
         return new ModelAndView("redirect:/admin/provider", model);
 
@@ -82,6 +93,7 @@ public class ProviderController {
         if (optionalProvider.isPresent()) {
             Provider entity = optionalProvider.get();
             BeanUtils.copyProperties(entity, pro);
+            pro.setIsEdit(true);
             model.addAttribute("pro", pro);
             return new ModelAndView("admin/provider/provider-add", model);
         }

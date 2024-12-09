@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="flex" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,19 +12,50 @@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 <body class="bg-light">
+<div id="layoutSidenav">
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4">Quản lý nhà cung cấp</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Nhà cung cấp</li>
+                </ol>
+
+                <!-- Hiển thị thông báo -->
+                <c:if test="${not empty error}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        ${error}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                </c:if>
+                <c:if test="${not empty success}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        ${success}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                </c:if>
 <div class="container mt-5">
-    <h1 class="mb-4 text-start">Danh sách nhà cung cấp</h1>
+    <h3 class="d-flex justify-content-between">Danh sách nhà cung cấp</h3>
 
     <!-- Form tìm kiếm -->
-    <form action="${pageContext.request.contextPath}/admin/provider/searchpaginated" method="get" class="row g-3 mb-4">
-        <div class="col-md-5">
-            <input type="text" name="name" class="form-control" placeholder="Tìm theo tên" value="${param.name}" />
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Tìm kiếm</button>
-        </div>
+    <div class="d-flex align-items-center">
+    <form action="${pageContext.request.contextPath}/admin/provider/searchpaginated" method="get" class="form-inline">
+            <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Tìm theo tên"
+                    value="${param.name}"
+            />
+           <button type="submit" class="btn btn-primary"> Tìm kiếm</button>
     </form>
-    <div class="mb-4">
+    </div>
+<%--        <div class="col-md-2 mb-2">--%>
+<%--            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Tìm kiếm</button>--%>
+<%--        </div>--%>
+
+    <div class="col-md-2 mb-2">
         <a href="${pageContext.request.contextPath}/admin/provider/add" class="btn btn-success">
             <i class="fas fa-plus"></i> Thêm Nhà cung cấp mới
         </a>
