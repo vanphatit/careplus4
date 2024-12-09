@@ -36,8 +36,6 @@
                     <td class="text-center">
                         <a href="/admin/unit/${unit.id}" class="btn btn-sm btn-info text-white">View</a>
                         <a href="/admin/unit/edit/${unit.id}" class="btn btn-sm btn-warning text-white">Edit</a>
-                        <a href="/admin/unit/delete/${unit.id}" class="btn btn-sm btn-danger"
-                           onclick="return confirm('Are you sure you want to delete this unit?')">Delete</a>
                     </td>
                 </tr>
             </c:forEach>

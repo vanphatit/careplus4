@@ -203,10 +203,12 @@ public class MedicinesController {
     }
 
     @GetMapping("/vendor/medicine/add")
-    public String addMedicine(Model model
+    public String addMedicine(Model model,
+                              @RequestParam(value = "importId", required = false) String importId
                               ) {
         MedicineModel medicineModel = new MedicineModel();
         medicineModel.setIsEdit(false);
+        model.addAttribute("importId", importId);
         model.addAttribute("CURRENTDATE", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         model.addAttribute("medicine", medicineModel);
         model.addAttribute("manufacturers", manufacturerService.findAll());
@@ -256,7 +258,8 @@ public class MedicinesController {
                                          @RequestParam("image") MultipartFile image,
                                          @RequestParam("manufacturerId") String manufacturerId,
                                          @RequestParam("categoryId") String categoryId,
-                                         @RequestParam("unitId") String unitId
+                                         @RequestParam("unitId") String unitId,
+                                         @RequestParam(value = "importId", required = false) String importId
     ) {
         String message = "";
         Medicine medicine = new Medicine();
@@ -365,16 +368,19 @@ public class MedicinesController {
         if (medicineModel.getIsEdit()) {
             medicineService.save(medicine);
             message = "Thông tin thuốc đã được cập nhật";
+            model.addAttribute("message", message);
+            return new ModelAndView("redirect:/vendor/medicines", model);
         } else {
             Medicine lastMedicine = medicineService.findTopByOrderByIdDesc();
             medicine.setRating(new BigDecimal(0));
             String previousMedicineId = (lastMedicine != null) ? lastMedicine.getId() : "MED0000";
             medicine.setId(medicineService.generateMedicineId(previousMedicineId));
             medicineService.save(medicine);
-            message = "Thuốc đã được thêm mới";
+            ModelMap modelMap = new ModelMap();
+            modelMap.addAttribute("medicineId", medicine.getId());
+            modelMap.addAttribute("importId", importId);
+            return new ModelAndView("vendor/import/import-detail-add", modelMap);
         }
-        model.addAttribute("message", message);
-        return new ModelAndView("redirect:/vendor/medicines", model);
     }
 
     @GetMapping("/vendor/medicine/edit/{id}")

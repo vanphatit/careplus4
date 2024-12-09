@@ -235,11 +235,6 @@
                 </form>
             </div>
 
-            <!-- Add Medicine Button -->
-            <div class="section-container mb-4">
-                <a href="${pageContext.request.contextPath}/vendor/medicine/add" class="btn btn-primary shadow-sm">Thêm thuốc mới</a>
-            </div>
-
             <!-- Notification -->
             <c:if test="${not empty message}">
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
@@ -275,7 +270,6 @@
                                 <div class="d-flex gap-2 justify-content-center">
                                     <a href="${pageContext.request.contextPath}/vendor/medicine/${medicine.id}" class="btn btn-info btn-sm text-white">Xem</a>
                                     <a href="${pageContext.request.contextPath}/vendor/medicine/edit/${medicine.id}" class="btn btn-warning btn-sm">Sửa</a>
-                                    <a href="${pageContext.request.contextPath}/vendor/medicine/delete/${medicine.id}" class="btn btn-danger btn-sm">Xóa</a>
                                 </div>
                             </td>
                         </tr>
