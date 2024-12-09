@@ -17,6 +17,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -86,12 +87,14 @@ public class UnitsController {
         if (unitModel.getIsEdit()) {
             unitService.save(unit);
             message = "Đơn vị đã được cập nhật thành công";
+            model.addAttribute("message", message);
         } else {
             Unit lastUnit = unitService.findTopByOrderByIdDesc();
             String previousUnitId = (lastUnit != null) ? lastUnit.getId() : "UNT0000";
             unit.setId(unitService.generateUnitId(previousUnitId));
             unitService.save(unit);
             message = "Đơn vị đã được thêm mới thành công";
+            model.addAttribute("message", message);
         }
         model.addAttribute("message", message);
         return new ModelAndView("redirect:/admin/unit/units", model);

@@ -302,5 +302,24 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <c:if test="${not empty message}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: '${message}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+    <c:if test="${not empty error}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: '${error}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+</script>
 </body>
 </html>

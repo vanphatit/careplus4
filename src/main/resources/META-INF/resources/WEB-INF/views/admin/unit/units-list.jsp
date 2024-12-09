@@ -55,4 +55,16 @@
             </c:if>
         </ul>
     </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        <c:if test="${not empty message}">
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: '${message}',
+            confirmButtonText: 'OK'
+        });
+        </c:if>
+    </script>
 </div>

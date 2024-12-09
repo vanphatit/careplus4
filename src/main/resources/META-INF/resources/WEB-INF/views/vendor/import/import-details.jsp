@@ -89,9 +89,12 @@
                                 <fmt:formatNumber value="${detail.subTotal}" type="number" groupingUsed="true" />
                             </td>
                             <td>
-                                <a href="${pageContext.request.contextPath}/vendor/import-detail/delete-detail/${detail.id}" class="btn btn-danger btn-sm">
+                                <button class="btn btn-danger btn-sm" onclick="confirmDelete(${detail.id});">
                                     <i class="fas fa-trash"></i> Xóa
-                                </a>
+                                </button>
+                                <button class="btn btn-warning btn-sm" onclick="confirmEdit(${detail.id});">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </button>
                             </td>
                         </tr>
                     </c:forEach>
@@ -112,5 +115,65 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Kiểm tra nếu có message
+    <c:if test="${not empty message}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: '${message}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+
+    // Kiểm tra nếu có error
+    <c:if test="${not empty error}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: '${error}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+</script>
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Chuyển hướng tới URL xóa
+                window.location.href = `/vendor/import-detail/delete-detail/` + id;
+            }
+        });
+    }
+
+    function confirmEdit(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sửa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Chuyển hướng tới URL sửa
+                window.location.href = `/vendor/import-detail/edit-detail/` + id;
+            }
+        });
+    }
+</script>
+
 </body>
 </html>

@@ -51,11 +51,17 @@
         </div>
 
         <!-- Thông báo -->
-        <c:if test="${not empty message}">
-            <div class="alert alert-warning" role="alert">
-                    ${message}
-            </div>
-        </c:if>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            <c:if test="${not empty message}">
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '${message}',
+                confirmButtonText: 'OK'
+            });
+            </c:if>
+        </script>
 
         <!-- Table -->
         <table class="table table-striped table-hover">

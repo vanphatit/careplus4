@@ -13,9 +13,18 @@
         </div>
         <div class="card-footer text-center">
             <a href="/admin/unit/edit/${unit.id}" class="btn btn-warning me-2">Edit</a>
-            <a href="/admin/unit/delete/${unit.id}" class="btn btn-danger me-2"
-               onclick="return confirm('Are you sure you want to delete this unit?')">Delete</a>
             <a href="/admin/units" class="btn btn-secondary">Back to List</a>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            <c:if test="${not empty message}">
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '${message}',
+                confirmButtonText: 'OK'
+            });
+            </c:if>
+        </script>
     </div>
 </div>

@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,8 +29,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -99,13 +102,16 @@ public class ImportController {
             model.addAttribute("error", "Không có Provider nào, vui lòng thêm Provider trước khi tạo Import!");
             return "vendor/import/import-list"; // Hoặc điều hướng đến một trang khác
         }
+        LocalDate now = LocalDate.now();
         ImportModel imp = new ImportModel();
+        model.addAttribute("now", java.sql.Date.valueOf(now));
         model.addAttribute("imp", imp);
         return "vendor/import/import-add";
     }
 
     @PostMapping("/save")
     public ModelAndView save(ModelMap model, @Valid @ModelAttribute("imp") ImportModel importModel,
+
                              BindingResult result) {
         if (result.hasErrors()) {
             System.out.println("Errors: " + result.getAllErrors());

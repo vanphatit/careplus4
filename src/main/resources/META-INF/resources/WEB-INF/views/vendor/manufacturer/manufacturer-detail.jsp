@@ -8,11 +8,17 @@
         <h1>Chi tiết Nhà Sản Xuất</h1>
 
         <!-- Hiển thị thông báo thành công -->
-        <c:if test="${not empty message}">
-            <div class="alert alert-success" role="alert">
-                    ${message}
-            </div>
-        </c:if>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            <c:if test="${not empty message}">
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '${message}',
+                confirmButtonText: 'OK'
+            });
+            </c:if>
+        </script>
 
         <!-- Bảng chi tiết -->
         <table class="table table-borderless">

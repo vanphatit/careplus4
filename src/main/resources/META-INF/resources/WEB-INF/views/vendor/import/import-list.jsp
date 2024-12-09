@@ -41,9 +41,6 @@
         <a href="/vendor/import/add" class="btn btn-success">
             <i class="fas fa-plus"></i> Thêm phiếu nhập mới
         </a>
-        <a href="/vendor/medicine/add" class="btn btn-info">
-            <i class="fas fa-plus"></i> Thêm thuốc mới
-        </a>
     </div>
 
     <!-- Bảng danh sách Import -->
