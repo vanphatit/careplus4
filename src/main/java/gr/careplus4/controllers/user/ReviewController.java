@@ -181,11 +181,6 @@ public class ReviewController {
         User user = userServiceImpl.findByPhoneNumber(id).get();
         Bill bill = billService.findById(billId).get();
 
-        // Kiểm tra xem bill đã được review chưa
-        if (reviewService.existsByUserAndBill(user, bill)) {
-            return new ModelAndView("user/reviewed");
-        }
-
         // Lấy tất cả chi tiết hóa đơn
         List<BillDetail> billDetails = bill.getBilDetails();
 
@@ -201,6 +196,11 @@ public class ReviewController {
                 .map(BillDetail::getMedicine)
                 .filter(medicine -> !reviewedMedicineIds.contains(medicine.getId()))
                 .collect(Collectors.toList());
+
+        // Kiểm tra xem bill đã được review chưa
+        if (medicinesNotReviewed.isEmpty() || medicinesNotReviewed == null) {
+            return new ModelAndView("user/reviewed");
+        }
 
         model.addAttribute("user", user);
         model.addAttribute("bill", bill);
