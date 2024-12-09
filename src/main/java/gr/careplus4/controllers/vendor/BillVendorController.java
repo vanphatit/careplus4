@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,6 +50,16 @@ public class BillVendorController {
 
     @PostMapping("/bill/update")
     public String handleUpdateBill(
+            @ModelAttribute("newBill") @Valid Bill bill,
+            BindingResult newProductBindingResult) {
+
+        this.billService.saveBill(bill);
+
+        return "redirect:/vendor/bill/" + bill.getId();
+    }
+
+    @PostMapping("bill/updateStatus")
+    public String handleUpdateBillStatus(
             @ModelAttribute("newBill") @Valid Bill bill,
             BindingResult newProductBindingResult) {
 
@@ -103,5 +114,20 @@ public class BillVendorController {
         return "vendor/bill/bill-list";
     }
 
+    @GetMapping("/bill/today")
+    public String getBillToday(Model model) {
+        LocalDate localDate = LocalDate.now();
+        java.sql.Date date = java.sql.Date.valueOf(localDate);
+        List<Bill> bills = this.billService.findBillsByDate(date);
+        model.addAttribute("bills", bills);
+        return "vendor/bill/bill-list";
+    }
+
+    @GetMapping("/bill/week")
+    public String getBillForWeek(Model model) {
+        List<Bill> bills = this.billService.findBillsForWeek();
+        model.addAttribute("bills", bills);
+        return "vendor/bill/bill-list";
+    }
 
 }

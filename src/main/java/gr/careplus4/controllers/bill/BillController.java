@@ -5,16 +5,15 @@ import gr.careplus4.entities.User;
 import gr.careplus4.services.impl.BillServiceImpl;
 import gr.careplus4.services.security.JwtCookies;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,12 +31,20 @@ public class BillController {
                                    @RequestParam("receiverAddress") String receiverAddress,
                                    @RequestParam("usedPoint") int usedPoint,
                                    @RequestParam("eventCode") String eventCode,
-                                   @RequestParam("accumulate") boolean accumulate
-                                   ) {
+                                   @RequestParam("province") String province,
+                                   @RequestParam("shippingFee") String shippingFee,
+                                   @RequestParam("accumulate") boolean accumulate) {
         String phone = jwtCookies.getUserPhoneFromJwt(request);
 
-        this.billService.handlePlaceOrder(receiverName, receiverAddress, phone, usedPoint,
-                eventCode, accumulate);
+        String address = receiverAddress + ", " + province;
+
+        float shipping = 0;
+        if (shippingFee != null) {
+            shipping = Float.parseFloat(shippingFee);
+        }
+
+        this.billService.handlePlaceOrder(receiverName, address, phone, usedPoint,
+                eventCode, accumulate, shipping);
 
         return "redirect:/user/thanks";
     }
@@ -65,5 +72,15 @@ public class BillController {
         model.addAttribute("id", phone);
 
         return "user/cart/order-history";
+    }
+
+    @PostMapping("updateStatus")
+    public String handleUpdateBillStatus(
+            @ModelAttribute("newBill") @Valid Bill bill,
+            BindingResult newProductBindingResult) {
+
+        this.billService.saveBill(bill);
+
+        return "redirect:/user/order-history";
     }
 }

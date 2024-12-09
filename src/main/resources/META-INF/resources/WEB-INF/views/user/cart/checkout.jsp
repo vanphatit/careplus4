@@ -22,7 +22,7 @@
                     </nav>
                 </div>
                 <div class="page-header__title">
-                    <h1>Checkout</h1>
+                    <h1>Thanh toán</h1>
                 </div>
             </div>
         </div>
@@ -37,12 +37,20 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
                                         <label for="checkout-first-name">Tên người nhận</label>
-                                        <input type="text" class="form-control" id="checkout-first-name" name="receiverName" placeholder="Receiver Name">
+                                        <input type="text" class="form-control" id="checkout-first-name" name="receiverName" placeholder="Tên người nhận">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="checkout-street-address">Địa chỉ</label>
-                                    <input type="text" class="form-control" id="checkout-street-address" name="receiverAddress" placeholder="Address">
+                                    <input type="text" class="form-control" id="checkout-street-address" name="receiverAddress" placeholder="Số nhà, đường, phường, quận">
+                                </div>
+                                <div class="form-group">
+                                    <label for="checkout-street-address">Tỉnh thành</label>
+                                    <select class="form-control" name="province">
+                                        <c:forEach var="province" items="${provinces}">
+                                            <option value="${province}">${province}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
@@ -62,6 +70,7 @@
                                 <input type="hidden" name="accumulate" value="false">
                                 <input hidden type="text" class="form-control" name="eventCode" value="${code}">
                                 <input hidden type="text" class="form-control" name="usedPoint" value="${usedPoints}">
+                                <input hidden type="text" class="form-control" id="shipping-fee" name="shippingFee" value="0">
                                 <button type="submit" class="btn btn-primary btn-xl btn-block">Đặt hàng</button>
                             </div>
                         </div>
@@ -118,13 +127,13 @@
                                     </tr>
                                     <tr>
                                         <th>Shipping</th>
-                                        <td>0 đ</td>
+                                        <td id="shipping-cost">0</td>
                                     </tr>
                                     </tbody>
                                     <tfoot class="checkout__totals-footer">
                                     <tr>
                                         <th>Thành tiền</th>
-                                        <td>
+                                        <td id="total-price">
                                             <fmt:formatNumber type="number" value="${totalPrice}" /> đ
                                         </td>
                                     </tr>

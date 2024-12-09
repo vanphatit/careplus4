@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -44,16 +45,21 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new UserInterceptor(userService, jwtCookies, jwtService))
                 .addPathPatterns("/**","/admin/**","/vendor/**")
-                .excludePathPatterns("/au/**", "/assets/**", "/v1/api/**", "/css/**", "/js/**", "/images/**");
+                .excludePathPatterns("/au/**", "/assets/**", "/v1/api/**", "/css/**", "/js/**", "/images/**", "/error/**", "/403");
         registry.addInterceptor(new CategoryInterceptor(categoryService))
                 .addPathPatterns("/**")
-                .excludePathPatterns("/au/**", "/assets/**", "/v1/api/**", "/css/**", "/js/**", "/images/**");
+                .excludePathPatterns("/au/**", "/assets/**", "/v1/api/**", "/css/**", "/js/**", "/images/**","/error/**", "/403");
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/assets/**")
                 .addResourceLocations("classpath:/META-INF/resources/assets/");
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/403").setViewName("exception/403");
     }
 
 

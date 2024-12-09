@@ -880,8 +880,6 @@
             totalPriceFooter.textContent = totalPrice.toFixed(3) + ' đ';
         }
 
-
-
         cartTable.querySelectorAll(".input-number__input").forEach(input => {
             input.addEventListener("input", function () {
                 const row = input.closest(".cart-table__row");
@@ -919,4 +917,53 @@
         formatted = formatted.replace(/\./g, ',');
         return formatted;
     }
+
+    $(document).ready(function() {
+        $("select[name='province']").change(function() {
+            let selectedProvince = $(this).val();
+            $.ajax({
+                url: `http://localhost:8080/v1/api/shipping_method/getMethod?Address=${selectedProvince}`,
+                type: 'GET',
+                success: function(response) {
+                    if (response.status) {
+                        // Lấy giá trị thành tiền hiện tại
+                        let totalPriceText = document.querySelector("#total-price").textContent.trim();
+                        let totalPriceValue = parseFloat(totalPriceText.replace(' đ', '').trim()) * 1000;  // Lấy giá trị thành tiền
+
+                        // Lấy phí ship hiện tại
+                        let currentShippingCostText = $('#shipping-cost').text().trim();
+                        let currentShippingCost = parseFloat(currentShippingCostText.replace(' đ', '').trim()) || 0; // Tránh null hoặc NaN
+
+                        let shippingFee = parseFloat(response.data.price);  // Phí ship mới từ API
+                        $('#shipping-cost').text(response.data.price + " đ");
+
+                        // Kiểm tra nếu phí ship hiện tại không phải 0
+                        if (currentShippingCost === 0) {
+                            // Tính tổng với phí ship mới
+                            let totalWithShipping = totalPriceValue + shippingFee;
+                            $('#shipping-fee').val(response.data.price);
+                            document.querySelector("#total-price").textContent = formatCurrency(totalWithShipping) + " đ";
+                        } else if (currentShippingCost === shippingFee) {
+                            // Nếu phí ship hiện tại và phí ship mới giống nhau, không thay đổi tổng
+                            $('#shipping-fee').val(response.data.price);
+                            document.querySelector("#total-price").textContent = formatCurrency(totalPriceValue) + " đ";
+                        } else {
+                            // Nếu phí ship hiện tại khác phí ship mới, tính lại tổng
+                            let totalWithShipping = totalPriceValue - currentShippingCost + shippingFee;
+                            $('#shipping-fee').val(response.data.price);
+                            document.querySelector("#total-price").textContent = formatCurrency(totalWithShipping) + " đ";
+                        }
+                    } else {
+                        // Trường hợp không tìm thấy phương thức vận chuyển
+                        $('#shipping-cost').text("Không tìm thấy phương thức vận chuyển");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Có lỗi xảy ra khi tính phí ship.");
+                }
+            });
+        });
+    });
+
 })(jQuery);

@@ -105,7 +105,7 @@ public class BillServiceImpl implements IBillService {
 
     @Override
     public void handlePlaceOrder(String receiverName, String receiverAddress,
-                                 String phone,  int usedPoint, String eventCode, boolean accumulate) {
+                                 String phone, int usedPoint, String eventCode, boolean accumulate, float shipping) {
 
         Optional<Cart> cart = this.cartRepository.findByUser_PhoneNumber(phone);
         Optional<User> user = this.userService.findByPhoneNumber(phone);
@@ -125,6 +125,11 @@ public class BillServiceImpl implements IBillService {
 
                 float totalPrice = getTotalPrice(usedPoint, cartDetails, event, user);
 
+                // Cộng tiền ship nếu có
+                if(shipping > 0) {
+                    totalPrice += shipping;
+                }
+
                 Date date = new Date();
                 Bill order = new Bill();
                 order.setId(GeneratedId.getGeneratedId(preBillId));
@@ -133,7 +138,7 @@ public class BillServiceImpl implements IBillService {
                 order.setName(receiverName);
                 order.setAddress(receiverAddress);
                 order.setMethod("COD");
-                order.setStatus("PENDING");
+                order.setStatus("AWAIT");
                 order.setPointUsed(usedPoint);
                 if (event.isPresent()) {
                     order.setEvent(event.get());
@@ -193,6 +198,9 @@ public class BillServiceImpl implements IBillService {
             if (usedPoint > 0) {
                 // (Số điểm sử dụng / 10) × 1.000
                 discount += (float) (usedPoint * 1000) / 10;
+                if (discount > (totalPrice * 0.3)) {
+                    discount = (float) (totalPrice * 0.3);
+                }
                 // Cập nhật ngay lại số điểm mà người dùng đã sử dụng
                 user.get().setPointEarned(0);
                 this.userService.save(user.get());
@@ -202,7 +210,7 @@ public class BillServiceImpl implements IBillService {
                 discount += totalPrice * event.get().getDiscount().floatValue() / 100;
             }
 
-            totalPrice = totalPrice - discount;
+            totalPrice -= discount;
         }
         return totalPrice;
     }
@@ -222,6 +230,25 @@ public class BillServiceImpl implements IBillService {
     @Override
     public Page<Bill> findByIdContaining(String id, Pageable pageable) {
         return this.billRepository.findByIdContaining(id, pageable);
+    }
+
+    @Override
+    public List<Bill> findBillsByDate(Date date) {
+        return billRepository.findBillsByDate(date);
+    }
+
+    @Override
+    public List<Bill> findBillsByDateBetween(Date startDate, Date endDate) {
+        return billRepository.findBillsByDateBetween(startDate, endDate);
+    }
+
+    @Override
+    public List<Bill> findBillsForWeek() {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+
+        return billRepository.findBillsByDateBetween(java.sql.Date.valueOf(startOfWeek), java.sql.Date.valueOf(endOfWeek));
     }
 
     @Override

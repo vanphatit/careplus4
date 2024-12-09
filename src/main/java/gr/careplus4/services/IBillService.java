@@ -19,9 +19,16 @@ public interface IBillService {
     void deleteBill(Bill bill);
     void saveBill(Bill bill);
     Optional<Bill> findById(String id);
-    void handlePlaceOrder(String receiverName,String receiverAddress, String phone, int usedPoint, String eventCode, boolean accumulate);
+    void handlePlaceOrder(String receiverName,String receiverAddress, String phone, int usedPoint, String eventCode, boolean accumulate, float shipping);
     List<Bill> findBillsByUserAndDateBetween(User user, Date startDate, Date endDate);
     Page<Bill> findByIdContaining(String id, Pageable pageable);
+
+    List<Bill> findBillsByDate(Date date);
+
+    List<Bill> findBillsByDateBetween(Date startDate, Date endDate);
+
+    List<Bill> findBillsForWeek();
+
     Page<Bill> findAll(Pageable pageable);
 
     BigDecimal getRevenueToday();

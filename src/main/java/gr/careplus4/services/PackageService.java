@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,6 +55,43 @@ public class PackageService {
             model.setDeliveryDate(pkg.getUpdateDate());    // Mapping Ngày giao hàng
             model.setStatus(pkg.getStatus());                // Mapping Trạng thái
             return model;
+        }).collect(Collectors.toList());
+    }
+
+    public String checkStatusAPI(String idBill) {
+        String externalApiUrl = "http://localhost:8080/v1/api/packages/checkStatus?idBill=" + idBill;
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Ánh xạ JSON phản hồi thành ApiResponse
+        ResponseEntity<ApiResponse<String>> response = restTemplate.exchange(
+                externalApiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<ApiResponse<String>>() {}
+        );
+
+        ApiResponse<String> apiResponse = response.getBody();
+
+        if (apiResponse != null && apiResponse.isStatus()) {
+            return apiResponse.getData();
+        } else {
+            throw new RuntimeException("Không thể lấy dữ liệu từ API: " + (apiResponse != null ? apiResponse.getMessage() : "Không có phản hồi"));
+        }
+    }
+
+    public String checkStatus(String idBill) {
+        return checkStatusAPI(idBill);
+    }
+
+    public List<Map<String, String>> getIdBillAndStatus() {
+        List<TransactionHistoryModel> transactionHistory = findAllTransactionHistory();
+        return transactionHistory.stream().map(transaction -> {
+            Map<String, String> map = Map.of(
+                    "idBill", transaction.getIdBill(),
+                    "status", transaction.getStatus()
+            );
+            return map;
         }).collect(Collectors.toList());
     }
 }

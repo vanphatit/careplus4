@@ -63,55 +63,84 @@
 </head>
 <body>
 <div class="container mt-4">
-    <!-- Tổng quan -->
     <div class="row text-center mt-5">
+        <!-- Tổng số người dùng -->
         <div class="col-md-3">
-            <div class="card">
+            <div class="card text-dark bg-light border-primary shadow">
                 <div class="card-body">
-                    <h5 class="card-title">Tổng số người dùng</h5>
+                    <h5 class="card-title">
+                        <i class="fas fa-users text-primary"></i> Tổng số người dùng
+                    </h5>
                     <h3>
                         <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
-                            <a href="${URL}admin/users" class="text-decoration-none">${totalUser}</a>
+                            <a href="${URL}admin/users" class="text-decoration-none text-dark">${totalUser}</a>
                         </c:if>
                         <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
                             <strong>${totalUser}</strong>
                         </c:if>
-
                     </h3>
                 </div>
             </div>
         </div>
+        <!-- Tổng hàng trong kho -->
         <div class="col-md-3">
-            <div class="card">
+            <div class="card text-dark bg-light border-success shadow">
                 <div class="card-body">
-                    <h5 class="card-title">Tổng hàng trong kho</h5>
+                    <h5 class="card-title">
+                        <i class="fas fa-cubes text-success"></i> Tổng hàng trong kho
+                    </h5>
                     <h3>
-                        <a href="${URL}vendor/medicines" class="text-decoration-none">${totalStockQuantity}</a>
+                        <a href="${URL}vendor/medicines" class="text-decoration-none text-dark">${totalStockQuantity}</a>
                     </h3>
                 </div>
             </div>
         </div>
+        <!-- Doanh thu hôm nay -->
         <div class="col-md-3">
-            <div class="card">
+            <div class="card text-dark bg-light border-warning shadow">
                 <div class="card-body">
-                    <h5 class="card-title">Doanh thu hôm nay</h5>
+                    <h5 class="card-title">
+                        <i class="fas fa-dollar-sign text-warning"></i> Doanh thu hôm nay
+                    </h5>
                     <h3>
-                        <a href="${URL}admin/bills" class="text-decoration-none">${revenueToday}</a>
+                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
+                            <a href="${URL}admin/bill/today" class="text-decoration-none text-dark">
+                                <span id="revenueToday">${revenueToday}</span> VND
+                            </a>
+                        </c:if>
+                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
+                            <a href="${URL}vendor/bill/today" class="text-decoration-none text-dark">
+                                <span id="revenueToday">${revenueToday}</span> VND
+                            </a>
+                        </c:if>
                     </h3>
                 </div>
             </div>
         </div>
+        <!-- Doanh thu tuần -->
         <div class="col-md-3">
-            <div class="card">
+            <div class="card text-dark bg-light border-danger shadow">
                 <div class="card-body">
-                    <h5 class="card-title">Doanh thu tuần</h5>
+                    <h5 class="card-title">
+                        <i class="fas fa-chart-line text-danger"></i> Doanh thu tuần
+                    </h5>
                     <h3>
-                        <a href="${URL}admin/bills" class="text-decoration-none">${revenueForWeek}</a>
+                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
+                            <a href="${URL}admin/bill/week" class="text-decoration-none text-dark">
+                                <span id="revenueForWeek">${revenueForWeek}</span> VND
+                            </a>
+                        </c:if>
+                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
+                            <a href="${URL}vendor/bill/week" class="text-decoration-none text-dark">
+                                <span id="revenueForWeek">${revenueForWeek}</span> VND
+                            </a>
+                        </c:if>
                     </h3>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- Combobox để chọn loại biểu đồ -->
     <div class="text-center my-4">
@@ -157,7 +186,9 @@
                                 <a href="${URL}vendor/medicine/${medicine.id}" class="text-decoration-none">${medicine.name}</a>
                             </span>
                         </td>
-                        <td class="text-end">${medicine.unitCost} VND</td>
+                        <td class="text-end">
+                            <span class="price">${medicine.unitCost}</span> VND
+                        </td>
                         <td class="text-center">${medicine.rating}</td>
                         <td class="text-center">${medicine.get("totalSales")}</td>
                         <td class="text-center">
@@ -172,10 +203,18 @@
         </div>
     </div>
 
+    <!-- Thong bao loi khong ket noi api -->
+    <c:if test="${error != null}">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>${error}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> Đóng</button>
+        </div>
+    </c:if>
+
     <!-- Bảng giao dịch -->
     <div class="row mt-5">
         <div class="col-md-12">
-            <h3 class="text-center">Lịch sử giao dịch</h3>
+            <h3 class="text-center">Tiến độ giao hàng</h3>
             <table class="table table-bordered table-striped">
                 <thead class="table-primary text-center">
                 <tr>
@@ -183,7 +222,6 @@
                     <th>Số Điện Thoại</th>
                     <th>Tên Người Nhận</th>
                     <th>Tổng Tiền</th>
-                    <th>Ngày Tạo</th>
                     <th>Ngày Giao</th>
                     <th>Trạng Thái</th>
                 </tr>
@@ -192,14 +230,22 @@
                 <c:forEach var="transaction" items="${transactionHistory}">
                     <tr>
                         <td>
-                            <a href="${URL}vendor/bill/${transaction.idBill}" class="text-decoration-none">
-                                ${transaction.idBill}
-                            </a>
+                            <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
+                                <a href="${URL}admin/bill/${transaction.idBill}" class="text-decoration-none">
+                                        ${transaction.idBill}
+                                </a>
+                            </c:if>
+                            <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
+                                <a href="${URL}vendor/bill/${transaction.idBill}" class="text-decoration-none">
+                                        ${transaction.idBill}
+                                </a>
+                            </c:if>
                         </td>
                         <td>${transaction.userPhone}</td>
                         <td>${transaction.receiverName}</td>
-                        <td>${transaction.totalAmount}</td>
-                        <td>${transaction.date}</td>
+                        <td>
+                            <span class="total-amount">${transaction.totalAmount}</span> VND
+                        </td>
                         <td>${transaction.deliveryDate}</td>
                         <td>${transaction.status}</td>
                     </tr>
@@ -214,6 +260,44 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Link đến Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Tìm các phần tử hiển thị revenue
+        const revenueTodayElem = document.querySelector('#revenueToday');
+        const revenueForWeekElem = document.querySelector('#revenueForWeek');
+        const priceElems = document.querySelectorAll('.price');
+        const totalAmountElems = document.querySelectorAll('.total-amount');
+
+        // Làm tròn doanh thu hôm nay
+        if (revenueTodayElem) {
+            const revenueTodayValue = parseFloat(revenueTodayElem.textContent);
+            revenueTodayElem.textContent = Math.floor(revenueTodayValue);
+        }
+
+        // Làm tròn doanh thu tuần
+        if (revenueForWeekElem) {
+            const revenueForWeekValue = parseFloat(revenueForWeekElem.textContent);
+            revenueForWeekElem.textContent = Math.floor(revenueForWeekValue);
+        }
+
+        // Làm tròn giá sản phẩm
+        priceElems.forEach(priceElem => {
+            const priceValue = parseFloat(priceElem.textContent.replace(/[^0-9.]/g, '')); // Xóa ký tự không phải số
+            if (!isNaN(priceValue)) {
+                priceElem.textContent = Math.floor(priceValue); // Làm tròn số
+            }
+        });
+
+        // Làm tròn tổng tiền
+        totalAmountElems.forEach(totalElem => {
+            const totalValue = parseFloat(totalElem.textContent.replace(/[^0-9.]/g, '')); // Xóa ký tự không phải số
+            if (!isNaN(totalValue)) {
+                totalElem.textContent = Math.floor(totalValue); // Làm tròn số
+            }
+        });
+    });
+</script>
 
 <script>
     let revenueChart;

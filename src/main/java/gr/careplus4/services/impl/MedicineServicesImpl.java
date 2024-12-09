@@ -19,6 +19,8 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -685,10 +687,9 @@ public class MedicineServicesImpl implements iMedicineServices {
         return list;
     }
 
+    @Override
     public Map<String, Object> parseDescription(String description, String medicineName) {
-        Map<String, Object> sections = new HashMap<>();
-
-        // Các tiêu đề chính
+        Map<String, Object> sections = new LinkedHashMap<>(); // Duy trì thứ tự các phần
         String[] headers = {
                 "Mô tả sản phẩm",
                 "Thành phần",
@@ -699,26 +700,43 @@ public class MedicineServicesImpl implements iMedicineServices {
                 "Bảo quản"
         };
 
-        // Chia đoạn văn theo tiêu đề
-        for (int i = 0; i < headers.length; i++) {
-            String header = headers[i];
-            String nextHeader = (i < headers.length - 1) ? headers[i + 1] : null;
+        // Tìm tiêu đề và nội dung
+        String regex = "(" + String.join("|", headers) + ")";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(description);
 
-            int startIndex = description.indexOf(header);
-            if (startIndex == -1) continue;
+        int lastIndex = 0;
+        String lastHeader = null;
 
-            int endIndex = nextHeader != null ? description.indexOf(nextHeader) : description.length();
-            String sectionContent = description.substring(startIndex + header.length(), endIndex).trim();
+        while (matcher.find()) {
+            if (lastHeader != null) {
+                // Tách nội dung giữa các tiêu đề
+                String sectionContent = description.substring(lastIndex, matcher.start()).trim();
+                if (lastHeader.equals("Thành phần")) {
+                    List<Map<String, String>> ingredients = parseIngredients(sectionContent);
+                    sections.put(lastHeader, ingredients);
+                } else {
+                    sectionContent = removeMedicineName(sectionContent, medicineName);
+                    sectionContent = capitalizeFirstLetter(sectionContent);
+                    sections.put(lastHeader, sectionContent);
+                }
+            }
 
-            if (header.equals("Thành phần")) {
+            // Cập nhật tiêu đề và vị trí
+            lastHeader = matcher.group();
+            lastIndex = matcher.end();
+        }
+
+        // Xử lý nội dung sau tiêu đề cuối cùng
+        if (lastHeader != null && lastIndex < description.length()) {
+            String sectionContent = description.substring(lastIndex).trim();
+            if (lastHeader.equals("Thành phần")) {
                 List<Map<String, String>> ingredients = parseIngredients(sectionContent);
-                sections.put(header, ingredients);
+                sections.put(lastHeader, ingredients);
             } else {
                 sectionContent = removeMedicineName(sectionContent, medicineName);
                 sectionContent = capitalizeFirstLetter(sectionContent);
-                if (!sectionContent.isEmpty()) {
-                    sections.put(header, sectionContent);
-                }
+                sections.put(lastHeader, sectionContent);
             }
         }
 
@@ -774,22 +792,20 @@ public class MedicineServicesImpl implements iMedicineServices {
      * Loại bỏ tên thuốc khỏi nội dung.
      */
     private String removeMedicineName(String content, String medicineName) {
-        String normalizedContent = content.toLowerCase();
-        String normalizedMedicineName = medicineName.toLowerCase();
+        // Tách tên thuốc thành từng từ
+        String[] nameParts = medicineName.split("\\s+");
+        String normalizedContent = content;
 
-        if (normalizedContent.contains(normalizedMedicineName)) {
-            normalizedContent = normalizedContent.replace(normalizedMedicineName, "").trim();
-        }
-
-        String[] nameParts = normalizedMedicineName.split("\\s+");
         for (String part : nameParts) {
-            if (normalizedContent.contains(part)) {
-                normalizedContent = normalizedContent.replace(part, "").trim();
+            if (part.length() > 1) { // Chỉ xử lý những từ dài hơn 1 ký tự
+                String regex = "\\b" + Pattern.quote(part) + "\\b"; // Xóa từ chính xác
+                normalizedContent = normalizedContent.replaceAll(regex, "").trim();
             }
         }
 
         return normalizedContent;
     }
+
 
     /**
      * Viết hoa chữ cái đầu.
@@ -800,6 +816,7 @@ public class MedicineServicesImpl implements iMedicineServices {
         }
         return text.substring(0, 1).toUpperCase() + text.substring(1);
     }
+
 
 
 }
