@@ -309,7 +309,11 @@
     // Helper function để parse dữ liệu biểu đồ
     function parseRevenueData(records) {
         return {
-            labels: records.map(record => new Date(record.date).toLocaleDateString("Default", { day: '2-digit', month: '2-digit' })), // Format ngày tháng (dd/mm)
+            labels: records.map(record => {
+                const parsedDate = new Date(record.date);
+                parsedDate.setDate(parsedDate.getDate() + 1); // Shift one day back
+                return parsedDate.toLocaleDateString("Default", { day: '2-digit', month: '2-digit' });
+            }),
             revenues: records.map(record => record.revenue || 0),
             profits: records.map(record => record.profit || 0)
         };
