@@ -21,7 +21,7 @@
                     <td>
                         <!-- Ẩn ID sản phẩm -->
                         <input type="hidden" name="medicineId" value="${medicine.id}">
-                        <input type="number" name="rating" class="form-control" min="1" max="5" required>
+                        <input type="number" name="rating" class="form-control" min="1.0" max="5.0" step="0.1" required>
                     </td>
                     <td>
                         <textarea name="comment" class="form-control" rows="3" required></textarea>
@@ -49,7 +49,7 @@
         const ratings = document.querySelectorAll('input[type="number"]');
         const comments = document.querySelectorAll('textarea');
         for (let i = 0; i < ratings.length; i++) {
-            if ((ratings[i].value > 1 || ratings[i].value < 5) && comments[i].value.trim() !== "") {
+            if ((ratings[i].value > 1.0 || ratings[i].value < 5.0) && comments[i].value.trim() !== "") {
                 return true
             }
         }

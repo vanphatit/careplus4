@@ -3,9 +3,7 @@ package gr.careplus4.services.impl;
 import gr.careplus4.entities.Bill;
 import gr.careplus4.entities.Review;
 import gr.careplus4.entities.User;
-import gr.careplus4.repositories.BillRepository;
 import gr.careplus4.repositories.ReviewRepository;
-import gr.careplus4.repositories.UserRepository;
 import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iReviewServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +53,11 @@ public class ReviewServiceImpl implements iReviewServices {
     @Override
     public Page<Review> findReviewByUser(User user, Pageable pageable) {
         return reviewRepository.findReviewByUser(user, pageable);
+    }
+
+    @Override
+    public Page<Review> findReviewByUser_NameContaining(String userName, Pageable pageable) {
+        return reviewRepository.findReviewByUser_NameContaining(userName, pageable);
     }
 
     @Override

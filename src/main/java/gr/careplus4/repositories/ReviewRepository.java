@@ -19,6 +19,7 @@ public interface ReviewRepository extends JpaRepository<Review, String> {
     Review findTopByIdContains(String id, Sort sort); // Tìm review cuối cùng theo id
     List<Review> findReviewByUser(User user); // Tìm kiếm theo user
     Page<Review> findReviewByUser(User user, Pageable pageable); // Tìm kiếm theo user và phân trang
+    Page<Review> findReviewByUser_NameContaining(String userName, Pageable pageable); // Tìm kiếm theo userName và phân trang
 
     Review findReviewByUserAndBill(User user, Bill bill);
 

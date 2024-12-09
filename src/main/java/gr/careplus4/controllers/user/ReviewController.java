@@ -65,6 +65,31 @@ public class ReviewController {
         return new ModelAndView("vendor/review-list");
     }
 
+    // Tìm kiếm review theo tên user
+    @PostMapping("/vendor/reviews/search")
+    public ModelAndView searchReviews(Model model, @Validated @RequestParam("searchText") String searchText,
+                                      @Validated @RequestParam("page") Optional<Integer> page,
+                                      @Validated @RequestParam("size") Optional<Integer> size) {
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(5);
+
+        if (searchText.isEmpty()) {
+            return new ModelAndView("redirect:/vendor/reviews");
+        }
+
+        Pageable pageable = (Pageable) PageRequest.of(currentPage - 1, pageSize, Sort.by("date").descending());
+        Page<Review> reviews = reviewService.findReviewByUser_NameContaining(searchText, pageable);
+
+        model.addAttribute("reviewPage", reviews);
+
+        int totalPages = reviews.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+        return new ModelAndView("vendor/review-list");
+    }
+
     // Hiển thị chi tiết review của vendor
     @GetMapping("/vendor/reviews/{id}")
     public ModelAndView showReviewDetails(@PathVariable("id") String id, Model model) {
@@ -155,6 +180,11 @@ public class ReviewController {
         String id = jwtCookies.getUserPhoneFromJwt(request);
         User user = userServiceImpl.findByPhoneNumber(id).get();
         Bill bill = billService.findById(billId).get();
+
+        // Kiểm tra xem bill đã được review chưa
+        if (reviewService.existsByUserAndBill(user, bill)) {
+            return new ModelAndView("user/reviewed");
+        }
 
         // Lấy tất cả chi tiết hóa đơn
         List<BillDetail> billDetails = bill.getBilDetails();
