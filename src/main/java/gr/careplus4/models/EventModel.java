@@ -16,4 +16,5 @@ public class EventModel {
     private Date dateStart;
     private Date dateEnd;
     private BigDecimal discount;
+    private Boolean isEdit;
 }

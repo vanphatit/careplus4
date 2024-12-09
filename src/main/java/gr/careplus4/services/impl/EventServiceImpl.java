@@ -1,7 +1,9 @@
 package gr.careplus4.services.impl;
 
 import gr.careplus4.entities.Event;
+import gr.careplus4.entities.Provider;
 import gr.careplus4.repositories.EventRepository;
+import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,6 +41,12 @@ public class EventServiceImpl implements iEventService {
 
     @Override
     public <S extends Event> S save(S entity) {
+        if (entity.getId() == null || entity.getId().trim().isEmpty()) //Loại bỏ mọi khoảng trắng ở đầu và cuối chuỗi id.
+        {
+            Event lastEvent = findTopByOrderByIdDesc();
+            String previousEventId = (lastEvent != null) ? lastEvent.getId() : "E000001";
+            entity.setId(generateEventId(previousEventId));
+        }
         return eventRepository.save(entity);
     }
 
@@ -75,6 +83,16 @@ public class EventServiceImpl implements iEventService {
     @Override
     public List<Event> getActiveEvents(Date inputDate) {
         return eventRepository.findActiveEvents(inputDate);
+    }
+
+    @Override
+    public String generateEventId(String previousId) {
+        return GeneratedId.getGeneratedId(previousId);
+    }
+
+    @Override
+    public Event findTopByOrderByIdDesc() {
+        return eventRepository.findTopByOrderByIdDesc();
     }
 
 }

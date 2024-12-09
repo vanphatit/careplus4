@@ -12,18 +12,18 @@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 <body class="bg-light">
-<div class="container mt-5">
-    <h1 class="mb-4">Danh sách sự kiện</h1>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4">Quản lý sự kiện</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Sự kiện</li>
+                </ol>
 
-<%--    <!-- Form tìm kiếm danh mục -->--%>
-<%--    <form action="${pageContext.request.contextPath}/vendor/event/searchpaginated" method="get" class="row mb-3">--%>
-<%--        <div class="d-flex align-items-center gap-2 mb-3">--%>
-<%--            <input type="text" name="name" id="name" placeholder="Nhập từ khóa để tìm" value="${param.name}"--%>
-<%--                   class="form-control" style="width: 250px;"/>--%>
-<%--            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Tìm kiếm--%>
-<%--            </button>--%>
-<%--        </div>--%>
-<%--    </form>--%>
+<div class="container mt-5">
+    <h3 class="mb-4">Danh sách sự kiện</h3>
 
     <!-- Form tìm kiếm -->
     <div class="d-flex align-items-center gap-2 mb-3">

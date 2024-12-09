@@ -30,12 +30,12 @@ public class Event implements Serializable {
 
     @Column(name = "DateStart")
     @Temporal(TemporalType.DATE)
-    @PastOrPresent
+//    @PastOrPresent
     private Date dateStart;
 
     @Column(name = "DateEnd")
     @Temporal(TemporalType.DATE)
-    @FutureOrPresent
+//    @FutureOrPresent
     private Date dateEnd;
 
     @Column(name = "Discount", precision = 5, scale = 2)
