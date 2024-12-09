@@ -1,6 +1,7 @@
 package gr.careplus4.services;
 
 import gr.careplus4.entities.Event;
+import gr.careplus4.entities.Provider;
 import gr.careplus4.models.EventModel;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -34,5 +35,10 @@ public interface iEventService {
     Page<Event> findByNameContaining(String name, Pageable pageable);
 
     Page<Event> findById(String id, Pageable pageable);
+
     List<Event> getActiveEvents(Date inputDate);
+
+    String generateEventId(String previousId);
+
+    Event findTopByOrderByIdDesc ();
 }

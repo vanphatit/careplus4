@@ -11,19 +11,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
-<body class="bg-light">
-<div class="container mt-5">
-    <h1 class="mb-4">Danh sách sự kiện</h1>
 
-<%--    <!-- Form tìm kiếm danh mục -->--%>
-<%--    <form action="${pageContext.request.contextPath}/vendor/event/searchpaginated" method="get" class="row mb-3">--%>
-<%--        <div class="d-flex align-items-center gap-2 mb-3">--%>
-<%--            <input type="text" name="name" id="name" placeholder="Nhập từ khóa để tìm" value="${param.name}"--%>
-<%--                   class="form-control" style="width: 250px;"/>--%>
-<%--            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Tìm kiếm--%>
-<%--            </button>--%>
-<%--        </div>--%>
-<%--    </form>--%>
+<body class="bg-light">
+<div id="layoutSidenav">
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4">Quản lý sự kiện</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Sự kiện</li>
+                </ol>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h3 class="mb-4">Danh sách sự kiện</h3>
 
     <!-- Form tìm kiếm -->
     <div class="d-flex align-items-center gap-2 mb-3">
@@ -79,11 +84,11 @@
                                 <a href="${pageContext.request.contextPath}/vendor/event/edit/${event.id}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i> Sửa
                                 </a>
-                                <a href="${pageContext.request.contextPath}/vendor/event/delete/${event.id}"
-                                   onclick="return confirm('Are you sure you want to delete this event?');"
-                                   class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i> Xóa
-                                </a>
+<%--                                <a href="${pageContext.request.contextPath}/vendor/event/delete/${event.id}"--%>
+<%--                                   onclick="return confirm('Are you sure you want to delete this event?');"--%>
+<%--                                   class="btn btn-danger btn-sm">--%>
+<%--                                    <i class="fas fa-trash"></i> Xóa--%>
+<%--                                </a>--%>
                             </td>
                         </tr>
                     </c:forEach>

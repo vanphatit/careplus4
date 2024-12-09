@@ -1,6 +1,7 @@
 package gr.careplus4.repositories;
 
 import gr.careplus4.entities.Event;
+import gr.careplus4.entities.Provider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,5 @@ public interface EventRepository extends JpaRepository<Event, String> {
     boolean existsById(String id);
     @Query("SELECT e FROM Event e WHERE :inputDate BETWEEN e.dateStart AND e.dateEnd")
     List<Event> findActiveEvents(@Param("inputDate") Date inputDate);
+    Event findTopByOrderByIdDesc();
 }

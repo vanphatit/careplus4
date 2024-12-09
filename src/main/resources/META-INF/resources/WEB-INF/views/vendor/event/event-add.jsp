@@ -17,10 +17,19 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <form:form modelAttribute="eve" method="post" action="${pageContext.request.contextPath}/vendor/event/save">
+                <input type="hidden" name="isEdit" value="${eve.isEdit}">
                 <!-- ID -->
                 <div class="mb-3">
-                    <form:label path="id" class="form-label">ID:</form:label>
-                    <form:input path="id" class="form-control" />
+                    <c:if test="${eve.isEdit}">
+                        <label for="id" class="form-label">ID:</label>
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="id"
+                                name="id"
+                                value="${eve.id}" readonly
+                        />
+                    </c:if>
                 </div>
 
                 <!-- Name -->
@@ -60,5 +69,24 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        const startDateInput = document.querySelector("[name='dateStart']");
+        const endDateInput = document.querySelector("[name='dateEnd']");
+        const saveButton = form.querySelector("[type='submit']");
+
+        form.addEventListener("submit", function (event) {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+
+            // Kiểm tra nếu "Ngày kết thúc" không sau "Ngày bắt đầu"
+            if (endDate <= startDate) {
+                event.preventDefault(); // Ngăn form gửi đi
+                alert("Ngày kết thúc phải sau ngày bắt đầu!");
+            }
+        });
+    });
+</script>
 </body>
 </html>

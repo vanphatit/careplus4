@@ -2,6 +2,7 @@ package gr.careplus4.controllers.vendor;
 
 
 import gr.careplus4.entities.Event;
+import gr.careplus4.entities.Provider;
 import gr.careplus4.models.EventModel;
 import gr.careplus4.services.impl.EventServiceImpl;
 import jakarta.validation.Valid;
@@ -79,6 +80,7 @@ public class EventController {
     @GetMapping("/add")
     public String add(Model model) {
         EventModel eve = new EventModel();
+        eve.setIsEdit(false);
         model.addAttribute("eve", eve);
         return "vendor/event/event-add";
     }
@@ -86,14 +88,28 @@ public class EventController {
     @PostMapping("/save")
     public ModelAndView save(ModelMap model, @Valid @ModelAttribute("eve") EventModel eventModel,
                              BindingResult result) {
+        String message = "";
         if (result.hasErrors()) {
             System.out.println("Errors: " + result.getAllErrors());
             return new ModelAndView("vendor/event/event-add");
         }
+        // Kiểm tra ngày bắt đầu và ngày kết thúc
+        if (eventModel.getDateStart().compareTo(eventModel.getDateEnd()) > 0) {
+            model.addAttribute("error", "Ngày bắt đầu phải nhỏ hơn ngày kết thúc!");
+            return new ModelAndView("vendor/event/event-add", model);
+        }
         Event entity = new Event();
         BeanUtils.copyProperties(eventModel, entity);
-        eventService.save(entity);
-        String message = "Event added successfully";
+        if (eventModel.getIsEdit()){
+            eventService.save(entity);
+            message = "Event updated successfully";
+        } else {
+            Event previousEvent = eventService.findTopByOrderByIdDesc();
+            String previousEventId = (previousEvent != null) ? previousEvent.getId() : "E000000";
+            entity.setId(eventService.generateEventId(previousEventId));
+            eventService.save(entity);
+            message = "Event added successfully";
+        }
         model.addAttribute("message", message);
         return new ModelAndView("redirect:/vendor/event", model);
 
@@ -106,6 +122,7 @@ public class EventController {
         if (optionalEvent.isPresent()) {
             Event entity = optionalEvent.get();
             BeanUtils.copyProperties(entity, eve);
+            eve.setIsEdit(true);
             model.addAttribute("eve", eve);
             return new ModelAndView("vendor/event/event-add", model);
         }
