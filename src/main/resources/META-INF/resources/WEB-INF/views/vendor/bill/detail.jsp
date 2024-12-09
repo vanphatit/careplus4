@@ -33,16 +33,33 @@
                                         <input type="text" class="form-control" name="status" value="SHIPPING"/>
                                     </div>
                                     <!-- Submit Button -->
-                                    <!-- Submit Button -->
                                     <div class="col-12">
-                                        <c:if test="${bill.status != 'SHIPPING'}">
+                                        <c:if test="${bill.status == 'AWAIT'}">
                                             <button type="submit" class="btn btn-secondary btn-send-to-shipping" id="btn-auto-submit">Chuyển sang ĐVVC</button>
+                                        </c:if>
+
+                                        <c:if test="${bill.status == 'SHIPPED'}">
+                                            <div class="alert alert-info" role="alert">
+                                                Hóa đơn này đã giao thành công.
+                                            </div>
                                         </c:if>
 
                                         <!-- Khi trạng thái là SHIPPING -->
                                         <c:if test="${bill.status == 'SHIPPING'}">
-                                            <div class="alert alert-info" role="alert">
+                                            <div class="alert alert-warning" role="alert">
                                                 Hóa đơn này đã được chuyển sang đơn vị vận chuyển.
+                                            </div>
+                                        </c:if>
+
+                                        <c:if test="${bill.status == 'CANCELED'}">
+                                            <div class="alert alert-danger" role="alert">
+                                                Hóa đơn không thành công.
+                                            </div>
+                                        </c:if>
+
+                                        <c:if test="${bill.status == 'RETURNED'}">
+                                            <div class="alert alert-danger" role="alert">
+                                                Hóa đơn không thành công.
                                             </div>
                                         </c:if>
                                     </div>
@@ -61,7 +78,16 @@
                                 <li class="list-group-item">Ngày tạo: ${bill.date}</li>
                                 <li class="list-group-item">Thanh toán: ${bill.method}</li>
                                 <li class="list-group-item">Mã sự kiện(Nếu có): ${bill.event.id}</li>
-                                <li class="list-group-item" id="status">Trạng thái đơn hàng: ${bill.status}</li>
+                                <li class="list-group-item" id="status">Trạng thái đơn hàng:
+                                    <c:choose>
+                                        <c:when test="${bill.status == 'AWAIT'}">Đang chờ lấy hàng</c:when>
+                                        <c:when test="${bill.status == 'SHIPPED'}">Đã giao hàng</c:when>
+                                        <c:when test="${bill.status == 'SHIPPING'}">Đang vận chuyển</c:when>
+                                        <c:when test="${bill.status == 'CANCELED'}">Đã hủy</c:when>
+                                        <c:when test="${bill.status == 'RETURNED'}">Hoàn đơn</c:when>
+                                        <c:otherwise>Trạng thái không xác định</c:otherwise>
+                                    </c:choose>
+                                </li>
                             </ul>
                         </div>
                     </div>

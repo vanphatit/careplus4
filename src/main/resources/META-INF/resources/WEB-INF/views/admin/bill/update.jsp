@@ -30,9 +30,11 @@
                                 <div class="mb-3 col-12">
                                     <label class="form-label">Trạng thái:</label>
                                     <select class="form-control" name="status">
-                                        <option value="PENDING" ${currentBill.status == 'PENDING' ? 'selected' : ''}>PENDING</option>
-                                        <option value="PROCESSING" ${currentBill.status == 'PROCESSING' ? 'selected' : ''}>PROCESSING</option>
-                                        <option value="COMPLETED" ${currentBill.status == 'COMPLETED' ? 'selected' : ''}>COMPLETED</option>
+                                        <option value="PENDING" ${currentBill.status == 'AWAIT' ? 'selected' : ''}>Đang chờ lấy hàng</option>
+                                        <option value="SHIPPING" ${currentBill.status == 'SHIPPING' ? 'selected' : ''}>Đang vận chuyển</option>
+                                        <option value="SHIPPED" ${currentBill.status == 'SHIPPED' ? 'selected' : ''}>Đã giao hàng</option>
+                                        <option value="CANCELED" ${currentBill.status == 'CANCELED' ? 'selected' : ''}>Đã hủy</option>
+                                        <option value="RETURNED" ${currentBill.status == 'RETURNED' ? 'selected' : ''}>Hoàn đơn</option>
                                     </select>
                                 </div>
 
