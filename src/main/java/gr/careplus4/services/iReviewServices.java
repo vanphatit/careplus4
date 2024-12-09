@@ -23,6 +23,8 @@ public interface iReviewServices {
 
     Page<Review> findReviewByUser(User user, Pageable pageable);
 
+    Page<Review> findReviewByUser_NameContaining(String userName, Pageable pageable);
+
     Review findReviewByUserAndBill(User user, Bill bill);
 
     Optional<Review> findById(String s);

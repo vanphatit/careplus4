@@ -1,9 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<!DOCTYPE html>
-<html lang="en">
-
-<body class="sb-nav-fixed">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div id="layoutSidenav">
     <div id="layoutSidenav_content">
         <main>
@@ -13,48 +10,61 @@
                     <li class="breadcrumb-item"><a href="/user/userInfo">Thông tin tài khoản</a></li>
                     <li class="breadcrumb-item active">Đánh giá</li>
                 </ol>
+
                 <div class="mt-3">
                     <div class="row">
                         <div class="col-12 mx-auto">
-                            <hr />
-                            <table class="table table-bordered table-hover">
-                                <thead>
+                            <hr/>
+                            <table class="table table-striped table-hover align-middle">
+                                <thead class="text-center" style="background-color: #0077b6; color: white;">
                                 <tr>
                                     <th>Mã đơn</th>
                                     <th>Ngày đánh giá</th>
                                     <th>Sản phẩm</th>
                                     <th>Đánh giá</th>
                                     <th>Bình luận</th>
-                                    <th>Xử lý</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <c:forEach var="review" items="${reviews}">
                                     <tr>
-                                        <td>${review.bill.id}</td>
-                                        <td>${review.date}</td>
+                                        <td class="text-center">${review.bill.id}</td>
+                                        <td class="text-center"><fmt:formatDate value="${review.date}" pattern="dd/MM/yyyy"/></td>
                                         <td>
-                                            <ul>
+                                            <div class="mb-0 ps-3">
                                                 <c:forEach var="detail" items="${reviewDetailsMap[review]}">
-                                                    <li>${detail.medicine.name}</li>
+                                                    <div>
+                                                        <a href="/user/medicine/${detail.medicine.id}"
+                                                           style="color: #0d1214 !important;"
+                                                           class="text-decoration-none text-primary">
+                                                                <strong>${detail.medicine.name}</strong>
+                                                        </a>
+                                                    </div>
                                                 </c:forEach>
-                                            </ul>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <c:forEach var="detail" items="${reviewDetailsMap[review]}">
+                                                <c:choose>
+                                                    <c:when test="${detail.rating >= 4.5}">
+                                                        <div><span class="badge bg-success">${detail.rating} sao</span></div>
+                                                    </c:when>
+                                                    <c:when test="${detail.rating >= 3.5}">
+                                                        <div><span class="badge bg-warning text-dark">${detail.rating} sao</span></div>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <div><span class="badge bg-danger">${detail.rating} sao</span></div>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:forEach>
                                         </td>
                                         <td>
-                                            <ul>
-                                                <c:forEach var="detail" items="${reviewDetailsMap[review]}">
-                                                    <li>${detail.rating} sao</li>
-                                                </c:forEach>
-                                            </ul>
+                                            <c:forEach var="detail" items="${reviewDetailsMap[review]}">
+                                                <div>${detail.text}</div>
+                                            </c:forEach>
                                         </td>
-                                        <td>
-                                            <ul>
-                                                <c:forEach var="detail" items="${reviewDetailsMap[review]}">
-                                                    <li>${detail.text}</li>
-                                                </c:forEach>
-                                            </ul>
-                                        </td>
-                                        <td>
+                                        <td class="text-center">
                                             <a href="/user/review/${review.bill.id}/delete" class="btn btn-danger btn-sm mx-2"
                                                onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này?')">Xóa</a>
                                         </td>
@@ -80,7 +90,7 @@
                                             </c:when>
                                             <c:otherwise>
                                                 <li class="page-item">
-                                                    <a class="page-link" href="?page=${i}&size=${size}">${i}</a>
+                                                    <a class="page-link" href="?page=${i}&size=${size}">${i + 1}</a>
                                                 </li>
                                             </c:otherwise>
                                         </c:choose>
@@ -99,8 +109,5 @@
         </main>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
-</body>
-
-</html>
