@@ -2,6 +2,7 @@ package gr.careplus4.controllers.bill;
 
 import gr.careplus4.entities.Bill;
 import gr.careplus4.entities.User;
+import gr.careplus4.services.PackageService;
 import gr.careplus4.services.impl.BillServiceImpl;
 import gr.careplus4.services.security.JwtCookies;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,9 @@ public class BillController {
 
     @Autowired
     private JwtCookies jwtCookies;
+
+    @Autowired
+    private PackageService packageService;
 
     @PostMapping("/place-order")
     public String handlePlaceOrder(HttpServletRequest request,@RequestParam("receiverName") String receiverName,
@@ -65,6 +69,15 @@ public class BillController {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         Page<Bill> billPage = this.billService.fetchBillsByUser(user, pageable);
         List<Bill> bills = billPage.getContent();
+        for(Bill bill : bills) {
+            if(bill.getStatus().equals("SHIPPING")){
+                String status = packageService.checkStatusAPI(bill.getId());
+                if(status != null){
+                    bill.setStatus(status);
+                    billService.saveBill(bill);
+                }
+            }
+        }
         int numberPages = this.billService.getNumberOfPageByUser(pageSize, user);
         model.addAttribute("bills", bills);
         model.addAttribute("pageNo", numberPages);
