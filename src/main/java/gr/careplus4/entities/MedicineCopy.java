@@ -19,7 +19,7 @@ public class MedicineCopy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private long id;
 
     @Column(name = "Name", length = 255, nullable = false)
     @NotEmpty(message = "Medicine name is required")
