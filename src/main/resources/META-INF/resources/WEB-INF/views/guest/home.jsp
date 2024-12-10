@@ -161,18 +161,20 @@
             <div class="container mb-4">
                 <div class="highlight-wrapper p-4 shadow-lg rounded">
                     <h2 class="text-center text-primary">Top 3 sản phẩm bán chạy trong 7 ngày gần đây</h2>
-                    <div class="row">
+                    <div class="row justify-content-start g-3">
                         <c:forEach var="medicine" items="${topProducts}">
-                            <div class="col-md-4 col-sm-6">
+                            <div class="col-md-4 col-sm-6 d-flex align-items-stretch">
                                 <div class="product-card shadow-sm rounded p-3">
                                     <img src="${pageContext.request.contextPath}/images/image?fileName=${medicine.image}" class="img-fluid rounded" alt="${medicine.name}">
                                     <h5 class="mt-3">${medicine.name}</h5>
                                     <p><strong>Giá:</strong> ${medicine.unitCost} VND</p>
                                     <p><strong>Đánh giá:</strong> ${medicine.rating}</p>
                                     <p><strong>Số lượng bán:</strong> ${medicine.get("totalSales")}</p>
-                                    <form action="${URL}user/medicine/${medicine.id}" method="get">
-                                        <button type="submit" class="btn btn-primary mt-3">Xem chi tiết</button>
-                                    </form>
+                                    <div class="mt-auto"> <!-- Đẩy nút xuống đáy -->
+                                        <form action="${URL}user/medicine/${medicine.id}" method="get">
+                                            <button type="submit" class="btn btn-primary w-100">Xem chi tiết</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </c:forEach>
@@ -187,7 +189,7 @@
                 <div class="container mb-4">
                     <div class="highlight-wrapper p-4 shadow-lg rounded">
                         <h2 class="text-center text-primary">Top 9 sản phẩm bán chạy</h2>
-                        <div class="row">
+                        <div class="row justify-content-start">
                             <c:forEach var="medicine" items="${topSelling}">
                                 <div class="col-md-4 col-sm-6">
                                     <div class="product-card shadow-sm rounded p-3">

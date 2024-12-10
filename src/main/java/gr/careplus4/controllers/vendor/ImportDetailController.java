@@ -93,7 +93,7 @@ public class ImportDetailController {
                 medicine.getManufacturer().getName(),
                 medicine.getExpiryDate(),
                 new Date(), // Ngày hiện tại
-                medicine.getUnitCost()
+                importDetail.getUnitPrice()
         );
 
         // Gọi hàm cập nhật số lượng tồn kho

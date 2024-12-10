@@ -70,37 +70,41 @@
                 </form>
             </div>
 
-            <!-- Medicines Cards -->
-            <div class="row">
+            <div class="row justify-content-start">
                 <c:forEach var="medicine" items="${medicines}">
-                    <div class="col-md-4 mb-4">
-                        <div class="medicine-card">
-                            <img src="${pageContext.request.contextPath}/images/image?fileName=${medicine.image}" style="height: 150px" alt="${medicine.name}">
-                            <div class="card-body">
-                                <h5>
-                                    <a href="${pageContext.request.contextPath}/user/medicine/${medicine.id}" class="btn" style="height: 100px">${medicine.name}</a>
+                    <div class="col-md-4 mb-4 d-flex align-items-stretch">
+                        <div class="medicine-card shadow-sm rounded p-3 d-flex flex-column">
+                            <img src="${pageContext.request.contextPath}/images/image?fileName=${medicine.image}" style="height: 150px; object-fit: contain;" class="img-fluid" alt="${medicine.name}">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="text-center">
+                                    <a href="${pageContext.request.contextPath}/user/medicine/${medicine.id}" class="btn">${medicine.name}</a>
                                 </h5>
                                 <p><strong>Đơn vị:</strong> ${medicine.unitName}</p>
                                 <p><strong>Giá:</strong> ${medicine.unitCost}</p>
                                 <p><strong>Đánh giá:</strong></p>
                                 <div class="mt-2">
-                                    <!-- Vùng hiển thị sao -->
                                     <div class="rating-stars" style="position: relative; display: inline-block; font-size: 20px; color: #ddd;">
-                                        <!-- Sao rỗng -->
                                         <span style="color: #e4e5e9;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-                                        <!-- Sao đầy -->
                                         <span style="color: #ffc107; position: absolute; top: 0; left: 0; width: ${medicine.rating * 20}%; overflow: hidden; white-space: nowrap;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
                                     </div>
                                 </div>
-                                <form method="post" action="${pageContext.request.contextPath}/user/add-medicine-to-cart/${medicine.id}">
+                                <form method="post" action="${pageContext.request.contextPath}/user/add-medicine-to-cart/${medicine.id}" class="mt-auto">
                                     <input type="hidden" name="medicineId" value="${medicine.id}">
-                                    <input type="hidden" name="quantity" value="1" >
-                                    <button type="submit" class="btn btn-primary mt-2">Thêm vào giỏ hàng</button>
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-primary mt-2 w-100">Thêm vào giỏ hàng</button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </c:forEach>
+
+                <!-- Tính số cột rỗng cần thêm -->
+                <c:set var="remainingColumns" value="${3 - (medicines.size() % 3)}" />
+                <c:if test="${remainingColumns < 3}">
+                    <c:forEach var="i" begin="1" end="${remainingColumns}">
+                        <div class="col-md-4 mb-4"></div>
+                    </c:forEach>
+                </c:if>
             </div>
 
             <!-- Pagination -->
@@ -109,6 +113,7 @@
                     <a href="${pageContext.request.contextPath}/user/medicines?page=${page}" class="btn btn-outline-primary">${page}</a>
                 </c:forEach>
             </div>
+            <br>
         </div>
     </div>
 </div>

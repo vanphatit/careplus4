@@ -262,6 +262,7 @@
                                 <div class="d-flex gap-2 justify-content-center">
                                     <a href="${pageContext.request.contextPath}/vendor/medicine/${medicine.id}" class="btn btn-info btn-sm text-white">Xem</a>
                                     <a href="${pageContext.request.contextPath}/vendor/medicine/edit/${medicine.id}" class="btn btn-warning btn-sm">Sửa</a>
+                                    <a href="${pageContext.request.contextPath}/vendor/medicine/delete/${medicine.id}" class="btn btn-danger btn-sm">Xóa</a>
                                 </div>
                             </td>
                         </tr>

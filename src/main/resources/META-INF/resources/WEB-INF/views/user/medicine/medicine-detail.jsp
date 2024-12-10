@@ -333,6 +333,7 @@
             <div class="text-center back-link mt-4">
                 <strong><a href="${pageContext.request.contextPath}/user/medicines" class="btn btn-outline-primary">Quay về</a></strong>
             </div>
+            <br>
         </div>
     </div>
 </div>
