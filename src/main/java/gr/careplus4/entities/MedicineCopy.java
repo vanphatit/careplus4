@@ -18,8 +18,7 @@ import java.util.Date;
 public class MedicineCopy {
 
     @Id
-    @Column(name = "ID", length = 7)
-    @Size(max = 7)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     @Column(name = "Name", length = 255, nullable = false)
