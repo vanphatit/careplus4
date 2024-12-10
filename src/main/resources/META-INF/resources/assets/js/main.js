@@ -838,71 +838,138 @@
         });
     });
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const cartTable = document.querySelector(".cart__table");
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     const cartTable = document.querySelector(".cart__table");
+    //
+    //     function updateRowTotal(row) {
+    //         const priceCell = row.querySelector(".cart-table__column--price");
+    //         const quantityInput = row.querySelector(".input-number__input");
+    //         const totalCell = row.querySelector(".cart-table__column--total");
+    //
+    //         const unitPrice = parseFloat(priceCell.textContent.trim());
+    //         const quantity = parseInt(quantityInput.value);
+    //
+    //         const rowTotal = unitPrice * quantity;
+    //         totalCell.textContent = rowTotal.toFixed(3) + ' đ';
+    //
+    //         const index = row.dataset.index;
+    //         const hiddenInput = document.querySelector(`input[data-index='${index}']`);
+    //         if (hiddenInput) {
+    //             hiddenInput.value = quantity;
+    //         }
+    //
+    //         updateCartTotal();
+    //     }
+    //
+    //     function updateCartTotal() {
+    //         const totalPriceHeader = document.querySelector(".cart__totals-header td");
+    //         const totalPriceFooter = document.querySelector(".cart__totals-footer td");
+    //         let totalPrice = 0;
+    //
+    //         cartTable.querySelectorAll(".cart-table__row").forEach(row => {
+    //             const totalCell = row.querySelector(".cart-table__column--total");
+    //             if (totalCell) {
+    //                 const rowTotal = parseFloat(totalCell.textContent.trim());
+    //                 if (!isNaN(rowTotal)) {
+    //                     totalPrice += rowTotal;
+    //                 }
+    //             }
+    //         });
+    //
+    //         totalPriceHeader.textContent = totalPrice.toFixed(3) +' đ';
+    //         totalPriceFooter.textContent = totalPrice.toFixed(3) + ' đ';
+    //     }
+    //
+    //     cartTable.querySelectorAll(".input-number__input").forEach(input => {
+    //         input.addEventListener("input", function () {
+    //             const row = input.closest(".cart-table__row");
+    //             updateRowTotal(row);
+    //         });
+    //     });
+    //
+    //     cartTable.querySelectorAll(".input-number__add, .input-number__sub").forEach(button => {
+    //         button.addEventListener("click", function () {
+    //             const row = button.closest(".cart-table__row");
+    //             const input = row.querySelector(".input-number__input");
+    //             const step = parseInt(input.getAttribute("step") || 1);
+    //
+    //             if (button.classList.contains("input-number__add")) {
+    //                 input.value = parseInt(input.value) + step;
+    //             } else if (button.classList.contains("input-number__sub")) {
+    //                 input.value = Math.max(parseInt(input.value) - step, 1);
+    //             }
+    //
+    //             updateRowTotal(row);
+    //         });
+    //     });
+    // });
+
+    $(document).ready(function () {
+        const cartTable = $(".cart__table");
 
         function updateRowTotal(row) {
-            const priceCell = row.querySelector(".cart-table__column--price");
-            const quantityInput = row.querySelector(".input-number__input");
-            const totalCell = row.querySelector(".cart-table__column--total");
+            const priceCell = row.find(".cart-table__column--price");
+            const quantityInput = row.find(".input-number__input");
+            const totalCell = row.find(".cart-table__column--total");
 
-            const unitPrice = parseFloat(priceCell.textContent.trim());
-            const quantity = parseInt(quantityInput.value);
+            const rawUnitPrice = priceCell.text().trim().replace(/[^0-9.,]+/g, '');
+            const unitPrice = parseFloat(rawUnitPrice.replace(/\./g, '').replace(/,/g, '.'));
+            const quantity = parseInt(quantityInput.val()) || 0;
 
             const rowTotal = unitPrice * quantity;
-            totalCell.textContent = rowTotal.toFixed(3) + ' đ';
+            totalCell.text(formatCurrency(rowTotal) + ' đ');
 
-            const index = row.dataset.index;
-            const hiddenInput = document.querySelector(`input[data-index='${index}']`);
-            if (hiddenInput) {
-                hiddenInput.value = quantity;
+            const index = row.data('index');
+            const hiddenInput = $(`input[data-index='${index}']`);
+            if (hiddenInput.length > 0) {
+                hiddenInput.val(quantity);
             }
 
             updateCartTotal();
         }
 
         function updateCartTotal() {
-            const totalPriceHeader = document.querySelector(".cart__totals-header td");
-            const totalPriceFooter = document.querySelector(".cart__totals-footer td");
+            const totalPriceHeader = $(".cart__totals-header td");
+            const totalPriceFooter = $(".cart__totals-footer td");
             let totalPrice = 0;
 
-            cartTable.querySelectorAll(".cart-table__row").forEach(row => {
-                const totalCell = row.querySelector(".cart-table__column--total");
-                if (totalCell) {
-                    const rowTotal = parseFloat(totalCell.textContent.trim());
+            cartTable.find(".cart-table__row").each(function () {
+                const totalCell = $(this).find(".cart-table__column--total");
+                if (totalCell.length) {
+                    const rawTotalPrice = totalCell.text().trim().replace(/[^0-9.,]+/g, '');
+                    const rowTotal = parseFloat(rawTotalPrice.replace(/\./g, '').replace(/,/g, '.'));
                     if (!isNaN(rowTotal)) {
                         totalPrice += rowTotal;
                     }
                 }
             });
 
-            totalPriceHeader.textContent = totalPrice.toFixed(3) +' đ';
-            totalPriceFooter.textContent = totalPrice.toFixed(3) + ' đ';
+            totalPriceHeader.text(formatCurrency(totalPrice) + ' đ');
+            totalPriceFooter.text(formatCurrency(totalPrice) + ' đ');
         }
 
-        cartTable.querySelectorAll(".input-number__input").forEach(input => {
-            input.addEventListener("input", function () {
-                const row = input.closest(".cart-table__row");
-                updateRowTotal(row);
-            });
+        cartTable.find(".input-number__input").on("input", function () {
+            const row = $(this).closest(".cart-table__row");
+            updateRowTotal(row);
         });
 
-        cartTable.querySelectorAll(".input-number__add, .input-number__sub").forEach(button => {
-            button.addEventListener("click", function () {
-                const row = button.closest(".cart-table__row");
-                const input = row.querySelector(".input-number__input");
-                const step = parseInt(input.getAttribute("step") || 1);
+        cartTable.find(".input-number__add, .input-number__sub").on("click", function () {
+            const row = $(this).closest(".cart-table__row");
+            const input = row.find(".input-number__input");
+            const stockInput = row.find(".input-stock__input");
+            const maxQuantity = parseInt(stockInput.val());
+            const step = parseInt(input.attr("step") || 1);
 
-                if (button.classList.contains("input-number__add")) {
-                    input.value = parseInt(input.value) + step;
-                } else if (button.classList.contains("input-number__sub")) {
-                    input.value = Math.max(parseInt(input.value) - step, 1);
-                }
+            if ($(this).hasClass("input-number__add")) {
+                input.val(Math.min(parseInt(input.val()) + step, maxQuantity));
+            } else if ($(this).hasClass("input-number__sub")) {
+                input.val(Math.max(parseInt(input.val()) - step, 1));
+            }
 
-                updateRowTotal(row);
-            });
+            updateRowTotal(row);
         });
     });
+
 
     function formatCurrency(value) {
         // Use the 'vi-VN' locale to format the number according to Vietnamese currency format
@@ -914,7 +981,7 @@
 
         let formatted = formatter.format(value);
         // Replace dots with commas for thousands separator
-        formatted = formatted.replace(/\./g, ',');
+        // formatted = formatted.replace(/\./g, ',');
         return formatted;
     }
 
@@ -928,14 +995,14 @@
                     if (response.status) {
                         // Lấy giá trị thành tiền hiện tại
                         let totalPriceText = document.querySelector("#total-price").textContent.trim();
-                        let totalPriceValue = parseFloat(totalPriceText.replace(' đ', '').trim()) * 1000;  // Lấy giá trị thành tiền
+                        let totalPriceValue = Number(totalPriceText.replace(/[^0-9]/g, ''));
 
                         // Lấy phí ship hiện tại
                         let currentShippingCostText = $('#shipping-cost').text().trim();
-                        let currentShippingCost = parseFloat(currentShippingCostText.replace(' đ', '').trim()) || 0; // Tránh null hoặc NaN
+                        let currentShippingCost = Number(currentShippingCostText.replace(/[^0-9]/g, '')) || 0;
 
                         let shippingFee = parseFloat(response.data.price);  // Phí ship mới từ API
-                        $('#shipping-cost').text(response.data.price + " đ");
+                        $('#shipping-cost').text(formatCurrency(response.data.price) + ' đ');
 
                         // Kiểm tra nếu phí ship hiện tại không phải 0
                         if (currentShippingCost === 0) {
@@ -953,6 +1020,15 @@
                             $('#shipping-fee').val(response.data.price);
                             document.querySelector("#total-price").textContent = formatCurrency(totalWithShipping) + " đ";
                         }
+                        Swal.fire({
+                            title: '🎉Thông báo!🎉',
+                            text: 'Đã cập nhật phí giao hàng.',
+                            icon: 'success',
+                            background: '#0077b6',
+                            color: '#ffffff',
+                            confirmButtonColor: '#27ae60',
+                            confirmButtonText: 'OK'
+                        });
                     } else {
                         // Trường hợp không tìm thấy phương thức vận chuyển
                         $('#shipping-cost').text("Không tìm thấy phương thức vận chuyển");
