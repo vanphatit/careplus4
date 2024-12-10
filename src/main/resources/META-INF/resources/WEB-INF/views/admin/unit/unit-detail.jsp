@@ -20,7 +20,9 @@
             <p><strong>Tên đơn vị:</strong> ${unit.name}</p>
         </div>
         <div class="card-footer text-center">
-            <a href="/admin/unit/edit/${unit.id}" class="btn btn-warning me-2">Sửa</a>
+            <a href="javascript:void(0);"
+               class="btn btn-warning"
+               onclick="confirmEditWithSweetAlert('${unit.id}', '${unit.name}');">Sửa</a>
             <a href="/admin/units" class="btn btn-secondary">Quay lại</a>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -33,6 +35,30 @@
                 confirmButtonText: 'OK'
             });
             </c:if>
+            <c:if test="${not empty error}">
+            Swal.fire({
+                icon: 'error',
+                title: 'Thất bại!',
+                text: '${error}',
+                confirmButtonText: 'OK'
+            });
+            </c:if>
+
+            function confirmEditWithSweetAlert(id, name) {
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn sửa đơn vị này?',
+                    text: "Đơn vị: " + name,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sửa'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "${URL}admin/unit/edit/" + id;
+                    }
+                });
+            }
         </script>
     </div>
 </div>
