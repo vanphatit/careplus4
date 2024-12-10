@@ -13,11 +13,11 @@
 
     <div class="card mx-auto shadow-lg" style="max-width: 500px;">
         <div class="card-header text-center bg-primary text-white">
-            <h1 class="h4">Unit Details</h1>
+            <h1 class="h4">Chi tiết Đơn vị</h1>
         </div>
         <div class="card-body">
-            <p><strong>Unit ID:</strong> ${unit.id}</p>
-            <p><strong>Unit Name:</strong> ${unit.name}</p>
+            <p><strong>Mã đơn vị:</strong> ${unit.id}</p>
+            <p><strong>Tên đơn vị:</strong> ${unit.name}</p>
         </div>
         <div class="card-footer text-center">
             <a href="/admin/unit/edit/${unit.id}" class="btn btn-warning me-2">Sửa</a>
