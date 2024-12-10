@@ -342,10 +342,11 @@ public class MedicineServicesImpl implements iMedicineServices {
                 ))
                 .values().stream()
                 .map(groupedMedicines -> {
-                    // Lấy thuốc có expiryDate gần nhất trong nhóm
+                    // Lấy thuốc có expiryDate gần nhất trong nhóm và số lượng còn lại > 0
                     Medicine nearestExpiryMedicine = groupedMedicines.stream()
+                            .filter(medicine -> medicine.getStockQuantity() > 0)
                             .min(Comparator.comparing(Medicine::getExpiryDate))
-                            .orElseThrow();
+                            .orElseThrow(); // Ném ngoại lệ nếu không tìm thấy
 
                     // Chuyển đổi sang MedicineForUserModel, bao gồm ID của entity
                     return new MedicineForUserModel(
