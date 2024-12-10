@@ -112,6 +112,7 @@ public class MedicinesController {
                                    @RequestParam(value = "categoryId", required = false) String categoryId,
                                    @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
                                    @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize) {
+        System.out.println("==================================== /vendor/medicines: ");
         // Đảm bảo currentPage >= 1
         currentPage = Math.max(currentPage, 1);
 
@@ -138,6 +139,7 @@ public class MedicinesController {
         model.addAttribute("medicines", medicines);
         model.addAttribute("currentPage", currentPage); // Để view biết trang hiện tại
         model.addAttribute("pageSize", pageSize);       // Để view biết kích thước trang
+        System.out.println("==================================== Medicines Message:");
         return "vendor/medicine/medicines-list"; // Tên view để render danh sách thuốc
     }
 
@@ -351,7 +353,7 @@ public class MedicinesController {
             medicineService.save(medicine);
             message = "Thông tin thuốc đã được cập nhật";
             model.addAttribute("message", message);
-            return new ModelAndView("redirect:/vendor/medicines", model);
+            return new ModelAndView("redirect:/vendor/medicines");
         } else {
             Medicine lastMedicine = medicineService.findTopByOrderByIdDesc();
             medicine.setRating(new BigDecimal(0));

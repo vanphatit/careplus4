@@ -33,7 +33,7 @@ public class OtpController {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("phatnet4@gmail.com");
         message.setTo(email);
-        // send otp 7 digits
+        // send otp 6 digits
         Random random = new Random();
         int otp = 100000 + random.nextInt(900000);
         message.setText("Mã OTP của bạn là: " + otp + ". Vui lòng không chia sẻ mã này với người khác.");

@@ -82,6 +82,8 @@ public class ImportDetailController {
         importDetail.setMedicine(medicine);
         importDetail.setQuantity(detailModel.getQuantity());
         importDetail.setUnitPrice(detailModel.getUnitPrice());
+        BigDecimal quantity = new BigDecimal(detailModel.getQuantity());
+        importDetail.setSubTotal(quantity.multiply(detailModel.getUnitPrice()));
         importDetailService.save(importDetail); // Lưu ImportDetail
 
         // Cập nhật totalAmount của Import
