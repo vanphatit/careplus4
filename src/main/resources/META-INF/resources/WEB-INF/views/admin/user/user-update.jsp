@@ -8,7 +8,7 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Quản lý người dùng</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/admin/">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="/admin/users">Người dùng </a></li>
                     <li class="breadcrumb-item active">Cập nhật</li>
                 </ol>
@@ -69,7 +69,7 @@
                                         </div>
                                         <div class="d-flex justify-content-between">
                                             <button type="submit" class="btn btn-success">Lưu thay đổi</button>
-                                            <a href="/admin/user" class="btn btn-secondary">Quay lại</a>
+                                            <a href="/admin/users" class="btn btn-secondary">Quay lại</a>
                                         </div>
                                     </form>
                                 </div>

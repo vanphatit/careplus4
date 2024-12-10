@@ -20,7 +20,9 @@ public interface iUserService {
 
     <S extends User> Page<S> findAll(Example<S> example, Pageable pageable);
 
-    Page<User> findByRoleName(String roleName, Pageable pageable);
+    Page<User> findUsersByStatusAndRole_Name(boolean status, String roleName, Pageable pageable);
+
+    Page<User> findUsersByRole_Name(String roleName, Pageable pageable);
 
     long count();
 
@@ -29,6 +31,8 @@ public interface iUserService {
     Optional<User> findByName(String name);
 
     Page<User> findByNameContaining(String name, Pageable pageable);
+
+    Page<User> findUsersByStatus(boolean status, Pageable pageable);
 
     Page<User> findByNameContainingIgnoreCaseOrPhoneNumber(String name, String phoneNumber, Pageable pageable);
 

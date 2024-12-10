@@ -17,10 +17,16 @@ public interface UserRepository extends JpaRepository<User, String> {
     Page<User> findByNameContaining(String name, Pageable pageable);
 
     Page<User> findByNameContainingIgnoreCaseOrPhoneNumber(String name, String phoneNumber, Pageable pageable);
-    Page<User> findByRoleName(String roleName, Pageable pageable);
+
+    Page<User> findUsersByRole_Name(@NotEmpty(message = "Role name is required") String roleName, Pageable pageable);
+    Page<User> findUsersByStatus(boolean status, Pageable pageable);
+
+    Page<User> findUsersByStatusAndRole_Name(boolean status, @NotEmpty(message = "Role name is required") String roleName, Pageable pageable);
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
     Optional<User> findByPhoneNumber(String phoneNumber);
+
+
     int countByRoleName(String roleName);
     List<User> findByRoleName(String roleName);
 

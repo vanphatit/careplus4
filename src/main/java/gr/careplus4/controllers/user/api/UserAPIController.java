@@ -75,7 +75,7 @@ public class UserAPIController {
     @PostMapping(path = "/getUserByRole")
     public ResponseEntity<?> getUserByRole(@Validated @RequestParam("idrole") int role, Pageable pageable) {
         Optional<Role> roleOptional = roleService.findById(role);
-        Page<User> users = userService.findByRoleName(roleOptional.get().getName(), pageable);
+        Page<User> users = userService.findUsersByRole_Name(roleOptional.get().getName(), pageable);
         if(users.isEmpty()){
             return new ResponseEntity<Response>(new Response(false, "User not found", null), HttpStatus.NOT_FOUND);
         }
