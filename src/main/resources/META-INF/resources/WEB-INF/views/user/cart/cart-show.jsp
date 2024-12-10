@@ -57,7 +57,8 @@
                                 </td>
                                 <td class="cart-table__column cart-table__column--quantity" data-title="Quantity">
                                     <div class="input-number">
-                                        <input class="form-control input-number__input" type="number" min="1" value="${item.quantity}" />
+                                        <input class="form-control input-number__input" type="number" min="1" value="${item.quantity}"/>
+                                        <input class="form-control input-stock__input" type="number" min="1" value="${item.medicine.stockQuantity}" hidden/>
                                         <div class="input-number__add"></div>
                                         <div class="input-number__sub"></div>
                                     </div>

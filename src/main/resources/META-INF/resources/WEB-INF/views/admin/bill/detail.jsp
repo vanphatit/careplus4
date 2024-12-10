@@ -113,14 +113,6 @@
 
             let province = address.split(',').pop().trim();
 
-            // Hiển thị thông tin trong console
-            console.log('Mã hóa đơn (billId):', billId);
-            console.log('Người nhận (receiverName):', receiverName);
-            console.log('Số điện thoại (userPhone):', userPhone);
-            console.log('Địa chỉ (address):', address);
-            console.log('Tỉnh/Thành phố (province):', province);
-            console.log('Tổng tiền (totalAmount):', totalAmount);
-
             $.ajax({
                 url: `http://localhost:8080/v1/api/packages/add_shipping`, // Gọi đến URL API
                 method: 'POST',
@@ -156,10 +148,8 @@
                             // Cập nhật trạng thái trực tiếp trên giao diện
                             $('#status').text('Trạng thái đơn hàng: ' + statusResponse.data);
 
-                            console.log(statusResponse.data);
                         },
                         error: function(xhr, status, error) {
-                            console.log(statusResponse.data)
                             console.error('Lỗi khi lấy trạng thái mới:', error);
                         }
                     });
