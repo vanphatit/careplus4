@@ -171,9 +171,7 @@ public class MedicinesController {
             model.addAttribute("message", message);
             return "redirect:/vendor/medicines";
         }
-        String message = "Đã tìm thấy thuốc " + medicine.get().getName();
         model.addAttribute("medicine", medicine.get());
-        model.addAttribute("message", message);
         model.addAttribute("currentPage", currentPage); // Để view biết trang hiện tại
         model.addAttribute("pageSize", pageSize);       // Để view biết kích thước trang
         model.addAttribute("description", medicineModel.getDescription());
@@ -196,7 +194,8 @@ public class MedicinesController {
         model.addAttribute("CURRENTDATE", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         model.addAttribute("medicine", medicineModel);
         model.addAttribute("manufacturers", manufacturerService.findAll());
-        model.addAttribute("categories", categoryService.findAll());
+        List<Category> categories = categoryService.findAll();
+        model.addAttribute("categories", categories);
         model.addAttribute("units", unitService.findAll());
         return "vendor/medicine/medicine-addOrEdit";
     }
@@ -257,42 +256,42 @@ public class MedicinesController {
         model.addAttribute("CURRENTDATE", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
         if (!manufacturer.isPresent()) {
-            redirectAttributes.addFlashAttribute("message", "Nhà sản xuất không tồn tại");
+            redirectAttributes.addFlashAttribute("error", "Nhà sản xuất không tồn tại");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         Optional<Category> category = categoryService.findById(categoryId);
         if (!category.isPresent()) {
-            redirectAttributes.addFlashAttribute("message", "Danh mục không tồn tại");
+            redirectAttributes.addFlashAttribute("error", "Danh mục không tồn tại");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         Optional<Unit> unit = unitService.findById(unitId);
         if (!unit.isPresent()) {
-            redirectAttributes.addFlashAttribute("message", "Đơn vị không tồn tại");
+            redirectAttributes.addFlashAttribute("error", "Đơn vị không tồn tại");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         if (medicineModel.getExpiryDate() != null && medicineModel.getExpiryDate().before(new Date())) {
-            redirectAttributes.addFlashAttribute("message", "Ngày hết hạn phải sau ngày hiện tại");
+            redirectAttributes.addFlashAttribute("error", "Ngày hết hạn phải sau ngày hiện tại");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         if (medicineModel.getStockQuantity() < 0) {
-            redirectAttributes.addFlashAttribute("message", "Số lượng tồn kho phải lớn hơn hoặc bằng 0");
+            redirectAttributes.addFlashAttribute("error", "Số lượng tồn kho phải lớn hơn hoặc bằng 0");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         if (medicineModel.getIsEdit()) {
             if (medicineModel.getRating().compareTo(BigDecimal.ZERO) < 0 && medicineModel.getRating().compareTo(BigDecimal.valueOf(5)) > 0) {
-                redirectAttributes.addFlashAttribute("message", "Đánh giá phải nằm trong khoảng từ 0 đến 5");
+                redirectAttributes.addFlashAttribute("error", "Đánh giá phải nằm trong khoảng từ 0 đến 5");
                 return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
             }
         }
 
         // Nếu ko là edit thì kiểm tra xem anh có rỗng không
         if (!medicineModel.getIsEdit() && (image == null || image.isEmpty())) {
-            redirectAttributes.addFlashAttribute("message", "Ảnh không được để trống");
+            redirectAttributes.addFlashAttribute("error", "Ảnh không được để trống");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
@@ -403,14 +402,20 @@ public class MedicinesController {
     }
 
     @GetMapping("/vendor/medicine/delete/{id}")
-    public ModelAndView deleteMedicine(ModelMap model, @PathVariable("id") String id) {
+    public ModelAndView deleteMedicine(ModelMap model, @PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         Optional<Medicine> medicine = medicineService.findById(id);
         if (medicine.isPresent()) {
+            boolean isDeleted = medicineService.checkMedicineIsDeleted(medicine.get().getUnitCost());
+            System.out.println();
+            if (!isDeleted) {
+                redirectAttributes.addFlashAttribute("error", "Không thể xóa thuốc đã được bán");
+                return new ModelAndView("redirect:/vendor/medicines", model);
+            }
             medicineService.deleteById(id);
             model.addAttribute("message", "Thuốc đã được xóa");
             return new ModelAndView("redirect:/vendor/medicines", model);
         }
-        model.addAttribute("message", "Không tìm thấy thuốc");
+        redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
         return new ModelAndView("redirect:/vendor/medicines", model);
     }
 
@@ -426,7 +431,7 @@ public class MedicinesController {
             Page<Medicine> medicines = medicineService.searchMedicineByKeyword(keyword, pageable);
 
             if (medicines.isEmpty()) {
-                redirectAttributes.addFlashAttribute("message", "Không tìm thấy thuốc");
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
                 return "redirect:/vendor/medicines";
             }
 
@@ -492,7 +497,7 @@ public class MedicinesController {
             );
 
             if (medicines.isEmpty()) {
-                redirectAttributes.addFlashAttribute("message", "Không tìm thấy thuốc");
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
                 return "redirect:/vendor/medicines";
             }
 
@@ -530,7 +535,7 @@ public class MedicinesController {
         if (check) {
             model.addAttribute("message", "Thuốc " + name + " đã tồn tại");
         } else {
-           redirectAttributes.addFlashAttribute("message", "Medicine not found");
+           redirectAttributes.addFlashAttribute("error", "Thuốc " + name + " không tồn tại");
         }
         return "vendor/medicine/medicines-list";
     }
@@ -539,7 +544,8 @@ public class MedicinesController {
     public String getListMedicinesUser(Model model,
                                    @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
                                    @RequestParam(value = "size", required = false, defaultValue = "12") int pageSize,
-                                   @RequestParam(value = "categoryId", required = false) String categoryId
+                                   @RequestParam(value = "categoryId", required = false) String categoryId,
+                                   RedirectAttributes redirectAttributes
                                        ) {
         // Đảm bảo currentPage >= 1
         currentPage = Math.max(currentPage, 1);
@@ -548,6 +554,10 @@ public class MedicinesController {
         if (categoryId != null) {
             String categoryName = categoryService.findById(categoryId).get().getName();
             medicines = medicineService.getMedicineForUserByCategoryName(categoryName, pageable);
+            if (medicines.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
+                return "user/medicine/medicines-list";
+            }
         } else{
             medicines = medicineService.getMedicinesForUser(pageable);
         }
@@ -606,7 +616,7 @@ public class MedicinesController {
         medicineModel = processMedicine(medicineModel);
 
         if (!medicine.isPresent()) {
-            redirectAttributes.addFlashAttribute("message", "Không tìm thấy thuốc");
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
             return "redirect:/user/medicines";
         }
 
@@ -627,10 +637,8 @@ public class MedicinesController {
         // Chia nhóm sản phẩm (5 sản phẩm mỗi nhóm)
         List<List<MedicineForUserModel>> groupedProducts = splitList(uniqueList, 2);
 
-        String message = "Đã tìm thấy thuốc";
         model.addAttribute("reviews", reviews);
         model.addAttribute("medicine", medicine.get());
-        model.addAttribute("message", message);
         model.addAttribute("description", medicineModel.getDescription());
         model.addAttribute("ingredients", medicineModel.getIngredients());
         model.addAttribute("usage", medicineModel.getUsage());
@@ -657,7 +665,7 @@ public class MedicinesController {
             Page<MedicineForUserModel> medicines = medicineService.searchMedicineByKeywordForUser(keyword, pageable);
 
             if (medicines.isEmpty()) {
-                redirectAttributes.addFlashAttribute("message", "Không tìm thấy thuốc");
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
                 return "redirect:/user/medicines";
             }
 
@@ -697,19 +705,19 @@ public class MedicinesController {
 
         // Kiểm tra các tham số đầu vào
         if (unitCostMin != null && unitCostMax != null && unitCostMin.compareTo(unitCostMax) > 0) {
-            redirectAttributes.addFlashAttribute("message", "Giá min phải nhỏ hơn hoặc bằng giá max");
+            redirectAttributes.addFlashAttribute("error", "Giá min phải nhỏ hơn hoặc bằng giá max");
             return "user/medicine/medicines-list";
         }
         if (expiryDateMin != null && expiryDateMax != null && expiryDateMin.compareTo(expiryDateMax) > 0) {
-            redirectAttributes.addFlashAttribute("message", "Ngày hết hạn min phải nhỏ hơn hoặc bằng ngày hết hạn max");
+            redirectAttributes.addFlashAttribute("error", "Ngày hết hạn min phải nhỏ hơn hoặc bằng ngày hết hạn max");
             return "user/medicine/medicines-list";
         }
         if (stockQuantityMin != null && stockQuantityMax != null && stockQuantityMin.compareTo(stockQuantityMax) > 0) {
-            redirectAttributes.addFlashAttribute("message", "Số lượng min phải nhỏ hơn hoặc bằng số lượng max");
+            redirectAttributes.addFlashAttribute("error", "Số lượng min phải nhỏ hơn hoặc bằng số lượng max");
             return "user/medicine/medicines-list";
         }
         if (ratingMin != null && ratingMax != null && ratingMin.compareTo(ratingMax) > 0) {
-            redirectAttributes.addFlashAttribute("message", "Đánh giá min phải nhỏ hơn hoặc bằng đánh giá max");
+            redirectAttributes.addFlashAttribute("error", "Đánh giá min phải nhỏ hơn hoặc bằng đánh giá max");
             return "user/medicine/medicines-list";
         }
 
@@ -722,7 +730,7 @@ public class MedicinesController {
         );
 
         if (filteredMedicines.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Không tìm thấy thuốc");
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
             return "redirect:/user/medicines";
         }
 

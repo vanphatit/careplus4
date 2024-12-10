@@ -1,8 +1,10 @@
 package gr.careplus4.services.impl;
 
 import gr.careplus4.entities.BillDetail;
+import gr.careplus4.entities.Category;
 import gr.careplus4.models.MedicineForUserModel;
 import gr.careplus4.repositories.BillDetailRepository;
+import gr.careplus4.repositories.CategoryRepository;
 import gr.careplus4.services.MedicineSpecifications;
 import gr.careplus4.entities.Medicine;
 import gr.careplus4.repositories.MedicineRepository;
@@ -30,6 +32,9 @@ public class MedicineServicesImpl implements iMedicineServices {
 
     @Autowired
     BillDetailRepository billDetailRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 
     @Override
     public List<Medicine> findByNameContaining(String name) {
@@ -140,7 +145,16 @@ public class MedicineServicesImpl implements iMedicineServices {
 
     @Override
     public void deleteById(String s) {
+
         medicineRepository.deleteById(s);
+    }
+
+    @Override
+    public Boolean checkMedicineIsDeleted(BigDecimal unitCost) {
+        if (unitCost.compareTo(BigDecimal.ZERO) == 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -503,12 +517,38 @@ public class MedicineServicesImpl implements iMedicineServices {
                 .toList();
     }
 
+
     @Override
     public Page<MedicineForUserModel> getMedicineForUserByCategoryName(String categoryName, Pageable pageable) {
         List<MedicineForUserModel> medicines = findNearestExpiryMedicines();
 
         List<MedicineForUserModel> filteredMedicines = medicines.stream()
-                .filter(medicine -> medicine.getCategoryName().equalsIgnoreCase(categoryName))
+                .filter(medicine -> {
+                    Optional<Category> optionalCategory = categoryRepository.findByName(categoryName);
+
+                    // Kiểm tra nếu không tìm thấy category
+                    if (optionalCategory.isEmpty()) {
+                        return false;
+                    }
+
+                    Category category = optionalCategory.get();
+
+                    // Nếu category là parent, lọc theo chính nó và các category con
+                    if (category.getParentCategory() == null) {
+                        // Lấy tất cả các category con của parent category
+                        List<String> subCategories = categoryRepository.findByParentCategoryId(category.getId())
+                                .stream()
+                                .map(Category::getName)
+                                .collect(Collectors.toList());
+
+                        // Kiểm tra nếu categoryName khớp với parent hoặc bất kỳ category con nào
+                        return categoryName.equalsIgnoreCase(medicine.getCategoryName()) ||
+                                subCategories.contains(medicine.getCategoryName());
+                    }
+
+                    // Nếu category là sub-category, chỉ lọc theo chính nó
+                    return categoryName.equalsIgnoreCase(medicine.getCategoryName());
+                })
                 .toList();
 
         int pageSize = pageable.getPageSize();

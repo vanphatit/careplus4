@@ -18,7 +18,7 @@
     <h4 class="text-center">Dành cho phiếu nhập có mã là: <strong>${importId}</strong></h4>
 
     <!-- Ghi chú -->
-    <c:if test="${detail.importDetailId == null}">
+    <c:if test="${medicineId == null}">
         <div class="alert alert-info mt-4" role="alert">
             <p class="mb-0 text-center">
                 <i class="fas fa-info-circle"></i>

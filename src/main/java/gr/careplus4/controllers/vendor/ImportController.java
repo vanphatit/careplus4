@@ -59,7 +59,7 @@ public class ImportController {
         int currentPage = page.orElse(1);
         int pageSize = 10;
 
-        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("id")); // Thay đổi nếu cần
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("date").descending()); // Thay đổi nếu cần
         Page<Import> importPage = importService.findAll(pageable); // Lấy đối tượng Page<Import>
 
         model.addAttribute("importPage", importPage); // Truyền importPage vào model

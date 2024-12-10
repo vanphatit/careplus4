@@ -10862,6 +10862,16 @@ screen and (-ms-high-contrast:active) {
     object-fit: contain;
 }
 
+.medicine-card h5 a {
+    display: block;
+    height: 3em; /* Giới hạn chiều cao */
+    line-height: 1.5em; /* Dòng cách */
+    overflow: hidden; /* Ẩn nội dung tràn */
+    text-overflow: ellipsis; /* Dấu "..." khi nội dung quá dài */
+    white-space: normal; /* Cho phép xuống dòng */
+    text-align: center; /* Căn giữa nội dung */
+}
+
 .card-body {
     margin-top: 10px;
 }
@@ -11116,7 +11126,7 @@ hr {
      border-radius: 10px;
      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
      text-align: center;
-     height: auto;
+     height: 100%;
      display: flex;
      flex-direction: column;
      justify-content: space-between;
@@ -11125,7 +11135,7 @@ hr {
 
 .product-card img {
     width: 100%;
-    height: 300px; /* Tăng chiều cao ảnh */
+    height: 150px; /* Tăng chiều cao ảnh */
     object-fit: contain;
     border-radius: 8px;
     margin-bottom: 15px;

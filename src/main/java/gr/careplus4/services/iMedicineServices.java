@@ -50,6 +50,8 @@ public interface iMedicineServices {
 
     void deleteById(String s);
 
+    Boolean checkMedicineIsDeleted(BigDecimal unitCost);
+
     Page<Medicine> findAll(Pageable pageable);
 
 
