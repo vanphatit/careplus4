@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -39,6 +40,10 @@ public class BillDetail implements Serializable {
 
     @Column(name = "SubTotal", precision = 10, scale = 2, nullable = false)
     private BigDecimal subTotal;
+
+    @OneToOne(mappedBy = "billDetail", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private MedicineCopy medicineCopy;
 
     @PrePersist
     @PreUpdate
