@@ -31,4 +31,6 @@ public interface iManufacturerServices {
     Boolean existsByName(String name);
 
     String generateManufacturerId(String previousId);
+
+    boolean checkEdit(String id);
 }

@@ -3,6 +3,15 @@
 <c:url value="/" var="URL"></c:url>
 
 <div class="container">
+
+    <!-- Breadcrumb Section -->
+    <h1 class="mt-4">Quản lý Nhà Sản Xuất</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active"> <a href="/admin/units"> Nhà Sản Xuất</a></li>
+        <li class="breadcrumb-item active">${manufacturer.isEdit ? 'Chỉnh sửa Nhà Sản Xuất' : 'Thêm mới Nhà Sản Xuất'}</li>
+    </ol>
+
     <div class="form-container">
         <h1>${manufacturer.isEdit ? 'Chỉnh sửa Nhà Sản Xuất' : 'Thêm mới Nhà Sản Xuất'}</h1>
 
@@ -17,14 +26,21 @@
                 confirmButtonText: 'OK'
             });
             </c:if>
+            <c:if test="${not empty error}">
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: '${error}',
+                confirmButtonText: 'OK'
+            });
+            </c:if>
         </script>
 
         <!-- Form -->
         <form action="/vendor/manufacturer/save" method="post">
             <div class="mb-3">
                 <c:if test="${manufacturer.isEdit}">
-                    <label for="id" class="form-label">ID:</label>
-                    <input type="text" class="form-control" id="id" value="${manufacturer.id}" readonly />
+                    <input type="text" class="form-control" name="id" id="id" value="${manufacturer.id}" hidden="hidden" />
                 </c:if>
             </div>
 

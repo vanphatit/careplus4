@@ -407,11 +407,6 @@ public class MedicineServicesImpl implements iMedicineServices {
         // Lấy danh sách thuốc đã lọc theo ngày hết hạn gần nhất
         List<MedicineForUserModel> medicines = findNearestExpiryMedicines();
 
-        // Loại bỏ các thuốc có stockQuantity = 0
-        medicines = medicines.stream()
-                .filter(medicine -> medicine.getStockQuantity() > 0)
-                .toList();
-
         // Duyệt danh sách và tìm thuốc có ID khớp
         return medicines.stream()
                 .filter(medicine -> medicine.getId().equals(id))

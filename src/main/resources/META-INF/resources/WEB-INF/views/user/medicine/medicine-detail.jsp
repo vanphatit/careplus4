@@ -118,10 +118,6 @@
                                 <td>${medicine.unitCost} VND</td>
                             </tr>
                             <tr>
-                                <th scope="row">Số lượng:</th>
-                                <td>${medicine.stockQuantity}</td>
-                            </tr>
-                            <tr>
                                 <th scope="row">Đánh giá:</th>
                                 <td>${medicine.rating}</td>
                             </tr>
@@ -136,30 +132,44 @@
                             </tbody>
                         </table>
                         <!-- Form thêm vào giỏ hàng -->
-                        <form method="post" action="${pageContext.request.contextPath}/user/add-medicine-to-cart/${medicine.id}" class="mt-4">
-                            <div class="row align-items-center">
-                                <input type="hidden" name="medicineId" value="${medicine.id}">
-                                <!-- Chọn số lượng -->
-                                <div class="quantity-selector" style="width: 50%">
-                                    <label for="quantity" class="form-label">Chọn số lượng:</label>
-                                    <div class="input-group">
-                                        <!-- Nút giảm -->
-                                        <button type="button" class="btn btn-outline-secondary" id="decrease-quantity">-</button>
-                                        <!-- Input số lượng -->
-                                        <input type="number" id="quantity" name="quantity" class="form-control text-center" value="1" min="1" max="${medicine.stockQuantity}" required>
-                                        <!-- Nút tăng -->
-                                        <button type="button" class="btn btn-outline-secondary" id="increase-quantity">+</button>
+                        <c:if test="${medicine.stockQuantity > 0}">
+                            <form method="post" action="${pageContext.request.contextPath}/user/add-medicine-to-cart/${medicine.id}" class="mt-4">
+                                <div class="row align-items-center">
+                                    <input type="hidden" name="medicineId" value="${medicine.id}">
+                                    <!-- Chọn số lượng -->
+                                    <div class="quantity-selector" style="width: 50%">
+                                        <label for="quantity" class="form-label">Chọn số lượng:</label>
+                                        <div class="input-group">
+                                            <!-- Nút giảm -->
+                                            <button type="button" class="btn btn-outline-secondary" id="decrease-quantity">-</button>
+                                            <!-- Input số lượng -->
+                                            <input type="number" id="quantity" name="quantity" class="form-control text-center" value="1" min="1" max="${medicine.stockQuantity}" required>
+                                            <!-- Nút tăng -->
+                                            <button type="button" class="btn btn-outline-secondary" id="increase-quantity">+</button>
+                                        </div>
+                                    </div>
+                                    <!-- Nút thêm vào giỏ hàng -->
+                                    <div class="col-6 text-end" style="margin-top: 21px">
+                                        <input type="hidden" name="medicineId" value="${medicine.id}">
+                                        <button type="submit" class="btn btn-success mt-3">
+                                            <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                                        </button>
                                     </div>
                                 </div>
-                                <!-- Nút thêm vào giỏ hàng -->
-                                <div class="col-6 text-end" style="margin-top: 21px">
-                                    <input type="hidden" name="medicineId" value="${medicine.id}">
-                                    <button type="submit" class="btn btn-success mt-3">
-                                        <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
-                                    </button>
+                            </form>
+                        </c:if>
+                        <c:if test="${medicine.stockQuantity <= 0}">
+                            <div class="mt-4 d-flex align-items-center justify-content-center">
+                                <div class="alert alert-danger d-flex align-items-center p-3 shadow-sm rounded" role="alert" style="max-width: 400px; text-align: center;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill me-2" viewBox="0 0 16 16" style="color: #dc3545;">
+                                        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.964 0L.165 13.233c-.457.778.091 1.767.982 1.767h13.706c.891 0 1.439-.99.982-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1-2.002 0 1 1 0 0 1 2.002 0z"/>
+                                    </svg>
+                                    <div>
+                                        <strong>Sản phẩm đã hết hàng!</strong><br>Vui lòng kiểm tra lại hoặc liên hệ nhà cung cấp.
+                                    </div>
                                 </div>
                             </div>
-                        </form>
+                        </c:if>
                     </div>
                 </div>
             </div>

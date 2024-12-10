@@ -33,4 +33,6 @@ public interface iUnitServices {
     Boolean existsByName(String name);
 
     String generateUnitId(String previousUnitId);
+
+    Boolean checkUnit(String id);
 }

@@ -3,16 +3,27 @@
 <c:url value="/" var="URL"></c:url>
 
 <div class="container mt-5">
-    <h1 class="text-center text-primary mb-4">Danh sách đơn vị</h1>
+
+    <!-- Breadcrumb Section -->
+    <h1 class="mt-4">Quản lý Đơn vị</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">Danh sách đơn vị</li>
+    </ol>
+
+    <h1 class="text-left text-primary mb-4">Danh sách đơn vị</h1>
 
     <!-- Search and Add Buttons -->
     <div class="row mb-4">
         <div class="col-md-8">
             <form action="/admin/unit/search" method="get" class="d-flex">
-                <input type="text" id="search" name="name" placeholder="Search by name" class="form-control me-2">
-                <button type="submit" class="btn btn-primary">Search</button>
+                <input type="text" id="search" name="name" placeholder="Tìm kiếm theo tên" class="form-control">
+                <button type="submit" class="btn btn-primary" style="margin: 3px 10px">Search</button>
             </form>
         </div>
+    </div>
+
+    <div class="row mb-4">
         <div class="col-md-4 text-end">
             <a href="/admin/unit/add" class="btn btn-success">Thêm đơn vị</a>
         </div>
@@ -34,8 +45,18 @@
                     <td class="text-center">${unit.id}</td>
                     <td>${unit.name}</td>
                     <td class="text-center">
-                        <a href="/admin/unit/${unit.id}" class="btn btn-sm btn-info text-white">Chi tiết</a>
-                        <a href="/admin/unit/edit/${unit.id}" class="btn btn-sm btn-warning text-white">Sửa</a>
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="<c:url value='/admin/unit/${unit.id}'/>" style="margin: 0 10px"
+                               class="btn btn-info btn-sm text-white">Chi tiết</a>
+                            <a href="javascript:void(0);"
+                               class="btn btn-warning btn-sm"
+                               style="margin: 0 10px"
+                               onclick="confirmEditWithSweetAlert('${unit.id}', '${unit.name}');">Sửa</a>
+                            <a href="javascript:void(0);"
+                               class="btn btn-danger btn-sm"
+                               style="margin: 0 10px"
+                               onclick="confirmDeleteWithSweetAlert('${unit.id}', '${unit.name}');">Xóa</a>
+                        </div>
                     </td>
                 </tr>
             </c:forEach>
@@ -55,16 +76,59 @@
             </c:if>
         </ul>
     </nav>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        <c:if test="${not empty message}">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <c:if test="${not empty message}">
         Swal.fire({
             icon: 'success',
             title: 'Thành công!',
             text: '${message}',
             confirmButtonText: 'OK'
         });
-        </c:if>
-    </script>
-</div>
+    </c:if>
+
+    <c:if test="${not empty error}">
+        Swal.fire({
+            icon: 'error',
+            title: 'Thất bại!',
+            text: '${error}',
+            confirmButtonText: 'OK'
+        });
+    </c:if>
+
+    function confirmDeleteWithSweetAlert(id, name) {
+        Swal.fire({
+            title: 'Xác nhận xóa',
+            text: `Bạn có chắc chắn muốn xóa đơn vị ` + name + ` không?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Huỷ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/admin/unit/delete/` + id;
+            }
+        });
+    }
+
+    function confirmEditWithSweetAlert(id, name) {
+        Swal.fire({
+            title: 'Xác nhận chỉnh sửa',
+            text: `Bạn có chắc chắn muốn chỉnh sửa đơn vị ` + name + ` không?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Chỉnh sửa',
+            cancelButtonText: 'Huỷ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/admin/unit/edit/` + id;
+            }
+        });
+    }
+</script>

@@ -101,6 +101,15 @@
 <body>
 
 <div class="container mt-5">
+
+    <!-- Breadcrumb Section -->
+    <h1 class="mt-4">Quản lý thuốc</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active"><a href="${pageContext.request.contextPath}/vendor/medicines">Quản lý thuốc</a></li>
+        <li class="breadcrumb-item active">Chi tiết thuốc</li>
+    </ol>
+
     <!-- Tiêu đề -->
     <div class="text-center mb-4">
         <h1 class="text-primary">Chi tiết thuốc ${medicine.name}</h1>

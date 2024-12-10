@@ -11163,6 +11163,15 @@ hr {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
+.product-card h5 {
+    font-size: 1rem;
+    text-align: center; /* Căn giữa tiêu đề */
+    min-height: 60px; /* Đặt chiều cao tối thiểu để đồng đều */
+    overflow: hidden; /* Ngăn tràn */
+    text-overflow: ellipsis; /* Hiện dấu ba chấm nếu tiêu đề quá dài */
+    white-space: normal; /* Cho phép xuống dòng */
+}
+
 /* Đảm bảo lưới sản phẩm hiển thị đẹp */
 .carousel-inner .row {
     gap: 20px; /* Tăng khoảng cách giữa các sản phẩm */
