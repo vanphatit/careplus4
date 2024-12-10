@@ -161,16 +161,18 @@
             <div class="container mb-4">
                 <div class="highlight-wrapper p-4 shadow-lg rounded">
                     <h2 class="text-center text-primary">Top 3 sản phẩm bán chạy trong 7 ngày gần đây</h2>
-                    <div class="row justify-content-start g-3">
+                    <br/>
+                    <br/>
+                    <div class="row row-cols-1 row-cols-md-3 g-3 justify-content-start"> <!-- Bootstrap row-cols đảm bảo chia đều -->
                         <c:forEach var="medicine" items="${topProducts}">
-                            <div class="col-md-4 col-sm-6 d-flex align-items-stretch">
-                                <div class="product-card shadow-sm rounded p-3">
-                                    <img src="${pageContext.request.contextPath}/images/image?fileName=${medicine.image}" class="img-fluid rounded" alt="${medicine.name}">
-                                    <h5 class="mt-3">${medicine.name}</h5>
+                            <div class="col d-flex"> <!-- Chia đều các cột -->
+                                <div class="product-card shadow-sm rounded p-3 d-flex flex-column w-100"> <!-- Đảm bảo thẻ chiếm đủ chiều rộng cột -->
+                                    <img src="${pageContext.request.contextPath}/images/image?fileName=${medicine.image}" class="img-fluid rounded mb-3" alt="${medicine.name}">
+                                    <h5 class="text-center mb-3">${medicine.name}</h5>
                                     <p><strong>Giá:</strong> ${medicine.unitCost} VND</p>
                                     <p><strong>Đánh giá:</strong> ${medicine.rating}</p>
                                     <p><strong>Số lượng bán:</strong> ${medicine.get("totalSales")}</p>
-                                    <div class="mt-auto"> <!-- Đẩy nút xuống đáy -->
+                                    <div class="mt-auto">
                                         <form action="${URL}user/medicine/${medicine.id}" method="get">
                                             <button type="submit" class="btn btn-primary w-100">Xem chi tiết</button>
                                         </form>

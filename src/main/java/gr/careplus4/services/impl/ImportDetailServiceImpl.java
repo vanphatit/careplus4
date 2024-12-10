@@ -93,7 +93,7 @@ public class ImportDetailServiceImpl implements iImportDetailService {
     public boolean checkDelete(Long id) {
        Optional<ImportDetail> importDetailOptional = importDetailRepository.findById(id);
        Optional<Medicine> medicineOptional = medicineRepository.findById(importDetailOptional.get().getMedicine().getId());
-       if (medicineOptional.get().getStockQuantity() < importDetailOptional.get().getQuantity() ) {
+       if (medicineOptional.get().getStockQuantity() <= importDetailOptional.get().getQuantity() ) {
            return true;
        }
        return false;

@@ -11148,6 +11148,15 @@ hr {
     color: #333;
 }
 
+.product-card h5 {
+    font-size: 1rem;
+    text-align: center; /* Căn giữa tiêu đề */
+    min-height: 60px; /* Đặt chiều cao tối thiểu để đồng đều */
+    overflow: hidden; /* Ngăn tràn */
+    text-overflow: ellipsis; /* Hiện dấu ba chấm nếu tiêu đề quá dài */
+    white-space: normal; /* Cho phép xuống dòng */
+}
+
 /* Thêm hiệu ứng hover */
 .product-card:hover {
     transform: scale(1.05);
