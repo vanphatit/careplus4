@@ -343,35 +343,46 @@ public class MedicineServicesImpl implements iMedicineServices {
                 .values().stream()
                 .map(groupedMedicines -> {
                     // Lấy thuốc có expiryDate gần nhất trong nhóm và số lượng còn lại > 0
-                    Medicine nearestExpiryMedicine = groupedMedicines.stream()
-                            .filter(medicine -> medicine.getStockQuantity() > 0)
-                            .min(Comparator.comparing(Medicine::getExpiryDate))
-                            .orElseThrow(); // Ném ngoại lệ nếu không tìm thấy
+                    try {
+                        Medicine nearestExpiryMedicine = groupedMedicines.stream()
+                                .min(Comparator.comparing(Medicine::getExpiryDate))
+                                .orElseThrow(); // Ném ngoại lệ nếu không tìm thấy
 
-                    // Chuyển đổi sang MedicineForUserModel, bao gồm ID của entity
-                    return new MedicineForUserModel(
-                            nearestExpiryMedicine.getId(), // Truyền ID từ entity vào DTO
-                            nearestExpiryMedicine.getName(),
-                            nearestExpiryMedicine.getDescription(),
-                            nearestExpiryMedicine.getUnitCost(),
-                            nearestExpiryMedicine.getStockQuantity(),
-                            nearestExpiryMedicine.getDosage(),
-                            nearestExpiryMedicine.getRating(),
-                            nearestExpiryMedicine.getManufacturer().getName(),
-                            nearestExpiryMedicine.getCategory().getName(),
-                            nearestExpiryMedicine.getUnit().getName(),
-                            nearestExpiryMedicine.getExpiryDate(),
-                            nearestExpiryMedicine.getImage(),
-                            null, null, null, null, null, null
-                    );
+                        // Chuyển đổi sang MedicineForUserModel, bao gồm ID của entity
+                        return new MedicineForUserModel(
+                                nearestExpiryMedicine.getId(), // Truyền ID từ entity vào DTO
+                                nearestExpiryMedicine.getName(),
+                                nearestExpiryMedicine.getDescription(),
+                                nearestExpiryMedicine.getUnitCost(),
+                                nearestExpiryMedicine.getStockQuantity(),
+                                nearestExpiryMedicine.getDosage(),
+                                nearestExpiryMedicine.getRating(),
+                                nearestExpiryMedicine.getManufacturer().getName(),
+                                nearestExpiryMedicine.getCategory().getName(),
+                                nearestExpiryMedicine.getUnit().getName(),
+                                nearestExpiryMedicine.getExpiryDate(),
+                                nearestExpiryMedicine.getImage(),
+                                null, null, null, null, null, null
+                        );
+                    } catch (NoSuchElementException e) {
+                        System.out.println("Không tìm thấy thuốc gần hết hạn");
+                        System.out.println(e.getMessage());
+                        return null; // Trả về null nếu không tìm thấy
+                    }
                 })
                 .toList();
+
     }
 
     @Override
     public Page<MedicineForUserModel> getMedicinesForUser(Pageable pageable) {
         // Lấy danh sách thuốc với expiry date gần nhất
         List<MedicineForUserModel> medicines = findNearestExpiryMedicines();
+
+        // Loại bỏ các thuốc có stockQuantity = 0
+        medicines = medicines.stream()
+                .filter(medicine -> medicine.getStockQuantity() > 0)
+                .toList();
 
         // Tính toán phần tử bắt đầu và danh sách con dựa trên pageable
         int pageSize = pageable.getPageSize();
@@ -395,6 +406,11 @@ public class MedicineServicesImpl implements iMedicineServices {
     public Optional<MedicineForUserModel> findMedicineByIdForUser(String id) {
         // Lấy danh sách thuốc đã lọc theo ngày hết hạn gần nhất
         List<MedicineForUserModel> medicines = findNearestExpiryMedicines();
+
+        // Loại bỏ các thuốc có stockQuantity = 0
+        medicines = medicines.stream()
+                .filter(medicine -> medicine.getStockQuantity() > 0)
+                .toList();
 
         // Duyệt danh sách và tìm thuốc có ID khớp
         return medicines.stream()
@@ -424,6 +440,11 @@ public class MedicineServicesImpl implements iMedicineServices {
     @Override
     public Page<MedicineForUserModel> searchMedicineByKeywordForUser(String keyword, Pageable pageable) {
         List<MedicineForUserModel> medicines = findNearestExpiryMedicines();
+
+        // Loại bỏ các thuốc có stockQuantity = 0
+        medicines = medicines.stream()
+                .filter(medicine -> medicine.getStockQuantity() > 0)
+                .toList();
 
         List<MedicineForUserModel> searchResult = containsKeywordInAttributesForUser(medicines, keyword);
 
@@ -523,6 +544,11 @@ public class MedicineServicesImpl implements iMedicineServices {
     public Page<MedicineForUserModel> getMedicineForUserByCategoryName(String categoryName, Pageable pageable) {
         List<MedicineForUserModel> medicines = findNearestExpiryMedicines();
 
+        // Loại bỏ các thuốc có stockQuantity = 0
+        medicines = medicines.stream()
+                .filter(medicine -> medicine.getStockQuantity() > 0)
+                .toList();
+
         List<MedicineForUserModel> filteredMedicines = medicines.stream()
                 .filter(medicine -> {
                     Optional<Category> optionalCategory = categoryRepository.findByName(categoryName);
@@ -578,6 +604,11 @@ public class MedicineServicesImpl implements iMedicineServices {
     ) {
         // Lấy danh sách thuốc gần hết hạn
         List<MedicineForUserModel> medicines = findNearestExpiryMedicines();
+
+        // Loại bỏ các thuốc có stockQuantity = 0
+        medicines = medicines.stream()
+                .filter(medicine -> medicine.getStockQuantity() > 0)
+                .toList();
 
         // Áp dụng bộ lọc
         List<MedicineForUserModel> filteredMedicines = filterForUser(

@@ -3,7 +3,7 @@
 <c:url value="/" var="URL"></c:url>
 
 <div class="container mt-5">
-    <h1 class="text-center text-primary mb-4">Units List</h1>
+    <h1 class="text-center text-primary mb-4">Danh sách đơn vị</h1>
 
     <!-- Search and Add Buttons -->
     <div class="row mb-4">
@@ -14,7 +14,7 @@
             </form>
         </div>
         <div class="col-md-4 text-end">
-            <a href="/admin/unit/add" class="btn btn-success">Add New Unit</a>
+            <a href="/admin/unit/add" class="btn btn-success">Thêm đơn vị</a>
         </div>
     </div>
 
@@ -23,9 +23,9 @@
         <table class="table table-bordered table-striped align-middle">
             <thead class="table-primary">
             <tr>
-                <th scope="col" class="text-center">Unit ID</th>
-                <th scope="col">Unit Name</th>
-                <th scope="col" class="text-center">Actions</th>
+                <th scope="col" class="text-center">Mã đơn vị</th>
+                <th scope="col">Tên đơn vị</th>
+                <th scope="col" class="text-center">Hành động</th>
             </tr>
             </thead>
             <tbody>
@@ -34,8 +34,8 @@
                     <td class="text-center">${unit.id}</td>
                     <td>${unit.name}</td>
                     <td class="text-center">
-                        <a href="/admin/unit/${unit.id}" class="btn btn-sm btn-info text-white">View</a>
-                        <a href="/admin/unit/edit/${unit.id}" class="btn btn-sm btn-warning text-white">Edit</a>
+                        <a href="/admin/unit/${unit.id}" class="btn btn-sm btn-info text-white">Chi tiết</a>
+                        <a href="/admin/unit/edit/${unit.id}" class="btn btn-sm btn-warning text-white">Sửa</a>
                     </td>
                 </tr>
             </c:forEach>
