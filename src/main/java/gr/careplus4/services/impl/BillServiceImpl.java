@@ -111,6 +111,15 @@ public class BillServiceImpl implements IBillService {
     public void saveBill(Bill bill) {
         String id = bill.getId();
         Bill updateBill = billRepository.findById(id).get();
+        if (bill.getStatus().equals("CANCELED") || bill.getStatus().equals("RETURNED")) {
+            for (BillDetail billDetail : updateBill.getBilDetails()) {
+                // update stock
+                Optional<Medicine> medicine = this.medicineRepository.findById(billDetail.getMedicine().getId());
+                int quantity = medicine.get().getStockQuantity() + billDetail.getQuantity();
+                medicine.get().setStockQuantity(quantity);
+                this.medicineRepository.save(medicine.get());
+            }
+        }
         updateBill.setStatus(bill.getStatus());
         Date date = new Date();
         updateBill.setUpdateDate(date);
@@ -202,7 +211,6 @@ public class BillServiceImpl implements IBillService {
                 for (CartDetail cd : cartDetails) {
                     this.cartDetailRepository.deleteById(cd.getId());
                 }
-
                 this.cartRepository.deleteById(cart.get().getId());
             }
         }
