@@ -112,6 +112,8 @@ public class BillServiceImpl implements IBillService {
         String id = bill.getId();
         Bill updateBill = billRepository.findById(id).get();
         updateBill.setStatus(bill.getStatus());
+        Date date = new Date();
+        updateBill.setUpdateDate(date);
         billRepository.save(updateBill);
     }
 
