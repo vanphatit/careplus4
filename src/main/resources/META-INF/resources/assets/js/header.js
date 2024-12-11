@@ -5,7 +5,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const menuItems = document.querySelectorAll('.app-menu__item, .app-submenu a');
 
     menuItems.forEach(item => {
-        if (item.getAttribute('href') === currentPath) {
+        // Kiểm tra nếu href của item có trong currentPath
+        const href = item.getAttribute('href');
+        if (href && currentPath.includes(href)) {
             item.classList.add('active');
 
             // Nếu là mục con, highlight cả mục cha
