@@ -22,19 +22,21 @@
         <div class="alert alert-success">${message}</div>
     </c:if>
     <!-- Form tìm kiếm -->
+    <form action="/vendor/import/searchpaginated" method="get">
     <div class="d-flex align-items-center gap-2 mb-3">
         <input
                 type="text"
                 name="id"
                 class="form-control"
                 placeholder="Tìm theo ID Import"
-                value="${id}"
+                value="${param.id}"
                 style="width: 250px;"
         />
         <button type="submit" class="btn btn-warning">
             <i class="fas fa-search"></i> Tìm kiếm
         </button>
     </div>
+    </form>
 
     <!-- Nút thêm mới -->
     <div class="d-flex gap-2 mb-3">

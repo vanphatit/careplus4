@@ -23,4 +23,5 @@ public interface EventRepository extends JpaRepository<Event, String> {
     @Query("SELECT e FROM Event e WHERE :inputDate BETWEEN e.dateStart AND e.dateEnd")
     List<Event> findActiveEvents(@Param("inputDate") Date inputDate);
     Event findTopByOrderByIdDesc();
+
 }
