@@ -381,7 +381,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    function formatNumber() {
         // Tìm các phần tử hiển thị revenue
         const revenueTodayElem = document.querySelector('#revenueToday');
         const revenueForWeekElem = document.querySelector('#revenueForWeek');
@@ -415,6 +415,10 @@
                 totalElem.textContent = Math.floor(totalValue); // Làm tròn số
             }
         });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        formatNumber()
     });
 </script>
 
@@ -644,6 +648,9 @@
 
                 document.querySelector('#transactionTable').innerHTML = newTable.innerHTML;
                 document.querySelector('#totalShippingStatus').textContent = totalShippingStatus;
+
+                // Cập nhật lại số
+                formatNumber();
 
                 // Cập nhật lại ngày tháng
                 applyDateFormatting();
