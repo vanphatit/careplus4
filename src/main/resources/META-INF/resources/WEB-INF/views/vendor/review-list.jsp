@@ -149,7 +149,7 @@
                                     <!-- Nút Previous -->
                                     <c:if test="${currentPage > 1}">
                                         <li class="page-item">
-                                            <a class="page-link" href="javascript:void(0)" onclick="changePage(${currentPage - 1})">Previous</a>
+                                            <a class="page-link" href="javascript:void(0)" onclick="changePage(${currentPage - 1})">Trước</a>
                                         </li>
                                     </c:if>
 
@@ -171,7 +171,7 @@
                                     <!-- Nút Next -->
                                     <c:if test="${currentPage < pageNumbers[pageNumbers.size() - 1]}">
                                         <li class="page-item">
-                                            <a class="page-link" href="javascript:void(0)" onclick="changePage(${currentPage + 1})">Next</a>
+                                            <a class="page-link" href="javascript:void(0)" onclick="changePage(${currentPage + 1})">Sau</a>
                                         </li>
                                     </c:if>
                                 </ul>

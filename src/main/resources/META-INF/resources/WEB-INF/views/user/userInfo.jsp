@@ -18,10 +18,6 @@
                            style="color: #0077b6 !important">
                             <i class="fas fa-user"></i> Hồ sơ</a></li>
                     <li class="list-group-item">
-                        <a href="${pageContext.request.contextPath}/user/reviewed" class="text-decoration-none"
-                           style="color: #0077b6 !important">
-                        <i class="fas fa-calendar-alt"></i> Hóa đơn chưa đánh giá</a></li>
-                    <li class="list-group-item">
                         <a href="${pageContext.request.contextPath}/user/reviews" class="text-decoration-none"
                            style="color: #0077b6 !important">
                             <i class="fas fa-calendar-alt"></i> Lịch sử đánh giá</a></li>
@@ -74,3 +70,23 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <c:if test="${not empty success}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: '${success}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+    <c:if test="${not empty error}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: '${error}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+</script>

@@ -19,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +50,7 @@ public class UserManagerController {
                             @RequestParam("page") Optional<Integer> page,
                             @Validated @RequestParam("size") Optional<Integer> size) {
         int currentPage = page.orElse(1);
-        int pageSize = size.orElse(15);
+        int pageSize = size.orElse(5);
 
         int adminCount = 0, vendorCount = 0, userCount = 0;
 
@@ -70,12 +71,15 @@ public class UserManagerController {
 
         int totalPages = users.getTotalPages();
         if (totalPages > 0) {
-            model.addAttribute("pageNo", totalPages);
+            List<Integer> pageNumbers = generatePageNumbers(currentPage, totalPages);
+            model.addAttribute("pageNumbers", pageNumbers);
         }
-        model.addAttribute("currentPage", currentPage);
         model.addAttribute("adminCount", adminCount);
         model.addAttribute("vendorCount", vendorCount);
         model.addAttribute("userCount", userCount);
+
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("pageSize", pageSize);
 
         if(error != null) {
             model.addAttribute("error", error);
@@ -92,7 +96,7 @@ public class UserManagerController {
                               @Validated @RequestParam("size") Optional<Integer> size, Model model) {
 
         int currentPage = page.orElse(1);
-        int pageSize = size.orElse(15);
+        int pageSize = size.orElse(5);
 
         if (text.isEmpty()) {
             return "redirect:/admin/users";
@@ -107,9 +111,12 @@ public class UserManagerController {
 
         int totalPages = users.getTotalPages();
         if (totalPages > 0) {
-            model.addAttribute("pageNo", totalPages);
+            List<Integer> pageNumbers = generatePageNumbers(currentPage, totalPages);
+            model.addAttribute("pageNumbers", pageNumbers);
         }
         model.addAttribute("currentPage", currentPage);
+        model.addAttribute("pageSize", pageSize);
+
         model.addAttribute("searchText", text);
         model.addAttribute("searchCount", searchCount);
         return "admin/user/user-list";
@@ -122,7 +129,7 @@ public class UserManagerController {
                                     @Validated @RequestParam("size") Optional<Integer> size, Model model) {
 
         int currentPage = page.orElse(1);
-        int pageSize = size.orElse(15);
+        int pageSize = size.orElse(5);
 
         Pageable pageable = (Pageable) PageRequest.of(currentPage - 1, pageSize, Sort.by("updatedAt").descending());
 
@@ -135,13 +142,13 @@ public class UserManagerController {
 
             int totalPages = users.getTotalPages();
             if (totalPages > 0) {
-                model.addAttribute("pageNo", totalPages);
+                List<Integer> pageNumbers = generatePageNumbers(currentPage, totalPages);
+                model.addAttribute("pageNumbers", pageNumbers);
             }
-            model.addAttribute("currentPage", currentPage);
+
             model.addAttribute("current_status", status);
             model.addAttribute("current_role", roleName);
             model.addAttribute("roleCount", users.getTotalElements());
-            return "admin/user/user-list";
         } else if(!"all".equalsIgnoreCase(status) && "all".equalsIgnoreCase(roleName)) { // filter by status
             boolean statusBool = true;
             if("inactive".equalsIgnoreCase(status)) {
@@ -153,13 +160,12 @@ public class UserManagerController {
 
             int totalPages = users.getTotalPages();
             if (totalPages > 0) {
-                model.addAttribute("pageNo", totalPages);
+                List<Integer> pageNumbers = generatePageNumbers(currentPage, totalPages);
+                model.addAttribute("pageNumbers", pageNumbers);
             }
-            model.addAttribute("currentPage", currentPage);
             model.addAttribute("current_role", roleName);
             model.addAttribute("current_status", status);
             model.addAttribute("statusCount", users.getTotalElements());
-            return "admin/user/user-list";
         } else { // filter by both
             boolean statusBool = true;
             if("inactive".equalsIgnoreCase(status)) {
@@ -171,15 +177,18 @@ public class UserManagerController {
 
             int totalPages = users.getTotalPages();
             if (totalPages > 0) {
-                model.addAttribute("pageNo", totalPages);
+                List<Integer> pageNumbers = generatePageNumbers(currentPage, totalPages);
+                model.addAttribute("pageNumbers", pageNumbers);
             }
-            model.addAttribute("currentPage", currentPage);
             model.addAttribute("current_role", roleName);
             model.addAttribute("current_status", status);
             model.addAttribute("roleCount", users.getTotalElements());
             model.addAttribute("statusCount", users.getTotalElements());
-            return "admin/user/user-list";
+
         }
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("pageSize", pageSize);
+        return "admin/user/user-list";
     }
 
     @GetMapping("/user/new")
@@ -333,6 +342,38 @@ public class UserManagerController {
             model.addAttribute("error", "Lỗi cập nhật mật khẩu!");
         }
         return new ModelAndView("redirect:/admin/user/" + phoneNumber, model);
+    }
+
+    // Phương thức tạo danh sách số trang hiển thị
+    private List<Integer> generatePageNumbers(int currentPage, int totalPages) {
+        List<Integer> pageNumbers = new ArrayList<>();
+
+        if (totalPages <= 5) {
+            // Nếu tổng số trang <= 5, hiển thị tất cả các trang
+            for (int i = 1; i <= totalPages; i++) {
+                pageNumbers.add(i);
+            }
+        } else {
+            // Nếu tổng số trang > 5
+            pageNumbers.add(1); // Trang đầu
+
+            if (currentPage > 3) {
+                pageNumbers.add(-1); // Thêm dấu "..." đại diện
+            }
+
+            // Thêm các trang lân cận
+            for (int i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+                pageNumbers.add(i);
+            }
+
+            if (currentPage < totalPages - 2) {
+                pageNumbers.add(-1); // Thêm dấu "..." đại diện
+            }
+
+            pageNumbers.add(totalPages); // Trang cuối
+        }
+
+        return pageNumbers;
     }
 
 }

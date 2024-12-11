@@ -66,7 +66,7 @@
                         <div class="col-12 mx-auto">
                             <div class="d-flex justify-content-between align-items-center">
                                 <!-- Tiêu đề -->
-                                <h3>Danh sách người dùng</h3>
+                                <h3>Danh sách người dùng <c:if test="${not empty roleCount}"> ( ${roleCount} ) </c:if> <c:if test="${not empty statusCount}"> ( ${statusCount} ) </c:if></h3>
 
                                 <!-- Combobox lọc status người dùng -->
                                 <form action="/admin/users/filter" method="get" class="d-flex align-items-center">
@@ -75,15 +75,9 @@
                                             style="width: 200px;" onchange="this.form.submit()">
                                         <option value="all">Tất cả (Trạng thái)</option>
                                         <option value="active" ${current_status == 'active' ? 'selected' : ''}>
-                                            Còn hoạt động
-                                            <c:if test="${not empty statusCount}">
-                                                ( ${statusCount} )
-                                            </c:if></option>
+                                            Còn hoạt động</option>
                                         <option value="inactive" ${current_status == 'inactive' ? 'selected' : ''}>
-                                            Đã ngưng hoạt động
-                                            <c:if test="${not empty statusCount}">
-                                                ( ${statusCount} )
-                                            </c:if></option>
+                                            Đã ngưng hoạt động</option>
                                     </select>
                                     <p>-</p>
                                     <select id="roles" name="roles"
@@ -91,20 +85,11 @@
                                             style="width: 200px;" onchange="this.form.submit()">
                                         <option value="all">Tất cả (Quyền)</option>
                                         <option value="ADMIN" ${current_role == 'ADMIN' ? 'selected' : ''}>
-                                            Quản trị viên
-                                            <c:if test="${not empty roleCount}">
-                                                ( ${roleCount} )
-                                            </c:if></option>
+                                            Quản trị viên</option>
                                         <option value="VENDOR" ${current_role == 'VENDOR' ? 'selected' : ''}>
-                                            Người bán hàng
-                                            <c:if test="${not empty roleCount}">
-                                                ( ${roleCount} )
-                                            </c:if></option>
+                                            Người bán hàng</option>
                                         <option value="USER" ${current_role == 'USER' ? 'selected' : ''}>
-                                            Người dùng
-                                            <c:if test="${not empty roleCount}">
-                                                ( ${roleCount} )
-                                            </c:if></option>
+                                            Người dùng</option>
                                     </select>
                                 </form>
 
@@ -193,35 +178,36 @@
                             </table>
 
                             <!-- Phân trang -->
-                            <nav aria-label="Page navigation example">
+                            <nav aria-label="Page navigation">
                                 <ul class="pagination justify-content-center">
-                                    <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="/admin/users?page=${currentPage - 1}"
-                                           aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                    <c:forEach begin="1" end="${pageNo}" var="i">
+                                    <!-- Nút Previous -->
+                                    <c:if test="${currentPage > 1}">
+                                        <li class="page-item">
+                                            <a class="page-link" href="javascript:void(0)" onclick="changePage(${currentPage - 1})">Trước</a>
+                                        </li>
+                                    </c:if>
+
+                                    <!-- Danh sách số trang -->
+                                    <c:forEach var="page" items="${pageNumbers}">
                                         <c:choose>
-                                            <c:when test="${currentPage == i}">
-                                                <li class="page-item active">
-                                                    <a class="page-link" href="/admin/users?page=${i}">${i}</a>
-                                                </li>
+                                            <c:when test="${page == -1}">
+                                                <!-- Dấu "..." -->
+                                                <li class="page-item disabled"><a class="page-link">...</a></li>
                                             </c:when>
                                             <c:otherwise>
-                                                <li class="page-item">
-                                                    <a class="page-link" href="/admin/users?page=${i}">${i}</a>
+                                                <li class="page-item ${page == currentPage ? 'active' : ''}">
+                                                    <a class="page-link" href="javascript:void(0)" onclick="changePage(${page})">${page}</a>
                                                 </li>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>
-                                    <li class="page-item ${currentPage == pageNo ? 'disabled' : ''}">
-                                        <a class="page-link" href="/admin/users?page=${currentPage + 1}"
-                                           aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                            <span class="sr-only">Next</span>
-                                        </a>
-                                    </li>
+
+                                    <!-- Nút Next -->
+                                    <c:if test="${currentPage < pageNumbers[pageNumbers.size() - 1]}">
+                                        <li class="page-item">
+                                            <a class="page-link" href="javascript:void(0)" onclick="changePage(${currentPage + 1})">Sau</a>
+                                        </li>
+                                    </c:if>
                                 </ul>
                             </nav>
                         </div>
@@ -251,6 +237,20 @@
         confirmButtonText: 'OK'
     });
     </c:if>
+    function changePage(page) {
+        let currentUrl = new URL(window.location.href);
+
+        // Loại bỏ các tham số không cần thiết
+        currentUrl.searchParams.delete('success');
+        currentUrl.searchParams.delete('error');
+
+        // Cập nhật tham số `page` và `size`
+        currentUrl.searchParams.set('page', page);
+        currentUrl.searchParams.set('size', '${pageSize}');
+
+        // Chuyển hướng đến URL mới
+        window.location.href = currentUrl.toString();
+    }
 </script>
 </body>
 </html>

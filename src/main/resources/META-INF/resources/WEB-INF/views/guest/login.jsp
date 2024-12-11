@@ -13,19 +13,6 @@
             <div class="signin-form">
                 <h2 class="form-title">Đăng nhập</h2>
 
-                <!-- Hiển thị thông báo lỗi và thông báo thành công -->
-                <c:if test="${not empty errorMessage}">
-                    <div class="alert alert-danger">
-                            ${errorMessage}
-                    </div>
-                </c:if>
-                <c:if test="${not empty successMessage}">
-                    <div class="alert alert-success">
-                            ${successMessage}
-                    </div>
-                </c:if>
-
-
                 <form action="/au/login/login-submit" method="post" class="register-form" id="login-form">
                     <div class="form-group">
                         <label for="phone"><i class="zmdi zmdi-account material-icons-name"></i></label>
@@ -57,3 +44,23 @@
         </div>
     </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <c:if test="${not empty success}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: '${success}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+    <c:if test="${not empty error}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: '${error}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+</script>
