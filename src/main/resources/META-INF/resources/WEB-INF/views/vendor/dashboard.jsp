@@ -334,8 +334,8 @@
                         <td>
                             <span class="total-amount">${transaction.totalAmount}</span> VND
                         </td>
-                        <td>${transaction.date}</td>
-                        <td>${transaction.deliveryDate}</td>
+                        <td data-date="${transaction.date}">${transaction.date}</td>
+                        <td data-date="${transaction.deliveryDate}">${transaction.deliveryDate}</td>
                         <td>
                             <c:choose>
                                 <c:when test="${transaction.status eq 'AWAIT'}">
@@ -430,7 +430,7 @@
         return {
             labels: records.map(record => {
                 const parsedDate = new Date(record.date);
-                parsedDate.setDate(parsedDate.getDate() + 1); // Shift one day back
+                parsedDate.setDate(parsedDate.getDate() + 1); // Để hiển thị ngày đúng
                 return parsedDate.toLocaleDateString("Default", { day: '2-digit', month: '2-digit' });
             }),
             revenues: records.map(record => record.revenue || 0),
@@ -558,6 +558,51 @@
         window.location.reload();
     }
 
+    function parseCustomDate(rawDate) {
+        const parts = rawDate.split(' '); // Tách chuỗi ngày
+        const months = {
+            Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+            Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
+        };
+
+        if (parts.length === 6) { // Ví dụ: Wed Dec 11 21:09:21 ICT 2024
+            const day = parseInt(parts[2], 10);
+            const month = months[parts[1]];
+            const year = parseInt(parts[5], 10);
+
+            return new Date(year, month, day); // Tạo Date hợp lệ
+        }
+        return null; // Trả về null nếu không hợp lệ
+    }
+
+    function applyDateFormatting() {
+        const dateCells = document.querySelectorAll('td[data-date]');
+
+        dateCells.forEach(cell => {
+            const rawDate = cell.getAttribute('data-date'); // Lấy giá trị ngày thô
+            if (rawDate) {
+                let date = new Date(rawDate);
+
+                // Nếu ngày không hợp lệ, thử parse bằng custom parser
+                if (isNaN(date)) {
+                    date = parseCustomDate(rawDate);
+                }
+
+                // Định dạng và hiển thị ngày
+                if (date && !isNaN(date)) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const formattedDate = day + '/' + month + '/' + year;
+
+                    cell.textContent = formattedDate; // Cập nhật nội dung ô với ngày đã định dạng
+                } else {
+                    console.warn(`Invalid date: `, rawDate);
+                }
+            }
+        });
+    }
+
     function filterByStatus(status) {
         // Lấy base URL (bao gồm /admin hoặc /vendor)
         const baseUrl = window.location.origin + window.location.pathname;
@@ -600,11 +645,19 @@
                 document.querySelector('#transactionTable').innerHTML = newTable.innerHTML;
                 document.querySelector('#totalShippingStatus').textContent = totalShippingStatus;
 
+                // Cập nhật lại ngày tháng
+                applyDateFormatting();
+
                 // Cuộn tới phần bảng
                 document.getElementById('shipping-status-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
             })
             .catch(error => console.error('Error fetching data:', error));
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        applyDateFormatting();
+    });
+
 </script>
 
 </body>

@@ -3,7 +3,6 @@ package gr.careplus4.controllers.vendor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.careplus4.entities.Bill;
-import gr.careplus4.models.BillModel;
 import gr.careplus4.models.RevenueRecordModel;
 import gr.careplus4.models.TransactionHistoryModel;
 import gr.careplus4.services.PackageService;
@@ -17,21 +16,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.Date;
 
 @Controller
 @RequestMapping({"/admin", "/vendor"})
@@ -70,6 +64,12 @@ public class DashboardController {
         try {
             List<TransactionHistoryModel> transactionHistory = packageService.findAllTransactionHistory();
 
+            System.out.println("============================================================= Transaction History From API");
+            for (TransactionHistoryModel transaction : transactionHistory) {
+                System.out.println(transaction);
+            }
+
+            System.out.println("============================================================= Update Date For Bill");
             for (TransactionHistoryModel transaction : transactionHistory) {
                 Optional<Bill> bill = billService.findById(transaction.getIdBill());
                 if (bill.isPresent()) {
@@ -100,6 +100,14 @@ public class DashboardController {
                 model.addAttribute("pageNumbers", pageNumbers);
             }
 
+            System.out.println("============================================================= Bill 40");
+            for (Bill bill : bills) {
+                if (bill.getId().equals("B000040")) {
+                    System.out.println(bill);
+                    break;
+                }
+            }
+
             Page<TransactionHistoryModel> transactionHistoryPage = bills.map(bill -> {
                 TransactionHistoryModel transaction = new TransactionHistoryModel();
                 transaction.setIdBill(bill.getId());
@@ -114,7 +122,10 @@ public class DashboardController {
             });
 
             List<TransactionHistoryModel> transactionHistoryList = transactionHistoryPage.getContent();
-            System.out.println("transactionHistoryList: " + transactionHistoryList);
+            System.out.println("============================================================= Transaction History From Database");
+            for (TransactionHistoryModel transaction : transactionHistoryList) {
+                System.out.println(transaction);
+            }
             model.addAttribute("transactionHistory", transactionHistoryList);
             model.addAttribute("currentPage", currentPage);
             model.addAttribute("totalPages", totalPages);
@@ -122,7 +133,7 @@ public class DashboardController {
             model.addAttribute("status", status);
             model.addAttribute("totalShippingStatus", totalShippingStatus);
         } catch (Exception e) {
-            model.addAttribute(("error"), "Lấy dữ liệu thất bại");
+            model.addAttribute(("error"), "Lấy dữ liệu thất bại: " + e.getMessage());
         }
 
         model.addAttribute("totalUser", totalUser);

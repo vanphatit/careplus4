@@ -29,9 +29,13 @@ public interface BillRepository extends JpaRepository<Bill, String>, JpaSpecific
 
     List<Bill> findBillsByDate(Date date);
 
+    List<Bill> findBillsByUpdateDate(Date date);
+
     List<Bill> findBillsByDate(Date date, Pageable pageable);
 
     List<Bill> findBillsByDateBetween(Date startDate, Date endDate);
+
+    List<Bill> findBillsByUpdateDateBetween (Date startDate, Date endDate);
 
     Boolean existsByEventId(String eventId);
 
