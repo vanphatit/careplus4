@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -87,33 +88,53 @@ public class ProviderController {
     }
 
     @GetMapping("/edit/{id}")
-    public ModelAndView edit(ModelMap model, @PathVariable("id") String id) {
+    public ModelAndView edit(ModelMap model, @PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         Optional<Provider> optionalProvider = providerService.findById(id);
         ProviderModel pro = new ProviderModel();
-        if (optionalProvider.isPresent()) {
-            Provider entity = optionalProvider.get();
-            BeanUtils.copyProperties(entity, pro);
-            pro.setIsEdit(true);
-            model.addAttribute("pro", pro);
-            return new ModelAndView("admin/provider/provider-add", model);
+        if (optionalProvider.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Nhà cung cấp không tồn tại");
+            return new ModelAndView("redirect:/admin/provider", model);
+        } else {
+            boolean checkUsed = providerService.checkUsed(id);
+            try {
+                if (checkUsed) {
+                    redirectAttributes.addFlashAttribute("error", "Nhà cung cấp đã được sử dụng trong phiếu nhập. Không được sửa!");
+                    return new ModelAndView("redirect:/admin/provider", model);
+                } else {
+                    Provider entity = optionalProvider.get();
+                    BeanUtils.copyProperties(entity, pro);
+                    pro.setIsEdit(true);
+                    model.addAttribute("pro", pro);
+                    return new ModelAndView("admin/provider/provider-add", model);
+                }
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("error", e.getMessage());
+            }
         }
-        model.addAttribute("mess", "Provider not found");
+        model.addAttribute("mess", "Chỉnh sửa thông tin thành công");
         return new ModelAndView("forward:/admin/provider/provider-list", model);
     }
 
     @GetMapping("/delete/{id}")
-    public String confirmDelete(Model model, @PathVariable("id") String id) {
+    public String confirmDelete(Model model, @PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         Optional<Provider> optionalProvider = providerService.findById(id);
-        if (optionalProvider.isPresent()) {
-            model.addAttribute("pro", optionalProvider.get());
-            return "admin/provider/provider-delete"; // Hiển thị trang xác nhận xóa
+        if (optionalProvider.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error","Nhà cung cấp không tồn tại");
+            return "redirect:/admin/provider";
+        } else {
+            boolean checkUsed = providerService.checkUsed(id);
+            try {
+                if (checkUsed) {
+                    redirectAttributes.addFlashAttribute("error","Nhà cung cấp đã được sử dụng trong phiếu nhập. Không được sửa!");
+                    return "redirect:/admin/provider";
+                } else {
+                    providerService.deleteById(id);
+                    redirectAttributes.addFlashAttribute("message", "Thực hiện xóa thành công!");
+                }
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("error", e.getMessage());
+            }
         }
-        return "redirect:/admin/provider";
-    }
-
-    @PostMapping("/delete/{id}")
-    public String delete(@PathVariable("id") String id) {
-        providerService.deleteById(id);
         return "redirect:/admin/provider";
     }
 
