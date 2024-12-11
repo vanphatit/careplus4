@@ -112,7 +112,9 @@
                                 <ul class="pagination justify-content-center">
                                     <!-- Nút Previous -->
                                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="/vendor/bills?page=${currentPage-1}&status=${param.status}" aria-label="Previous">
+                                        <a class="page-link"
+                                           href="/vendor/bills?page=${currentPage - 1}<c:if test='${param.status != null}'>&status=${param.status}</c:if>"
+                                           aria-label="Previous">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
@@ -120,13 +122,18 @@
                                     <!-- Liệt kê các trang -->
                                     <c:forEach begin="1" end="${pageNo}" var="i">
                                         <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                            <a class="page-link" href="/vendor/bills?page=${i}&status=${param.status}">${i}</a>
+                                            <a class="page-link"
+                                               href="/vendor/bills?page=${i}<c:if test='${param.status != null}'>&status=${param.status}</c:if>">
+                                                    ${i}
+                                            </a>
                                         </li>
                                     </c:forEach>
 
                                     <!-- Nút Next -->
                                     <li class="page-item ${currentPage == pageNo ? 'disabled' : ''}">
-                                        <a class="page-link" href="/vendor/bills?page=${currentPage + 1}&status=${param.status}" aria-label="Next">
+                                        <a class="page-link"
+                                           href="/vendor/bills?page=${currentPage + 1}<c:if test='${param.status != null}'>&status=${param.status}</c:if>"
+                                           aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>
