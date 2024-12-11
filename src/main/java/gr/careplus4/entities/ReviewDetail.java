@@ -28,6 +28,8 @@ public class ReviewDetail implements Serializable {
     @JoinColumn(name = "IDMedicine", nullable = false)
     private Medicine medicine;
 
+    private String medicineName;
+
     @Column(name = "Text")
     private String text;
 

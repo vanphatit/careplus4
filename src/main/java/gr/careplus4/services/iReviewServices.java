@@ -23,9 +23,9 @@ public interface iReviewServices {
 
     Page<Review> findReviewByUser(User user, Pageable pageable);
 
-    Page<Review> findReviewByUser_NameContaining(String userName, Pageable pageable);
-
     Review findReviewByUserAndBill(User user, Bill bill);
+
+    Page<Review> findReviewsByUser_NameContainingIgnoreCaseOrBill_Id(String userName, String billId, Pageable pageable);
 
     Optional<Review> findById(String s);
 
