@@ -2,16 +2,65 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <c:url value="/" var="URL"></c:url>
 
+<style>
+    /* Bố cục hàng cho phần OTP */
+    .otp-row {
+        display: flex;
+        align-items: center; /* Căn giữa theo chiều dọc */
+        gap: 10px; /* Khoảng cách giữa các thành phần */
+        margin-bottom: 15px;
+    }
+
+    /* Icon */
+    .input-label {
+        display: flex;
+        align-items: center; /* Đảm bảo icon căn giữa với input */
+    }
+
+    .input-label .icon {
+        font-size: 18px; /* Điều chỉnh kích thước icon */
+        color: #555;
+        margin-right: 8px; /* Khoảng cách giữa icon và input */
+        line-height: 1; /* Đảm bảo chiều cao đồng bộ */
+    }
+
+    /* Input */
+    .otp-row input {
+        flex: 1;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+        transition: border-color 0.2s ease;
+    }
+
+    .otp-row input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
+
+    /* Nút Gửi OTP */
+    .otp-row .btn {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .otp-row .btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+
 <!-- Sign up form -->
 <section class="signup">
     <div class="container">
-        <!-- Hiển thị thông báo lỗi và thông báo thành công -->
-        <c:if test="${not empty errorMessage}">
-            <div class="alert-danger">
-                <strong>Lỗi:</strong> ${errorMessage}
-                <button type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</button>
-            </div>
-        </c:if>
         <div class="signup-content">
             <div class="signup-form">
                 <h2 class="form-title">Đăng ký</h2>
@@ -71,6 +120,14 @@
                         </c:choose>
                     </div>
 
+                    <c:if test="${empty email}">
+                        <!-- OTP -->
+                        <div class="form-group otp-row">
+                            <input type="text" name="otp" id="otp" placeholder="Nhập mã OTP" required maxlength="6" />
+                            <button type="button" name="otp" class="btn" id="sendOtpButton">Gửi OTP</button>
+                        </div>
+                    </c:if>
+
                     <!-- Address (Optional) -->
                     <div class="form-group">
                         <label for="address"><i class="zmdi zmdi-home"></i></label>
@@ -91,3 +148,188 @@
     </div>
 </section>
 <!-- End of sign up form -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <c:if test="${not empty success}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: '${success}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+    <c:if test="${not empty error}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: '${error}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+
+    // Xử lý sự kiện Gửi OTP
+    document.getElementById("sendOtpButton").addEventListener("click", function () {
+        const email = document.getElementById("email").value;
+        if (!email) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Vui lòng nhập email để gửi OTP.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        fetch(`${pageContext.request.contextPath}/api/otp/send`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }) // Gửi email của người dùng
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Không thể gửi OTP. Vui lòng thử lại.',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+            })
+            .then(data => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: data,
+                    confirmButtonText: 'OK'
+                });
+                // Kích hoạt trường nhập OTP và vô hiệu hóa nút Đăng ký
+                document.getElementById("otp").disabled = false;
+                document.getElementById("signup").disabled = true;
+            })
+            .catch(error => {
+                console.error("Lỗi khi gửi OTP:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: 'Có lỗi xảy ra khi gửi OTP. Vui lòng thử lại.',
+                    confirmButtonText: 'OK'
+                });
+            });
+    });
+
+    // Xử lý sự kiện Xác minh OTP
+    document.getElementById("otp").addEventListener("blur", function () {
+        const email = document.getElementById("email").value;
+        const otp = document.getElementById("otp").value;
+
+        if (!otp) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Vui lòng nhập mã OTP.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        fetch(`${pageContext.request.contextPath}/api/otp/verify`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, otp }) // Gửi email và mã OTP để xác minh
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Xác minh OTP thất bại.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+            .then(data => {
+                if (data === "success") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: 'OTP hợp lệ! Bạn có thể tiếp tục.',
+                        confirmButtonText: 'OK'
+                    });
+                    // Ẩn trường email
+                    document.getElementById("email").style.display = "none";
+                    document.getElementById("otp").style.display = "none";
+                    document.getElementById("sendOtpButton").style.display = "none";
+
+                    // Kích hoạt nút Đăng ký
+                    document.getElementById("signup").disabled = false;
+                    // Vô hiệu hóa trường OTP và nút gửi OTP
+                    document.getElementById("otp").disabled = true;
+                    document.getElementById("sendOtpButton").disabled = true;
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'OTP không hợp lệ! Vui lòng kiểm tra lại.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi khi xác minh OTP:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: 'Có lỗi xảy ra khi xác minh OTP. Vui lòng thử lại.',
+                    confirmButtonText: 'OK'
+                });
+            });
+    });
+
+    // Xử lý sự kiện kiểm tra password và repassword
+    document.getElementById("rePassword ").addEventListener("blur", function () {
+        const password = document.getElementById("pass").value;
+        const repassword = document.getElementById("rePassword").value;
+
+        if (!password || !repassword) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Vui lòng nhập mật khẩu và nhập lại mật khẩu.',
+                confirmButtonText: 'OK'
+            });
+            document.getElementById("signup").disabled = true;
+            return;
+        }
+
+        if (password !== repassword) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Mật khẩu không khớp. Vui lòng kiểm tra lại.',
+                confirmButtonText: 'OK'
+            });
+            document.getElementById("signup").disabled = true;
+        } else {
+            document.getElementById("signup").disabled = false;
+        }
+    });
+
+    // Ẩn nút Đăng ký ban đầu
+    document.addEventListener("DOMContentLoaded", function () {
+        const email = document.getElementById("email").value;
+        if (!email) {
+            document.getElementById("signup").disabled = true;
+            return;
+        }
+        else {
+            document.getElementById("signup").disabled = false;
+            return;
+        }
+    });
+</script>

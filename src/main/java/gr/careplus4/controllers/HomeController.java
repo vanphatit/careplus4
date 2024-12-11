@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
@@ -33,7 +34,8 @@ public class HomeController {
     private EventServiceImpl eventService;
 
     @GetMapping(path = {"/", "/home"})
-    public String index(Model model) {
+    public String index(Model model, @RequestParam(value = "success", required = false) String success,
+                        @RequestParam(value = "error", required = false) String error){
 
         Date date = new Date(System.currentTimeMillis());
         List<Event> events = eventService.getActiveEvents(date);
@@ -45,6 +47,13 @@ public class HomeController {
         List<java.util.Map<String, Object>> top10Cate = medicineServices.findTop9FavoriteCategoriesWithDetails();
 
         List<Map<String, Object>> top5Popular = medicineServices.findTop3PopularMedicinesLast7Days();
+
+        if(success != null){
+            model.addAttribute("success", success);
+        }
+        if(error != null){
+            model.addAttribute("error", error);
+        }
 
         // Thêm dữ liệu vào model
         model.addAttribute("events", events);
