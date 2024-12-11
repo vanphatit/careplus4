@@ -6,19 +6,18 @@ import gr.careplus4.services.impl.*;
 import gr.careplus4.services.security.JwtCookies;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,20 +47,59 @@ public class ReviewController {
     // Hiển thị danh sách review của vendor
     @GetMapping("/vendor/reviews")
     public ModelAndView showReviews(Model model, @RequestParam("page") Optional<Integer> page,
-                                    @Validated @RequestParam("size") Optional<Integer> size) {
+                                    @Validated @RequestParam("size") Optional<Integer> size,
+                                    @RequestParam(value = "error", required = false) String error,
+                                    @RequestParam(value = "success", required = false) String success) {
         int currentPage = page.orElse(1);
-        int pageSize = size.orElse(5);
+        int pageSize = size.orElse(3);
+        int positiveCount = 0, negativeCount = 0, neutralCount = 0;
 
         Pageable pageable = (Pageable) PageRequest.of(currentPage - 1, pageSize, Sort.by("date").descending());
         Page<Review> reviews = reviewService.findAll(pageable);
 
+        // tạo map review -> list review detail
+        Map<Review, List<ReviewDetail>> reviewDetailsMap = new HashMap<>();
+        for (Review review : reviews.getContent()) {
+            List<ReviewDetail> details = reviewDetailService.findReviewDetailsByReview(review);
+            reviewDetailsMap.put(review, details);
+        }
+
+        for (Review review : reviewService.findAll()) {
+            List<ReviewDetail> details = reviewDetailService.findReviewDetailsByReview(review);
+            for (ReviewDetail detail : details) {
+                if (detail.getRating().compareTo(BigDecimal.valueOf(4.50)) >= 0) {
+                    positiveCount++;
+                } else if (detail.getRating().compareTo(BigDecimal.valueOf(3.50)) >= 0) {
+                    neutralCount++;
+                } else {
+                    negativeCount++;
+                }
+            }
+        }
+
+        model.addAttribute("positiveCount", positiveCount);
+        model.addAttribute("neutralCount", neutralCount);
+        model.addAttribute("negativeCount", negativeCount);
+
         model.addAttribute("reviewPage", reviews);
+        model.addAttribute("reviewDetailsMap", reviewDetailsMap);
 
         int totalPages = reviews.getTotalPages();
         if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+            List<Integer> pageNumbers = generatePageNumbers(currentPage, totalPages);
             model.addAttribute("pageNumbers", pageNumbers);
         }
+
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("pageSize", pageSize);
+
+        if (error != null && !error.isEmpty()) {
+            model.addAttribute("error", error);
+        }
+        if (success != null && !success.isEmpty()) {
+            model.addAttribute("success", success);
+        }
+
         return new ModelAndView("vendor/review-list");
     }
 
@@ -71,23 +109,120 @@ public class ReviewController {
                                       @Validated @RequestParam("page") Optional<Integer> page,
                                       @Validated @RequestParam("size") Optional<Integer> size) {
         int currentPage = page.orElse(1);
-        int pageSize = size.orElse(5);
+        int pageSize = size.orElse(3);
 
         if (searchText.isEmpty()) {
             return new ModelAndView("redirect:/vendor/reviews");
         }
 
         Pageable pageable = (Pageable) PageRequest.of(currentPage - 1, pageSize, Sort.by("date").descending());
-        Page<Review> reviews = reviewService.findReviewByUser_NameContaining(searchText, pageable);
+        Page<Review> reviews = reviewService.findReviewsByUser_NameContainingIgnoreCaseOrBill_Id(searchText, searchText, pageable);
 
+        // tạo map review -> list review detail
+        Map<Review, List<ReviewDetail>> reviewDetailsMap = new HashMap<>();
+        for (Review review : reviews.getContent()) {
+            List<ReviewDetail> details = reviewDetailService.findReviewDetailsByReview(review);
+            reviewDetailsMap.put(review, details);
+        }
+
+        model.addAttribute("searchText", searchText);
         model.addAttribute("reviewPage", reviews);
+        model.addAttribute("reviewDetailsMap", reviewDetailsMap);
 
         int totalPages = reviews.getTotalPages();
         if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+            List<Integer> pageNumbers = generatePageNumbers(currentPage, totalPages);
             model.addAttribute("pageNumbers", pageNumbers);
         }
+
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("pageSize", pageSize);
+
         return new ModelAndView("vendor/review-list");
+    }
+
+    @GetMapping("/vendor/reviews/filter")
+    public ModelAndView filterReviews(Model model, @RequestParam(value = "status", required = false) String filter,
+                                      @RequestParam("page") Optional<Integer> page, HttpServletRequest request,
+                                      @Validated @RequestParam("size") Optional<Integer> size) {
+        // Kiểm tra giá trị filter
+        if (filter == null || filter.isEmpty() ||
+                (!filter.equals("positive") && !filter.equals("neutral") && !filter.equals("negative"))) {
+            return new ModelAndView("redirect:/vendor/reviews");
+        }
+
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(3);
+
+        // Lấy danh sách tất cả reviews
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("date").descending());
+        List<Review> reviews = reviewService.findAll();
+        List<Review> filteredReviews = new ArrayList<>();
+        Map<Review, List<ReviewDetail>> reviewDetailsMap = new HashMap<>();
+
+        int reviewDetailsCount = 0;
+        // Xử lý bộ lọc theo trạng thái
+        for (Review review : reviews) {
+            List<ReviewDetail> details = reviewDetailService.findReviewDetailsByReview(review);
+            List<ReviewDetail> filteredDetails = filterDetails(details, filter);
+
+            if (!filteredDetails.isEmpty()) {
+                reviewDetailsMap.put(review, filteredDetails);
+                reviewDetailsCount += filteredDetails.size();
+                filteredReviews.add(review);
+            }
+        }
+        if(filter.equals("positive")) {
+            model.addAttribute("positiveCount", reviewDetailsCount);
+        } else if(filter.equals("neutral")) {
+            model.addAttribute("neutralCount", reviewDetailsCount);
+        } else if(filter.equals("negative")) {
+            model.addAttribute("negativeCount", reviewDetailsCount);
+        }
+
+        // Tổng số phần tử đã lọc
+        int totalFiltered = filteredReviews.size();
+
+        // Xác định vị trí bắt đầu và kết thúc của trang hiện tại
+        int start = Math.min((currentPage - 1) * pageSize, totalFiltered);
+        int end = Math.min(start + pageSize, totalFiltered);
+
+        // Lấy danh sách con của trang hiện tại
+        List<Review> pagedReviews = filteredReviews.subList(start, end);
+
+        // Tạo đối tượng Page cho dữ liệu đã lọc
+        Page<Review> filteredPage = new PageImpl<>(pagedReviews, pageable, totalFiltered);
+
+        // Thêm dữ liệu vào model
+        model.addAttribute("reviewPage", filteredPage);
+        model.addAttribute("reviewDetailsMap", reviewDetailsMap);
+        model.addAttribute("current_status", filter);
+
+        // Tính toán số trang
+        int totalPages = (int) Math.ceil((double) totalFiltered / pageSize);
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = generatePageNumbers(currentPage, totalPages);
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("pageSize", pageSize);
+
+        return new ModelAndView("vendor/review-list");
+    }
+
+    // Phương thức lọc ReviewDetail theo trạng thái
+    private List<ReviewDetail> filterDetails(List<ReviewDetail> details, String filter) {
+        return details.stream().filter(detail -> {
+            if ("positive".equals(filter)) {
+                return detail.getRating().compareTo(BigDecimal.valueOf(4.50)) >= 0;
+            } else if ("neutral".equals(filter)) {
+                return detail.getRating().compareTo(BigDecimal.valueOf(3.50)) >= 0 && detail.getRating().compareTo(BigDecimal.valueOf(4.50)) < 0;
+            } else if ("negative".equals(filter)) {
+                return detail.getRating().compareTo(BigDecimal.valueOf(3.50)) < 0;
+            }
+            return false;
+        }).collect(Collectors.toList());
     }
 
     // Hiển thị chi tiết review của vendor
@@ -103,15 +238,22 @@ public class ReviewController {
 
     // Xóa review bởi vendor
     @GetMapping("/vendor/reviews/{id}/delete")
-    public ModelAndView deleteReview(@PathVariable("id") String id) {
-        Review review = reviewService.findById(id).get();
+    public ModelAndView deleteReview(@PathVariable("id") String id, ModelMap model) {
+        try {
+            Review review = reviewService.findById(id).get();
 
-        List<ReviewDetail> reviewDetails = reviewDetailService.findReviewDetailsByReview(review);
-        for (ReviewDetail reviewDetail : reviewDetails) {
-            reviewDetailService.delete(reviewDetail);
+            List<ReviewDetail> reviewDetails = reviewDetailService.findReviewDetailsByReview(review);
+            for (ReviewDetail reviewDetail : reviewDetails) {
+                reviewDetailService.delete(reviewDetail);
+            }
+            reviewService.delete(review);
+        } catch (Exception e) {
+            model.addAttribute("error", "Xóa đánh giá thất bại!");
+            return new ModelAndView("redirect:/vendor/reviews", model);
         }
-        reviewService.delete(review);
-        return new ModelAndView("redirect:/vendor/reviews");
+
+        model.addAttribute("success", "Đã xóa đánh giá thành công!");
+        return new ModelAndView("redirect:/vendor/reviews", model);
     }
 
     // Hiển thị danh sách chưa review của user và chọn bill để review
@@ -219,7 +361,7 @@ public class ReviewController {
         Bill bill = billService.findById(billId).orElseThrow(() -> new IllegalArgumentException("Invalid Bill"));
 
         Review review;
-        if(reviewService.existsByUserAndBill(user, bill)) {
+        if (reviewService.existsByUserAndBill(user, bill)) {
             review = reviewService.findReviewByUserAndBill(user, bill);
         } else {
             review = new Review();
@@ -263,5 +405,37 @@ public class ReviewController {
         }
         reviewService.delete(review);
         return new ModelAndView("redirect:/user/reviews");
+    }
+
+    // Phương thức tạo danh sách số trang hiển thị
+    private List<Integer> generatePageNumbers(int currentPage, int totalPages) {
+        List<Integer> pageNumbers = new ArrayList<>();
+
+        if (totalPages <= 5) {
+            // Nếu tổng số trang <= 5, hiển thị tất cả các trang
+            for (int i = 1; i <= totalPages; i++) {
+                pageNumbers.add(i);
+            }
+        } else {
+            // Nếu tổng số trang > 5
+            pageNumbers.add(1); // Trang đầu
+
+            if (currentPage > 3) {
+                pageNumbers.add(-1); // Thêm dấu "..." đại diện
+            }
+
+            // Thêm các trang lân cận
+            for (int i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+                pageNumbers.add(i);
+            }
+
+            if (currentPage < totalPages - 2) {
+                pageNumbers.add(-1); // Thêm dấu "..." đại diện
+            }
+
+            pageNumbers.add(totalPages); // Trang cuối
+        }
+
+        return pageNumbers;
     }
 }

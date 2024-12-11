@@ -56,13 +56,13 @@ public class ReviewServiceImpl implements iReviewServices {
     }
 
     @Override
-    public Page<Review> findReviewByUser_NameContaining(String userName, Pageable pageable) {
-        return reviewRepository.findReviewByUser_NameContaining(userName, pageable);
+    public Review findReviewByUserAndBill(User user, Bill bill) {
+        return reviewRepository.findReviewByUserAndBill(user, bill);
     }
 
     @Override
-    public Review findReviewByUserAndBill(User user, Bill bill) {
-        return reviewRepository.findReviewByUserAndBill(user, bill);
+    public Page<Review> findReviewsByUser_NameContainingIgnoreCaseOrBill_Id(String userName, String billId, Pageable pageable) {
+        return reviewRepository.findReviewsByUser_NameContainingIgnoreCaseOrBill_Id(userName, billId, pageable);
     }
 
     @Override

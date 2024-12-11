@@ -38,7 +38,7 @@
                                                         <a href="/user/medicine/${detail.medicine.id}"
                                                            style="color: #0d1214 !important;"
                                                            class="text-decoration-none text-primary">
-                                                                <strong>${detail.medicine.name}</strong>
+                                                                <strong>${detail.medicineName}</strong>
                                                         </a>
                                                     </div>
                                                 </c:forEach>
@@ -66,7 +66,8 @@
                                         </td>
                                         <td class="text-center">
                                             <a href="/user/review/${review.bill.id}/delete" class="btn btn-danger btn-sm mx-2"
-                                               onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này?')">Xóa</a>
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này?')">
+                                                <i class="fas fa-trash-alt"></i></a>
                                         </td>
                                     </tr>
                                 </c:forEach>
