@@ -279,12 +279,12 @@
     <div class="row mt-5">
         <div class="col-md-12">
             <div class="d-flex justify-content-left align-items-center mb-3">
-                <h2 id="shipping-status-title" class="text-center">Tiến độ giao hàng của đơn vị vận chuyển</h2>
+                <h2 id="shipping-status-title" class="text-center">Tiến độ giao hàng của đơn vị vận chuyển:</h2>
                 <form method="get" action="javascript:void(0);">
                     <select name="status"
                             id="status"
                             class="custom-select form-select"
-                            style="width: 200px; margin-right: 10px; margin-left: 10px"
+                            style="width: 200px; margin-right: 10px; margin-left: 20px"
                             onchange="filterByStatus(this.value)"
                     >
                         <option value="" ${status eq '' ? 'selected' : ''}>Tất cả trạng thái</option>
@@ -297,6 +297,9 @@
                     <input type="hidden" name="page" value="${currentPage}"/> <!-- Đảm bảo giữ lại trang hiện tại -->
                     <input type="hidden" name="size" value="${pageSize}"/> <!-- Giữ lại kích thước trang -->
                 </form>
+                <h5 class="text-muted text-center" style="font-style: italic; margin-left: 10px; margin-right: 10px">Có tổng cộng
+                    <span id="totalShippingStatus" class="text-primary fw-bold">${totalShippingStatus}</span> đơn hàng
+                </h5>
             </div>
 
             <table class="table table-bordered table-striped" id="transactionTable">
@@ -564,6 +567,10 @@
         params.set('status', status);
         params.set('page', 1); // Reset về trang đầu tiên
 
+        if (status === '') {
+            params.delete('status');
+        }
+
         // Tạo URL mới
         const newUrl = baseUrl + '?' + params.toString();
 
@@ -588,8 +595,10 @@
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 const newTable = doc.querySelector('#transactionTable');
+                const totalShippingStatus = doc.querySelector('#totalShippingStatus').textContent;
 
                 document.querySelector('#transactionTable').innerHTML = newTable.innerHTML;
+                document.querySelector('#totalShippingStatus').textContent = totalShippingStatus;
 
                 // Cuộn tới phần bảng
                 document.getElementById('shipping-status-title').scrollIntoView({ behavior: 'smooth', block: 'start' });

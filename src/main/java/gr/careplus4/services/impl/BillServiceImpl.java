@@ -563,4 +563,14 @@ public class BillServiceImpl implements IBillService {
     public Page<Bill> findBillsByStatus(String status, Pageable pageable) {
         return billRepository.findBillsByStatus(status, pageable);
     }
+
+    @Override
+    public int countAllStatus(String status) {
+        if (status.isEmpty()) {
+            return (int) billRepository.count();
+        }
+
+        List<Bill> bills = billRepository.findBillsByStatus(status);
+        return bills.size();
+    }
 }

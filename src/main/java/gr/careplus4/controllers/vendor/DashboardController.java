@@ -83,6 +83,10 @@ public class DashboardController {
             Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("date").descending());
 
             Page<Bill> bills = billService.findAll(pageable);
+            int totalShippingStatus = billService.countAllStatus(status);
+
+            System.out.println("status: " + status);
+            System.out.println("totalShippingStatus: " + totalShippingStatus);
 
             if (!status.isEmpty()) {
                 bills = billService.findBillsByStatus(status, pageable);
@@ -110,11 +114,13 @@ public class DashboardController {
             });
 
             List<TransactionHistoryModel> transactionHistoryList = transactionHistoryPage.getContent();
+            System.out.println("transactionHistoryList: " + transactionHistoryList);
             model.addAttribute("transactionHistory", transactionHistoryList);
             model.addAttribute("currentPage", currentPage);
             model.addAttribute("totalPages", totalPages);
             model.addAttribute("pageSize", pageSize);
             model.addAttribute("status", status);
+            model.addAttribute("totalShippingStatus", totalShippingStatus);
         } catch (Exception e) {
             model.addAttribute(("error"), "Lấy dữ liệu thất bại");
         }

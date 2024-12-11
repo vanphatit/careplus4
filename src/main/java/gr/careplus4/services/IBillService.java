@@ -71,4 +71,6 @@ public interface IBillService {
     List<Bill> findALl();
 
     Page<Bill> findBillsByStatus(String status, Pageable pageable);
+
+    int countAllStatus(String status);
 }
