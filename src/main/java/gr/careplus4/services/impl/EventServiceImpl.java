@@ -1,7 +1,7 @@
 package gr.careplus4.services.impl;
 
 import gr.careplus4.entities.Event;
-import gr.careplus4.entities.Provider;
+import gr.careplus4.repositories.BillRepository;
 import gr.careplus4.repositories.EventRepository;
 import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iEventService;
@@ -19,6 +19,9 @@ public class EventServiceImpl implements iEventService {
 
     @Autowired
     EventRepository eventRepository;
+
+    @Autowired
+    BillRepository billRepository;
 
     public EventServiceImpl(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
@@ -93,6 +96,13 @@ public class EventServiceImpl implements iEventService {
     @Override
     public Event findTopByOrderByIdDesc() {
         return eventRepository.findTopByOrderByIdDesc();
-    }
 
+    }
+    @Override
+    public boolean checkUsed(String id){
+        if(billRepository.existsByEventId(id)){
+            return true;
+        }
+        return false;
+    }
 }
