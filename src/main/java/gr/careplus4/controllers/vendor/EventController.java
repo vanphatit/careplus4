@@ -122,7 +122,7 @@ public class EventController {
         EventModel eve = new EventModel();
         if (optionalEvent.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Sự kiên không tồn tại!");
-            return new ModelAndView("redirect:/vendor/event", model);
+                return new ModelAndView("redirect:/vendor/event", model);
         } else {
             boolean checkUsed = eventService.checkUsed(id);
             try {
@@ -140,7 +140,7 @@ public class EventController {
                 redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa sự kiện: " + e.getMessage());
             }
         }
-        redirectAttributes.addFlashAttribute("message", "Chỉnh sửa Import Detail thành công!");
+        redirectAttributes.addFlashAttribute("message", "Chỉnh sửa sự kiện thành công!");
         return new ModelAndView("redirect:/vendor/event", model);
     }
 

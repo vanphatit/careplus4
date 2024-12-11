@@ -22,4 +22,5 @@ public interface iProviderService {
     Boolean existsByName(String name);
     String generateProviderId(String previousId);
     Page<Provider> findByIdContaining(String id, Pageable pageable);
+    boolean checkUsed(String id);
 }

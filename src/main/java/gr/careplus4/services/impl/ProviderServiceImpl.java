@@ -1,7 +1,7 @@
 package gr.careplus4.services.impl;
 
-import gr.careplus4.entities.Manufacturer;
 import gr.careplus4.entities.Provider;
+import gr.careplus4.repositories.ImportRepository;
 import gr.careplus4.repositories.ProviderRepository;
 import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iProviderService;
@@ -19,6 +19,8 @@ public class ProviderServiceImpl implements iProviderService {
     @Autowired
     ProviderRepository providerRepository;
 
+    @Autowired
+    ImportRepository importRepository;
     @Override
     public Page<Provider> findAll(Pageable pageable) {
         return providerRepository.findAll(pageable);
@@ -84,5 +86,13 @@ public class ProviderServiceImpl implements iProviderService {
     @Override
     public Page<Provider> findByIdContaining(String id, Pageable pageable) {
         return providerRepository.findByIdContaining(id, pageable);
+    }
+
+    @Override
+    public boolean checkUsed(String id){
+        if(importRepository.existsByProviderId(id)){
+            return true;
+        }
+        return false;
     }
 }
