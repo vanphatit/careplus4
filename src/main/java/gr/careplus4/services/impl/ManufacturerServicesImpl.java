@@ -1,7 +1,9 @@
 package gr.careplus4.services.impl;
 
 import gr.careplus4.entities.Manufacturer;
+import gr.careplus4.entities.Medicine;
 import gr.careplus4.repositories.ManufacturerRepository;
+import gr.careplus4.repositories.MedicineRepository;
 import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iManufacturerServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ import java.util.Optional;
 public class ManufacturerServicesImpl implements iManufacturerServices {
     @Autowired
     ManufacturerRepository manufacturerRepository;
+
+    @Autowired
+    MedicineRepository medicineRepository;
 
     @Override
     public List<Manufacturer> findByNameContaining(String name) {
@@ -80,5 +85,22 @@ public class ManufacturerServicesImpl implements iManufacturerServices {
     @Override
     public String generateManufacturerId(String previousId) {
         return GeneratedId.getGeneratedId(previousId);
+    }
+
+    @Override
+    public boolean checkEdit(String id) {
+        Manufacturer manufacturer = manufacturerRepository.findById(id).orElse(null);
+
+        if (manufacturer == null) {
+            return true;
+        }
+
+        List<Medicine> medicines = medicineRepository.findAll();
+        for (Medicine medicine : medicines) {
+            if (medicine.getManufacturer().getId().equals(manufacturer.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

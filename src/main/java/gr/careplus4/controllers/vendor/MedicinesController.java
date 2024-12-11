@@ -53,24 +53,19 @@ public class MedicinesController {
     private UnitServicesImpl unitService;
 
     @Autowired
-    private FileSystemStorageServiceImpl storageService;
-
-    @Autowired
-    private ReviewServiceImpl reviewService;
-
-    @Autowired
     private ReviewDetailServiceImpl reviewDetailService;
 
     public MedicinesController(MedicineServicesImpl medicineService,
                                ManufacturerServicesImpl manufacturerService,
                                CategoryServiceImpl categoryService,
                                UnitServicesImpl unitService,
-                               FileSystemStorageServiceImpl storageService) {
+                               ReviewDetailServiceImpl reviewDetailService
+                               ) {
         this.medicineService = medicineService;
         this.manufacturerService = manufacturerService;
         this.categoryService = categoryService;
         this.unitService = unitService;
-        this.storageService = storageService;
+        this.reviewDetailService = reviewDetailService;
     }
 
     public MedicineModel processMedicine(MedicineModel model) {
@@ -111,8 +106,9 @@ public class MedicinesController {
                                    @RequestParam(value = "message", required = false) String message,
                                    @RequestParam(value = "categoryId", required = false) String categoryId,
                                    @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
-                                   @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize) {
-        System.out.println("==================================== /vendor/medicines: ");
+                                   @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize,
+                                   @RequestParam(value = "error", required = false) String error
+                                   ) {
         // Đảm bảo currentPage >= 1
         currentPage = Math.max(currentPage, 1);
 
@@ -132,14 +128,15 @@ public class MedicinesController {
         }
 
         model.addAttribute("manufacturers", manufacturerService.findAll());
-        model.addAttribute("categories", categoryService.findAll());
+
+        model.addAttribute("categories", categoryService.findAllSubCategories());
         model.addAttribute("units", unitService.findAll());
 
         model.addAttribute("message", message);
+        model.addAttribute("error", error);
         model.addAttribute("medicines", medicines);
         model.addAttribute("currentPage", currentPage); // Để view biết trang hiện tại
         model.addAttribute("pageSize", pageSize);       // Để view biết kích thước trang
-        System.out.println("==================================== Medicines Message:");
         return "vendor/medicine/medicines-list"; // Tên view để render danh sách thuốc
     }
 
@@ -196,8 +193,7 @@ public class MedicinesController {
         model.addAttribute("CURRENTDATE", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         model.addAttribute("medicine", medicineModel);
         model.addAttribute("manufacturers", manufacturerService.findAll());
-        List<Category> categories = categoryService.findAll();
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories", categoryService.findAllSubCategories());
         model.addAttribute("units", unitService.findAll());
         return "vendor/medicine/medicine-addOrEdit";
     }
@@ -244,56 +240,56 @@ public class MedicinesController {
                                          @RequestParam("manufacturerId") String manufacturerId,
                                          @RequestParam("categoryId") String categoryId,
                                          @RequestParam("unitId") String unitId,
-                                         @RequestParam(value = "importId", required = false) String importId,
-                                         RedirectAttributes redirectAttributes
+                                         @RequestParam(value = "importId", required = false) String importId
+
     ) {
         String message = "";
         Medicine medicine = new Medicine();
         Optional<Manufacturer> manufacturer = manufacturerService.findById(manufacturerId);
 
         model.addAttribute("manufacturers", manufacturerService.findAll());
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("categories", categoryService.findAllSubCategories());
         model.addAttribute("units", unitService.findAll());
 
         model.addAttribute("CURRENTDATE", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
         if (!manufacturer.isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "Nhà sản xuất không tồn tại");
+            model.addAttribute("error", "Nhà sản xuất không tồn tại");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         Optional<Category> category = categoryService.findById(categoryId);
         if (!category.isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "Danh mục không tồn tại");
+            model.addAttribute("error", "Danh mục không tồn tại");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         Optional<Unit> unit = unitService.findById(unitId);
         if (!unit.isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "Đơn vị không tồn tại");
+            model.addAttribute("error", "Đơn vị không tồn tại");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         if (medicineModel.getExpiryDate() != null && medicineModel.getExpiryDate().before(new Date())) {
-            redirectAttributes.addFlashAttribute("error", "Ngày hết hạn phải sau ngày hiện tại");
+            model.addAttribute("error", "Ngày hết hạn phải sau ngày hiện tại");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         if (medicineModel.getStockQuantity() < 0) {
-            redirectAttributes.addFlashAttribute("error", "Số lượng tồn kho phải lớn hơn hoặc bằng 0");
+            model.addAttribute("error", "Số lượng tồn kho phải lớn hơn hoặc bằng 0");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
         if (medicineModel.getIsEdit()) {
             if (medicineModel.getRating().compareTo(BigDecimal.ZERO) < 0 && medicineModel.getRating().compareTo(BigDecimal.valueOf(5)) > 0) {
-                redirectAttributes.addFlashAttribute("error", "Đánh giá phải nằm trong khoảng từ 0 đến 5");
+                model.addAttribute("error", "Đánh giá phải nằm trong khoảng từ 0 đến 5");
                 return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
             }
         }
 
         // Nếu ko là edit thì kiểm tra xem anh có rỗng không
         if (!medicineModel.getIsEdit() && (image == null || image.isEmpty())) {
-            redirectAttributes.addFlashAttribute("error", "Ảnh không được để trống");
+            model.addAttribute("error", "Ảnh không được để trống");
             return new ModelAndView("vendor/medicine/medicine-addOrEdit", model);
         }
 
@@ -319,6 +315,9 @@ public class MedicinesController {
                     File oldImageFile = new File(oldImagePath);
                     if (oldImageFile.exists() && oldImageFile.isFile()) {
                         boolean deleted = oldImageFile.delete();
+                        if (!deleted) {
+                            model.addAttribute("error", "Không thể xóa ảnh cũ: " + oldImagePath);
+                        }
                     }
                 }
             }
@@ -398,34 +397,32 @@ public class MedicinesController {
         model.addAttribute("medicine", medicineModel);
         model.addAttribute("CURRENTDATE", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         model.addAttribute("manufacturers", manufacturerService.findAll());
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("categories", categoryService.findAllSubCategories());
         model.addAttribute("units", unitService.findAll());
         return "vendor/medicine/medicine-addOrEdit";
     }
 
     @GetMapping("/vendor/medicine/delete/{id}")
-    public ModelAndView deleteMedicine(ModelMap model, @PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+    public ModelAndView deleteMedicine(ModelMap model, @PathVariable("id") String id) {
         Optional<Medicine> medicine = medicineService.findById(id);
         if (medicine.isPresent()) {
             boolean isDeleted = medicineService.checkMedicineIsDeleted(medicine.get().getUnitCost());
-            System.out.println();
             if (!isDeleted) {
-                redirectAttributes.addFlashAttribute("error", "Không thể xóa thuốc đã được bán");
+                model.addAttribute("error", "Không thể xóa thuốc đã được bán");
                 return new ModelAndView("redirect:/vendor/medicines", model);
             }
             medicineService.deleteById(id);
             model.addAttribute("message", "Thuốc đã được xóa");
             return new ModelAndView("redirect:/vendor/medicines", model);
         }
-        redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
+        model.addAttribute("error", "Không tìm thấy thuốc");
         return new ModelAndView("redirect:/vendor/medicines", model);
     }
 
     @PostMapping("/vendor/medicine/search")
     public String searchMedicine(Model model, @RequestParam("keyword") String keyword,
                                     @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
-                                    @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize,
-                                    RedirectAttributes redirectAttributes) {
+                                    @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize ) {
             // Đảm bảo currentPage >= 1
             currentPage = Math.max(currentPage, 1);
 
@@ -433,7 +430,7 @@ public class MedicinesController {
             Page<Medicine> medicines = medicineService.searchMedicineByKeyword(keyword, pageable);
 
             if (medicines.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
+                model.addAttribute("error", "Không tìm thấy thuốc");
                 return "redirect:/vendor/medicines";
             }
 
@@ -446,7 +443,7 @@ public class MedicinesController {
             }
 
             model.addAttribute("manufacturers", manufacturerService.findAll());
-            model.addAttribute("categories", categoryService.findAll());
+            model.addAttribute("categories", categoryService.findAllSubCategories());
             model.addAttribute("units", unitService.findAll());
 
             model.addAttribute("medicines", medicines);
@@ -472,12 +469,11 @@ public class MedicinesController {
                                  @RequestParam(value = "importDateMin", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date importDateMin,
                                  @RequestParam(value = "importDateMax", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date importDateMax,
                                  @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
-                                 @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize,
-                                 RedirectAttributes redirectAttributes
+                                 @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize
     ) {
 
             model.addAttribute("manufacturers", manufacturerService.findAll());
-            model.addAttribute("categories", categoryService.findAll());
+            model.addAttribute("categories", categoryService.findAllSubCategories());
             model.addAttribute("units", unitService.findAll());
 
             if (manufacturerName == "") manufacturerName = null;
@@ -499,7 +495,7 @@ public class MedicinesController {
             );
 
             if (medicines.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
+                model.addAttribute("error", "Không tìm thấy thuốc");
                 return "redirect:/vendor/medicines";
             }
 
@@ -532,12 +528,14 @@ public class MedicinesController {
     }
 
     @GetMapping("/vendor/medicine/exist/{name}&{expiryDate}&{manufacturerName}&{importDate}")
-    public String medicineIsExist(Model model, @PathVariable("name") String name, @PathVariable("expiryDate") Date expiryDate, @PathVariable("manufacturerName") String manufacturerName, @PathVariable("importDate") Date importDate, RedirectAttributes redirectAttributes) {
+    public String medicineIsExist(Model model, @PathVariable("name") String name, @PathVariable("expiryDate") Date expiryDate,
+                                  @PathVariable("manufacturerName") String manufacturerName,
+                                  @PathVariable("importDate") Date importDate) {
         Boolean check = medicineService.medicineIsExist(name, expiryDate, manufacturerName, importDate);
         if (check) {
             model.addAttribute("message", "Thuốc " + name + " đã tồn tại");
         } else {
-           redirectAttributes.addFlashAttribute("error", "Thuốc " + name + " không tồn tại");
+           model.addAttribute("error", "Thuốc " + name + " không tồn tại");
         }
         return "vendor/medicine/medicines-list";
     }
@@ -546,8 +544,7 @@ public class MedicinesController {
     public String getListMedicinesUser(Model model,
                                    @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
                                    @RequestParam(value = "size", required = false, defaultValue = "12") int pageSize,
-                                   @RequestParam(value = "categoryId", required = false) String categoryId,
-                                   RedirectAttributes redirectAttributes
+                                   @RequestParam(value = "categoryId", required = false) String categoryId
                                        ) {
         // Đảm bảo currentPage >= 1
         currentPage = Math.max(currentPage, 1);
@@ -557,7 +554,7 @@ public class MedicinesController {
             String categoryName = categoryService.findById(categoryId).get().getName();
             medicines = medicineService.getMedicineForUserByCategoryName(categoryName, pageable);
             if (medicines.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
+                model.addAttribute("error", "Không tìm thấy thuốc");
                 return "user/medicine/medicines-list";
             }
         } else{
@@ -573,7 +570,7 @@ public class MedicinesController {
         }
 
         model.addAttribute("manufacturers", manufacturerService.findAll());
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("categories", categoryService.findAllSubCategories());
         model.addAttribute("units", unitService.findAll());
 
         List<MedicineForUserModel> list = medicines.getContent();
@@ -599,11 +596,12 @@ public class MedicinesController {
                                       @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
                                       @RequestParam(value = "productPage", required = false, defaultValue = "1") int productPage,
                                       @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize,
-                                      @RequestParam(value = "productSize", required = false, defaultValue = "5") int productPageSize,
-                                        RedirectAttributes redirectAttributes
+                                      @RequestParam(value = "productSize", required = false, defaultValue = "5") int productPageSize
                                       ) {
         Optional<MedicineForUserModel> medicine = medicineService.findMedicineByIdForUser(id);
 
+
+        System.out.println("======================================= Medicine: " + medicine.get());
 
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("id").ascending());
         Pageable productPageable = PageRequest.of(productPage - 1, productPageSize, Sort.by("id").ascending());
@@ -618,10 +616,9 @@ public class MedicinesController {
         medicineModel = processMedicine(medicineModel);
 
         if (!medicine.isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
+            model.addAttribute("error", "Không tìm thấy thuốc");
             return "redirect:/user/medicines";
         }
-
 
         // Chuyển các trang thành các danh sách
         List<MedicineForUserModel> list_Man = medicines_relative_Man.getContent();
@@ -637,7 +634,11 @@ public class MedicinesController {
         Set<MedicineForUserModel> uniqueList = new HashSet<>(list);
 
         // Chia nhóm sản phẩm (5 sản phẩm mỗi nhóm)
-        List<List<MedicineForUserModel>> groupedProducts = splitList(uniqueList, 2);
+        List<List<MedicineForUserModel>> groupedProducts = splitList(uniqueList, 3);
+
+        for (List<MedicineForUserModel> group : groupedProducts) {
+            System.out.println("======================================= Group: " + group);
+        }
 
         model.addAttribute("reviews", reviews);
         model.addAttribute("medicine", medicine.get());
@@ -658,8 +659,8 @@ public class MedicinesController {
     @PostMapping("/user/medicine/search")
     public String searchMedicineUser(Model model, @RequestParam("keyword") String keyword,
                                     @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
-                                    @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize,
-                                     RedirectAttributes redirectAttributes) {
+                                    @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize
+                                     ) {
             // Đảm bảo currentPage >= 1
             currentPage = Math.max(currentPage, 1);
 
@@ -667,7 +668,7 @@ public class MedicinesController {
             Page<MedicineForUserModel> medicines = medicineService.searchMedicineByKeywordForUser(keyword, pageable);
 
             if (medicines.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
+                model.addAttribute("error", "Không tìm thấy thuốc");
                 return "redirect:/user/medicines";
             }
 
@@ -680,7 +681,7 @@ public class MedicinesController {
             }
 
             model.addAttribute("manufacturers", manufacturerService.findAll());
-            model.addAttribute("categories", categoryService.findAll());
+            model.addAttribute("categories", categoryService.findAllSubCategories());
             model.addAttribute("units", unitService.findAll());
             model.addAttribute("medicines", medicines.getContent());
             model.addAttribute("currentPage", currentPage); // Để view biết trang hiện tại
@@ -702,24 +703,24 @@ public class MedicinesController {
                                      @RequestParam(value = "ratingMin", required = false) BigDecimal ratingMin,
                                      @RequestParam(value = "ratingMax", required = false) BigDecimal ratingMax,
                                      @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
-                                     @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize,
-                                     RedirectAttributes redirectAttributes) {
+                                     @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize
+                                     ) {
 
         // Kiểm tra các tham số đầu vào
         if (unitCostMin != null && unitCostMax != null && unitCostMin.compareTo(unitCostMax) > 0) {
-            redirectAttributes.addFlashAttribute("error", "Giá min phải nhỏ hơn hoặc bằng giá max");
+            model.addAttribute("error", "Giá min phải nhỏ hơn hoặc bằng giá max");
             return "user/medicine/medicines-list";
         }
         if (expiryDateMin != null && expiryDateMax != null && expiryDateMin.compareTo(expiryDateMax) > 0) {
-            redirectAttributes.addFlashAttribute("error", "Ngày hết hạn min phải nhỏ hơn hoặc bằng ngày hết hạn max");
+            model.addAttribute("error", "Ngày hết hạn min phải nhỏ hơn hoặc bằng ngày hết hạn max");
             return "user/medicine/medicines-list";
         }
         if (stockQuantityMin != null && stockQuantityMax != null && stockQuantityMin.compareTo(stockQuantityMax) > 0) {
-            redirectAttributes.addFlashAttribute("error", "Số lượng min phải nhỏ hơn hoặc bằng số lượng max");
+            model.addAttribute("error", "Số lượng min phải nhỏ hơn hoặc bằng số lượng max");
             return "user/medicine/medicines-list";
         }
         if (ratingMin != null && ratingMax != null && ratingMin.compareTo(ratingMax) > 0) {
-            redirectAttributes.addFlashAttribute("error", "Đánh giá min phải nhỏ hơn hoặc bằng đánh giá max");
+            model.addAttribute("error", "Đánh giá min phải nhỏ hơn hoặc bằng đánh giá max");
             return "user/medicine/medicines-list";
         }
 
@@ -732,13 +733,13 @@ public class MedicinesController {
         );
 
         if (filteredMedicines.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Không tìm thấy thuốc");
+            model.addAttribute("error", "Không tìm thấy thuốc");
             return "redirect:/user/medicines";
         }
 
         // Cập nhật model để hiển thị dữ liệu
         model.addAttribute("manufacturers", manufacturerService.findAll());
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("categories", categoryService.findAllSubCategories());
         model.addAttribute("units", unitService.findAll());
         model.addAttribute("medicines", filteredMedicines.getContent());
         model.addAttribute("manufacturerName", manufacturerName);

@@ -1,6 +1,7 @@
 package gr.careplus4.repositories;
 
 import gr.careplus4.entities.Unit;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,6 @@ public interface UnitRepository extends JpaRepository<Unit, String> {
     Unit findTopByOrderByIdDesc();
 
     Boolean existsByName(String name);
+
+    Unit findUnitById(@Size(max = 7) String id);
 }

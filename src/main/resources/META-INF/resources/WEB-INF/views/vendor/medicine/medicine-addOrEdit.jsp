@@ -57,6 +57,15 @@
 </head>
 <body>
 <div class="container mt-5">
+
+    <!-- Breadcrumb Section -->
+    <h1 class="mt-4">Quản lý thuốc</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active"><a href="${pageContext.request.contextPath}/vendor/medicines">Quản lý thuốc</a></li>
+        <li class="breadcrumb-item active">${medicine.id != null ? 'Cập nhật thông tin thuốc' : 'Thêm thuốc mới'}</li>
+    </ol>
+
     <h1 class="text-center text-primary">${medicine.id != null ? 'Cập nhật thông tin thuốc' : 'Thêm thuốc mới'}</h1>
 
     <form method="post" action="${pageContext.request.contextPath}/vendor/medicine/save" enctype="multipart/form-data" class="mt-4">

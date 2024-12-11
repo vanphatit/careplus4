@@ -37,7 +37,9 @@ public class UnitsController {
     @GetMapping("/units")
     public String getListUnits(Model model,
                                @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
-                               @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize
+                               @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize,
+                               @RequestParam(value = "error", required = false) String error,
+                                 @RequestParam(value = "message", required = false) String message
     ) {
         // Đảm bảo currentPage >= 1
         currentPage = Math.max(currentPage, 1);
@@ -53,6 +55,13 @@ public class UnitsController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
 
+        if (error != null) {
+            model.addAttribute("error", error);
+        }
+
+        if (message != null) {
+            model.addAttribute("message", message);
+        }
         model.addAttribute("units", units);
         model.addAttribute("currentPage", currentPage); // Để view biết trang hiện tại
         model.addAttribute("pageSize", pageSize);       // Để view biết kích thước trang
@@ -79,12 +88,17 @@ public class UnitsController {
 
         if (result.hasErrors()) {
             message = "Vui lòng sửa các lỗi sau đây và thử lại";
-            model.addAttribute("message", message);
+            model.addAttribute("error", message);
             return new ModelAndView("admin/unit-addOrEdit");
         }
         BeanUtils.copyProperties(unitModel, unit);
 
         if (unitModel.getIsEdit()) {
+            boolean checkUnit = unitService.checkUnit(unit.getId());
+            if (checkUnit) {
+                model.addAttribute("error", "Đơn vị đang được sử dụng");
+                return new ModelAndView("redirect:/admin/units", model);
+            }
             unitService.save(unit);
             message = "Đơn vị đã được cập nhật thành công";
             model.addAttribute("message", message);
@@ -113,15 +127,20 @@ public class UnitsController {
         Optional<Unit> unit = unitService.findById(id);
         UnitModel unitModel = new UnitModel();
 
+        boolean checkUnit = unitService.checkUnit(id);
+        if (checkUnit) {
+            model.addAttribute("error", "Đơn vị đang được sử dụng");
+            return new ModelAndView("redirect:/admin/units", model);
+        }
+
         if (unit.isPresent()) {
             Unit unitEntity = unit.get();
             BeanUtils.copyProperties(unitEntity, unitModel);
             unitModel.setIsEdit(true);
             model.addAttribute("unit", unitModel);
-            model.addAttribute("message", "Đơn vị đã được tìm thấy");
             return new ModelAndView("admin/unit/unit-addOrEdit", model);
         }
-        model.addAttribute("message", "Đơn vị không tồn tại");
+        model.addAttribute("error", "Đơn vị không tồn tại");
         return new ModelAndView("redirect:/admin/unit/units", model);
     }
 
@@ -130,10 +149,17 @@ public class UnitsController {
         Optional<Unit> unit = unitService.findById(id);
 
         if (unit.isPresent()) {
+
+            boolean checkUnit = unitService.checkUnit(id);
+            if (checkUnit) {
+                model.addAttribute("error", "Đơn vị đang được sử dụng");
+                return new ModelAndView("redirect:/admin/units", model);
+            }
+
             unitService.deleteById(id);
-            model.addAttribute("message", "Đơn vị đã được xóa thành công");
+            model.addAttribute("error", "Đơn vị đã được xóa thành công");
         } else {
-            model.addAttribute("message", "Đơn vị không tồn tại");
+            model.addAttribute("error", "Đơn vị không tồn tại");
         }
         return new ModelAndView("redirect:/admin/unit/units", model);
     }
@@ -167,9 +193,9 @@ public class UnitsController {
         Boolean exists = unitService.existsByName(name);
 
         if (exists) {
-            model.addAttribute("message", "Unit exists");
+            model.addAttribute("message", "Đơn vị đã tồn tại");
         } else {
-            model.addAttribute("message", "Unit does not exist");
+            model.addAttribute("error", "Đơn vị không tồn tại");
         }
         return "admin/unit/unit-list";
     }

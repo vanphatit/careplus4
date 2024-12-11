@@ -1,6 +1,8 @@
 package gr.careplus4.services.impl;
 
+import gr.careplus4.entities.Medicine;
 import gr.careplus4.entities.Unit;
+import gr.careplus4.repositories.MedicineRepository;
 import gr.careplus4.repositories.UnitRepository;
 import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iUnitServices;
@@ -16,6 +18,9 @@ import java.util.Optional;
 public class UnitServicesImpl implements iUnitServices {
     @Autowired
     UnitRepository unitRepository;
+
+    @Autowired
+    MedicineRepository medicineRepository;
 
     public UnitServicesImpl(UnitRepository unitRepository) {
         this.unitRepository = unitRepository;
@@ -89,5 +94,23 @@ public class UnitServicesImpl implements iUnitServices {
     @Override
     public String generateUnitId(String previousUnitId) {
         return GeneratedId.getGeneratedId(previousUnitId);
+    }
+
+    @Override
+    public Boolean checkUnit(String id) {
+        Unit unit = unitRepository.findUnitById(id);
+
+        if (unit == null) {
+            return true;
+        }
+
+        List<Medicine> medicines = medicineRepository.findAll();
+        for (Medicine medicine : medicines) {
+            if (medicine.getUnit().getId().equals(id)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
