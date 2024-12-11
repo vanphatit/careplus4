@@ -42,6 +42,10 @@ public class Bill implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date date;
 
+    @Column(name = "UpdateDate")
+    @Temporal(TemporalType.DATE)
+    private Date updateDate;
+
     @Column(name = "TotalAmount", precision = 10, scale = 2, nullable = false)
     @DecimalMin("0.01")
     private BigDecimal totalAmount;
