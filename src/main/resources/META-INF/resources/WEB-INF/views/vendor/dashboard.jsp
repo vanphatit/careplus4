@@ -19,6 +19,40 @@
             margin: 20px auto;
         }
 
+        .card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 150px; /* Đảm bảo chiều cao cố định */
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Căn giữa theo chiều dọc */
+            align-items: center; /* Căn giữa theo chiều ngang */
+            text-align: center;
+        }
+
+        .card h5 {
+            margin-bottom: 10px; /* Khoảng cách giữa tiêu đề và số */
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .card i {
+            font-size: 2rem; /* Tăng kích thước icon */
+            margin-bottom: 10px; /* Khoảng cách dưới icon */
+        }
+
         .custom-select {
             width: 25%;
             margin: 0 auto; /* Căn giữa */
@@ -63,79 +97,117 @@
 </head>
 <body>
 <div class="container mt-4">
-    <div class="row text-center mt-5">
+    <div class="row text-center mt-5 d-flex align-items-stretch">
         <!-- Tổng số người dùng -->
-        <div class="col-md-3">
-            <div class="card text-dark bg-light border-primary shadow">
+        <div class="col-md-3 mb-3">
+            <div class="card text-dark bg-light border-primary shadow h-100">
                 <div class="card-body">
                     <h5 class="card-title">
                         <i class="fas fa-users text-primary"></i> Tổng số người dùng
                     </h5>
-                    <h3>
-                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
-                            <a href="${URL}admin/users" class="text-decoration-none text-dark">${totalUser}</a>
-                        </c:if>
-                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
-                            <strong>${totalUser}</strong>
-                        </c:if>
-                    </h3>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div>
+                        <p class="mb-1 text-secondary">Với quyền USER:</p>
+                        <h4 class="text-warning">
+                            <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
+                                <a href="/admin/users/filter?status=active&roles=USER" class="text-decoration-none text-dark">${totalUser}</a>
+                            </c:if>
+                            <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
+                                <strong>${totalUser}</strong>
+                            </c:if>
+                        </h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
         <!-- Tổng hàng trong kho -->
-        <div class="col-md-3">
-            <div class="card text-dark bg-light border-success shadow">
+        <div class="col-md-3 mb-3">
+            <div class="card text-dark bg-light border-success shadow h-100">
                 <div class="card-body">
                     <h5 class="card-title">
                         <i class="fas fa-cubes text-success"></i> Tổng hàng trong kho
                     </h5>
-                    <h3>
-                        <a href="${URL}vendor/medicines" class="text-decoration-none text-dark">${totalStockQuantity}</a>
-                    </h3>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div>
+                            <p class="mb-1 text-secondary">Với tổng số sản phẩm:</p>
+                            <h4>
+                                <a href="${URL}vendor/medicines" class="text-decoration-none text-dark">${totalStockQuantity}</a>
+                            </h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
         <!-- Doanh thu hôm nay -->
-        <div class="col-md-3">
-            <div class="card text-dark bg-light border-warning shadow">
+        <div class="col-md-3 mb-3">
+            <div class="card text-dark bg-light border-warning shadow h-100">
                 <div class="card-body">
                     <h5 class="card-title">
                         <i class="fas fa-dollar-sign text-warning"></i> Doanh thu hôm nay
                     </h5>
-                    <h3>
-                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
-                            <a href="${URL}admin/bill/today" class="text-decoration-none text-dark">
-                                <span id="revenueToday">${revenueToday}</span> VND
-                            </a>
-                        </c:if>
-                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
-                            <a href="${URL}vendor/bill/today" class="text-decoration-none text-dark">
-                                <span id="revenueToday">${revenueToday}</span> VND
-                            </a>
-                        </c:if>
-                    </h3>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div>
+                            <p class="mb-1 text-secondary">Với tổng số tiền:</p>
+                            <h4>
+                                <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
+                                    <a href="${URL}admin/bill/today" class="text-decoration-none text-dark">
+                                        <span id="revenueToday">${revenueToday}</span> VND
+                                    </a>
+                                </c:if>
+                                <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
+                                    <a href="${URL}vendor/bill/today" class="text-decoration-none text-dark">
+                                        <span id="revenueToday">${revenueToday}</span> VND
+                                    </a>
+                                </c:if>
+                            </h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- Doanh thu tuần -->
-        <div class="col-md-3">
-            <div class="card text-dark bg-light border-danger shadow">
+
+        <!-- Trạng thái đơn hàng -->
+        <div class="col-md-3 mb-3">
+            <div class="card text-dark bg-light border-primary shadow h-100">
                 <div class="card-body">
                     <h5 class="card-title">
-                        <i class="fas fa-chart-line text-danger"></i> Doanh thu tuần
+                        <i class="fas fa-truck text-primary"></i> Trạng thái đơn hàng
                     </h5>
-                    <h3>
-                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
-                            <a href="${URL}admin/bill/week" class="text-decoration-none text-dark">
-                                <span id="revenueForWeek">${revenueForWeek}</span> VND
-                            </a>
-                        </c:if>
-                        <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
-                            <a href="${URL}vendor/bill/week" class="text-decoration-none text-dark">
-                                <span id="revenueForWeek">${revenueForWeek}</span> VND
-                            </a>
-                        </c:if>
-                    </h3>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1 text-secondary">Đang chờ xử lý:</p>
+                            <h4 class="text-danger">
+                                <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
+                                    <a href="${URL}admin/bill/awaiting" class="text-decoration-none text-dark">
+                                        <span id="totalStatusAwaiting">${totalStatusAwaiting}</span>
+                                    </a>
+                                </c:if>
+                                <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
+                                    <a href="${URL}vendor/bill/awaiting" class="text-decoration-none text-dark">
+                                        <span id="totalStatusAwaiting">${totalStatusAwaiting}</span>
+                                    </a>
+                                </c:if>
+                            </h4>
+                        </div>
+                        <div>
+                            <p class="mb-1 text-secondary">Đang giao hàng:</p>
+                            <h4 class="text-warning">
+                                <c:if test="${user.role != null && user.role.name != null && user.role.name == 'ADMIN'}">
+                                    <a href="${URL}admin/bill/shipping" class="text-decoration-none text-dark">
+                                        <span id="totalStatusShipping">${totalStatusShipping}</span>
+                                    </a>
+                                </c:if>
+                                <c:if test="${user.role != null && user.role.name != null && user.role.name == 'VENDOR'}">
+                                    <a href="${URL}vendor/bill/shipping" class="text-decoration-none text-dark">
+                                        <span id="totalStatusShipping">${totalStatusShipping}</span>
+                                    </a>
+                                </c:if>
+                            </h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -203,17 +275,41 @@
         </div>
     </div>
 
-    <!-- Bảng giao dịch -->
+    <!-- Bảng tiến độ giao hàng -->
     <div class="row mt-5">
         <div class="col-md-12">
-            <h3 class="text-center">Tiến độ giao hàng</h3>
-            <table class="table table-bordered table-striped">
+            <div class="d-flex justify-content-left align-items-center mb-3">
+                <h2 id="shipping-status-title" class="text-center">Tiến độ giao hàng của đơn vị vận chuyển:</h2>
+                <form method="get" action="javascript:void(0);">
+                    <select name="status"
+                            id="status"
+                            class="custom-select form-select"
+                            style="width: 200px; margin-right: 10px; margin-left: 20px"
+                            onchange="filterByStatus(this.value)"
+                    >
+                        <option value="" ${status eq '' ? 'selected' : ''}>Tất cả trạng thái</option>
+                        <option value="AWAIT" ${status eq 'AWAIT' ? 'selected' : ''}>Đang chờ xử lý</option>
+                        <option value="SHIPPING" ${status eq 'SHIPPING' ? 'selected' : ''}>Đang giao hàng</option>
+                        <option value="SHIPPED" ${status eq 'SHIPPED' ? 'selected' : ''}>Đã hoàn thành</option>
+                        <option value="CANCELED" ${status eq 'CANCELED' ? 'selected' : ''}>Đã hủy</option>
+                    </select>
+
+                    <input type="hidden" name="page" value="${currentPage}"/> <!-- Đảm bảo giữ lại trang hiện tại -->
+                    <input type="hidden" name="size" value="${pageSize}"/> <!-- Giữ lại kích thước trang -->
+                </form>
+                <h5 class="text-muted text-center" style="font-style: italic; margin-left: 10px; margin-right: 10px">Có tổng cộng
+                    <span id="totalShippingStatus" class="text-primary fw-bold">${totalShippingStatus}</span> đơn hàng
+                </h5>
+            </div>
+
+            <table class="table table-bordered table-striped" id="transactionTable">
                 <thead class="table-primary text-center">
                 <tr>
                     <th>Mã Hóa Đơn</th>
                     <th>Số Điện Thoại</th>
                     <th>Tên Người Nhận</th>
                     <th>Tổng Tiền</th>
+                    <th>Ngày Đặt</th>
                     <th>Ngày Giao</th>
                     <th>Trạng Thái</th>
                 </tr>
@@ -238,12 +334,43 @@
                         <td>
                             <span class="total-amount">${transaction.totalAmount}</span> VND
                         </td>
+                        <td>${transaction.date}</td>
                         <td>${transaction.deliveryDate}</td>
-                        <td>${transaction.status}</td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${transaction.status eq 'AWAIT'}">
+                                    <span class="badge bg-warning text-dark">Đang chờ xử lý</span>
+                                </c:when>
+                                <c:when test="${transaction.status eq 'SHIPPING'}">
+                                    <span class="badge bg-primary">Đang giao hàng</span>
+                                </c:when>
+                                <c:when test="${transaction.status eq 'SHIPPED'}">
+                                    <span class="badge bg-success">Đã hoàn thành</span>
+                                </c:when>
+                                <c:when test="${transaction.status eq 'CANCELED'}">
+                                    <span class="badge bg-danger">Đã hủy</span>
+                                </c:when>
+                            </c:choose>
+                        </td>
                     </tr>
                 </c:forEach>
                 </tbody>
             </table>
+
+            <c:if test="${not empty pageNumbers}">
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <c:forEach var="page" items="${pageNumbers}">
+                            <li class="page-item ${page eq currentPage ? 'active' : ''}">
+                                <a class="page-link" href="javascript:void(0);" onclick="navigateToPage(${page})">
+                                        ${page}
+                                </a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </nav>
+            </c:if>
+
         </div>
     </div>
 </div>
@@ -407,6 +534,77 @@
         confirmButtonText: 'OK'
     });
     </c:if>
+</script>
+
+<script>
+    function navigateToPage(page) {
+        // Thay đổi URL mà không tải lại trang
+        const baseUrl = window.location.origin + window.location.pathname;
+        const params = new URLSearchParams(window.location.search);
+        // Giữ lại giá trị của tham số `status` nếu có
+        const status = params.get("status") || "";
+
+        params.set("page", page); // Thay đổi tham số `page`
+        const newUrl = baseUrl + "?" + params.toString();
+
+        // Thay đổi URL trên trình duyệt mà không tải lại trang
+        history.pushState(null, "", newUrl);
+
+        // Cuộn xuống tiêu đề "Tiến độ giao hàng của đơn vị vận chuyển"
+        const target = document.getElementById("shipping-status-title");
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        // Tải lại trang để cập nhật dữ liệu phân trang (nếu cần)
+        window.location.reload();
+    }
+
+    function filterByStatus(status) {
+        // Lấy base URL (bao gồm /admin hoặc /vendor)
+        const baseUrl = window.location.origin + window.location.pathname;
+        const params = new URLSearchParams(window.location.search);
+
+        // Cập nhật tham số
+        params.set('status', status);
+        params.set('page', 1); // Reset về trang đầu tiên
+
+        if (status === '') {
+            params.delete('status');
+        }
+
+        // Tạo URL mới
+        const newUrl = baseUrl + '?' + params.toString();
+
+        // Thay đổi URL trên trình duyệt
+        history.pushState(null, "", newUrl);
+
+        // Gửi yêu cầu AJAX
+        fetch(newUrl, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest' // Để server biết đây là AJAX request
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status:` + response.status);
+                }
+                return response.text(); // Trả về HTML
+            })
+            .then(html => {
+                // Phân tích HTML và cập nhật phần bảng
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newTable = doc.querySelector('#transactionTable');
+                const totalShippingStatus = doc.querySelector('#totalShippingStatus').textContent;
+
+                document.querySelector('#transactionTable').innerHTML = newTable.innerHTML;
+                document.querySelector('#totalShippingStatus').textContent = totalShippingStatus;
+
+                // Cuộn tới phần bảng
+                document.getElementById('shipping-status-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
 </script>
 
 </body>

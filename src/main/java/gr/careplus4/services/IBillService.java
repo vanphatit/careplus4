@@ -63,4 +63,14 @@ public interface IBillService {
     List<RevenueRecordModel> getRevenueRecordForMonth();
 
     List<RevenueRecordModel> getRevenueRecordForSeason();
+
+    int countBillIsStatusAwaiting();
+
+    int countBillIsStatusShipping();
+
+    List<Bill> findALl();
+
+    Page<Bill> findBillsByStatus(String status, Pageable pageable);
+
+    int countAllStatus(String status);
 }

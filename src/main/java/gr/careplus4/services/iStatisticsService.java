@@ -27,4 +27,8 @@ public interface iStatisticsService {
     List<RevenueRecordModel> getRevenueRecordForMonth();
 
     List<RevenueRecordModel> getRevenueRecordForSeason();
+
+    int getTotalBillIsStatusAwaiting();
+
+    int getTotalBillIsStatusShipping();
 }

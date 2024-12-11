@@ -549,4 +549,36 @@ public class BillServiceImpl implements IBillService {
 
         return revenueRecords;
     }
+
+    @Override
+    public int countBillIsStatusAwaiting() {
+        List<Bill> bills = billRepository.findBillsByStatus("AWAIT");
+        return bills.size();
+    }
+
+    @Override
+    public int countBillIsStatusShipping() {
+        List<Bill> bills = billRepository.findBillsByStatus("SHIPPING");
+        return bills.size();
+    }
+
+    @Override
+    public List<Bill> findALl() {
+        return billRepository.findAll();
+    }
+
+    @Override
+    public Page<Bill> findBillsByStatus(String status, Pageable pageable) {
+        return billRepository.findBillsByStatus(status, pageable);
+    }
+
+    @Override
+    public int countAllStatus(String status) {
+        if (status.isEmpty()) {
+            return (int) billRepository.count();
+        }
+
+        List<Bill> bills = billRepository.findBillsByStatus(status);
+        return bills.size();
+    }
 }

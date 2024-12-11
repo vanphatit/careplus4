@@ -3,21 +3,35 @@ package gr.careplus4.controllers.vendor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.careplus4.entities.Bill;
+import gr.careplus4.models.BillModel;
 import gr.careplus4.models.RevenueRecordModel;
 import gr.careplus4.models.TransactionHistoryModel;
 import gr.careplus4.services.PackageService;
 import gr.careplus4.services.impl.BillServiceImpl;
 import gr.careplus4.services.impl.StatisticsServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping({"/admin", "/vendor"})
@@ -34,7 +48,10 @@ public class DashboardController {
 
     @RequestMapping({"/", "/dashboard", ""})
     public String dashboard(Model model,
-                            RedirectAttributes redirectAttributes
+                            @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
+                            @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize,
+                            @RequestParam(value = "status", required = false, defaultValue = "") String status,
+                            HttpServletRequest request
     ) throws JsonProcessingException {
 
         int totalUser = statisticsService.getTotalUsertWithRoleUser();
@@ -42,9 +59,9 @@ public class DashboardController {
 
         List<Map<String, Object>> top3BestSellerForLast7Days = statisticsService.getTop3BestSellerForLast7Days();
         BigDecimal revenueToday = statisticsService.getRevenueToday();
-        BigDecimal revenueForWeek = statisticsService.getRevenueForWeek();
-        BigDecimal revenueForMonth = statisticsService.getRevenueForMonth();
-        BigDecimal revenueForSeason = statisticsService.getRevenueForSeason();
+
+        int totalStatusAwaiting = statisticsService.getTotalBillIsStatusAwaiting();
+        int totalStatusShipping = statisticsService.getTotalBillIsStatusShipping();
 
         List<RevenueRecordModel> revenueRecordForWeek = statisticsService.getRevenueRecordForWeek();
         List<RevenueRecordModel> revenueRecordForMonth = statisticsService.getRevenueRecordForMonth();
@@ -57,19 +74,53 @@ public class DashboardController {
                 Optional<Bill> bill = billService.findById(transaction.getIdBill());
                 if (bill.isPresent()) {
                     bill.get().setStatus(transaction.getStatus());
+                    bill.get().setUpdateDate(transaction.getDeliveryDate());
                     billService.saveBill(bill.get());
                 }
-
-                if (transaction.getStatus().equals("SHIPPING")) {
-                    transaction.setStatus("Đang giao hàng");
-                } else if (transaction.getStatus().equals("SHIPPED")) {
-                    transaction.setStatus("Đã giao hàng");
-                } else if (transaction.getStatus().equals("CANCELED")) {
-                    transaction.setStatus("Đã hủy");
-                }
             }
-            model.addAttribute(("message"), "Lấy dữ liệu thành công");
-            model.addAttribute("transactionHistory", transactionHistory);
+
+            currentPage = Math.max(currentPage, 1);
+            Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("date").descending());
+
+            Page<Bill> bills = billService.findAll(pageable);
+            int totalShippingStatus = billService.countAllStatus(status);
+
+            System.out.println("status: " + status);
+            System.out.println("totalShippingStatus: " + totalShippingStatus);
+
+            if (!status.isEmpty()) {
+                bills = billService.findBillsByStatus(status, pageable);
+            }
+
+            int totalPages = bills.getTotalPages();
+            if (totalPages > 0) {
+                List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                        .boxed()
+                        .collect(Collectors.toList());
+                model.addAttribute("pageNumbers", pageNumbers);
+            }
+
+            Page<TransactionHistoryModel> transactionHistoryPage = bills.map(bill -> {
+                TransactionHistoryModel transaction = new TransactionHistoryModel();
+                transaction.setIdBill(bill.getId());
+                transaction.setUserPhone(bill.getUser().getPhoneNumber());
+                transaction.setReceiverName(bill.getName());
+                BigDecimal totalAmount = bill.getTotalAmount();
+                transaction.setTotalAmount(totalAmount);
+                transaction.setDate(bill.getDate());
+                transaction.setDeliveryDate(bill.getUpdateDate());
+                transaction.setStatus(bill.getStatus());
+                return transaction;
+            });
+
+            List<TransactionHistoryModel> transactionHistoryList = transactionHistoryPage.getContent();
+            System.out.println("transactionHistoryList: " + transactionHistoryList);
+            model.addAttribute("transactionHistory", transactionHistoryList);
+            model.addAttribute("currentPage", currentPage);
+            model.addAttribute("totalPages", totalPages);
+            model.addAttribute("pageSize", pageSize);
+            model.addAttribute("status", status);
+            model.addAttribute("totalShippingStatus", totalShippingStatus);
         } catch (Exception e) {
             model.addAttribute(("error"), "Lấy dữ liệu thất bại");
         }
@@ -77,9 +128,8 @@ public class DashboardController {
         model.addAttribute("totalUser", totalUser);
         model.addAttribute("totalStockQuantity", totalStockQuantity);
         model.addAttribute("revenueToday", revenueToday);
-        model.addAttribute("revenueForWeek", revenueForWeek);
-        model.addAttribute("revenueForMonth", revenueForMonth);
-        model.addAttribute("revenueForSeason", revenueForSeason);
+        model.addAttribute("totalStatusAwaiting", totalStatusAwaiting);
+        model.addAttribute("totalStatusShipping", totalStatusShipping);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -89,6 +139,10 @@ public class DashboardController {
         model.addAttribute("revenueRecordForSeason", objectMapper.writeValueAsString(revenueRecordForSeason));
 
         model.addAttribute("top3BestSellerForLast7Days", top3BestSellerForLast7Days);
+
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            return "vendor/dashboard"; // Trả về toàn bộ trang JSP
+        }
 
         return "vendor/dashboard";
     }
