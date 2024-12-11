@@ -198,41 +198,6 @@ public class MedicinesController {
         return "vendor/medicine/medicine-addOrEdit";
     }
 
-    private String generateFileName(String medicineName, String fileExtension) {
-        // Format: <medicine_name>_yyyyMMdd_HHmmss.<extension>
-        String timestamp = new java.text.SimpleDateFormat("yyyyMMdd_hhmmss").format(new java.util.Date());
-        String sanitizedMedicineName = medicineName.replaceAll("[^a-zA-Z0-9]", "_"); // Loại bỏ ký tự đặc biệt
-        return sanitizedMedicineName + "_" + timestamp + "." + fileExtension.toLowerCase();
-    }
-
-    public String handleSaveUploadImage(MultipartFile image, String uploadDir, String medicineName) {
-        if (image != null && !image.isEmpty()) {
-            try {
-                // Kiểm tra và tạo thư mục nếu chưa tồn tại
-                Path uploadPath = Paths.get(uploadDir);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-
-                // Xử lý tên file để tránh ký tự không hợp lệ
-                String sanitizedFileName = generateFileName(medicineName, "png");
-
-                // Đường dẫn đầy đủ của file
-                Path path = uploadPath.resolve(sanitizedFileName);
-
-                // Lưu file
-                Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
-                return sanitizedFileName;
-            } catch (Exception e) {
-                // Log lỗi để dễ dàng gỡ lỗi
-                e.printStackTrace();
-                return null;
-            }
-        }
-        return null;
-    }
-
     @PostMapping("/vendor/medicine/save")
     public ModelAndView handleModifyForm(ModelMap model,
                                          @Valid @ModelAttribute("medicine") MedicineModel medicineModel,
@@ -295,7 +260,7 @@ public class MedicinesController {
 
         // Xử lý upload file (nếu có)
         if (medicineModel.getImage() != null && !medicineModel.getImage().isEmpty()) {
-            String imagePath = handleSaveUploadImage(medicineModel.getImage(), MEDICINE_UPLOAD_DIR, medicineModel.getName());
+            String imagePath = medicineService.handleSaveUploadImage(medicineModel.getImage(), MEDICINE_UPLOAD_DIR, medicineModel.getName());
             if (imagePath != null) {
                 // Lưu đường dẫn ảnh mới vào Entity
                 String oldImagePath = null;

@@ -3,16 +3,28 @@ package gr.careplus4.services.impl;
 import gr.careplus4.entities.BillDetail;
 import gr.careplus4.entities.Medicine;
 import gr.careplus4.entities.MedicineCopy;
+import gr.careplus4.models.CustomMultipartFileForMedicine;
 import gr.careplus4.repositories.MedicineCopyRepository;
 import gr.careplus4.services.iMedicineCopy;
+import gr.careplus4.ultilities.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import gr.careplus4.ultilities.Constants.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 @Service
 public class MedicineCopyImpl implements iMedicineCopy {
 
     @Autowired
     private MedicineCopyRepository medicineCopyRepository;
+
+    @Autowired
+    private MedicineServicesImpl medicineServices;
+
+    private CustomMultipartFileForMedicine customMultipartFileForMedicine = new CustomMultipartFileForMedicine();
 
     @Override
     public void copyMedicineFromBillDetails(Medicine currentMedicine, BillDetail billDetails) {
@@ -30,6 +42,16 @@ public class MedicineCopyImpl implements iMedicineCopy {
         saveMedicine.setCategoryName(currentMedicine.getCategory().getName());
         saveMedicine.setUnitName(currentMedicine.getUnit().getName());
         saveMedicine.setBillDetail(billDetails);
+
+        // Lay file anh tu thu muc thuoc
+        MultipartFile file = customMultipartFileForMedicine.handleGetImageFile(currentMedicine.getImage(), Constants.MEDICINE_UPLOAD_DIR);
+
+        String name = currentMedicine.getName() + "_MedicineCopy_" + billDetails.getId();
+
+        String newFileInDir = medicineServices.handleSaveUploadImage(file, Constants.MEDICINE_UPLOAD_DIR, name);
+
+        saveMedicine.setImage(newFileInDir);
+
         this.medicineCopyRepository.save(saveMedicine);
     }
 
