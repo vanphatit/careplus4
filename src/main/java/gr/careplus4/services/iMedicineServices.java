@@ -6,6 +6,7 @@ import gr.careplus4.services.impl.MedicineServicesImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -138,4 +139,8 @@ public interface iMedicineServices {
     List<MedicineForUserModel> getRelatedProducts(String id, String cateName, Pageable pageable);
 
     Map<String, Object> parseDescription(String description, String medicineName);
+
+    String generateFileName(String medicineName, String fileExtension);
+
+    String handleSaveUploadImage(MultipartFile image, String uploadDir, String medicineName);
 }
