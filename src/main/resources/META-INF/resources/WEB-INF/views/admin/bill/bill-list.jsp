@@ -16,10 +16,41 @@
                 <div class="mt-3">
                     <div class="row">
                         <div class="col-12 mx-auto">
-                            <form action="/admin/bill/search" method="get" class="form-inline">
-                                <input type="text" name="id" placeholder="Tìm theo mã hóa đơn" value="${id}" class="form-control"/>
-                                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-                            </form>
+                            <div class="d-flex flex-wrap align-content-center justify-content-around">
+                                <form action="/admin/bill/search" method="get" class="form-inline">
+                                    <input type="text" name="id" placeholder="Tìm theo mã hóa đơn" value="${id}" class="form-control"/>
+                                    <button type="submit" class="btn btn-dark">Tìm kiếm</button>
+                                </form>
+
+                                <form action="/admin/bills" method="get" class="form-inline" id="searchForm">
+                                    <div class="col-12" id="orderStatusFilter">
+                                        <div class="mb-2"><b>Trạng thái đơn hàng</b></div>
+                                        <div class="d-flex flex-wrap">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="status" id="status-await" value="AWAIT">
+                                                <label class="form-check-label" for="status-await">Chờ xử lý</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="status" id="status-shipping" value="SHIPPING">
+                                                <label class="form-check-label" for="status-shipping">Đang giao hàng</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="status" id="status-shipped" value="SHIPPED">
+                                                <label class="form-check-label" for="status-shipped">Đã giao hàng</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="status" id="status-canceled" value="CANCELED">
+                                                <label class="form-check-label" for="status-canceled">Đã hủy</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="status" id="status-returned" value="RETURNED">
+                                                <label class="form-check-label" for="status-returned">Hoàn đơn</label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Lọc đơn</button>
+                                    </div>
+                                </form>
+                            </div>
 
                             <div class="d-flex justify-content-between mt-4">
                                 <h3>Danh sách hóa đơn</h3>
@@ -81,29 +112,24 @@
                             </table>
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination justify-content-center">
+                                    <!-- Nút Previous -->
                                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="/admin/bills?page=${currentPage-1}" aria-label="Previous">
+                                        <a class="page-link" href="/admin/bills?page=${currentPage-1}&status=${param.status}" aria-label="Previous">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
+
+                                    <!-- Liệt kê các trang -->
                                     <c:forEach begin="1" end="${pageNo}" var="i">
-                                        <c:choose>
-                                            <c:when test="${currentPage == i}">
-                                                <li class="page-item active">
-                                                    <a class="page-link" href="/admin/bills?page=${i}">${i}</a>
-                                                </li>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <li class="page-item">
-                                                    <a class="page-link" href="/admin/bills?page=${i}">${i}</a>
-                                                </li>
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <li class="page-item ${currentPage == i ? 'active' : ''}">
+                                            <a class="page-link" href="/admin/bills?page=${i}&status=${param.status}">${i}</a>
+                                        </li>
                                     </c:forEach>
+
+                                    <!-- Nút Next -->
                                     <li class="page-item ${currentPage == pageNo ? 'disabled' : ''}">
-                                        <a class="page-link" href="/admin/bills?page=${currentPage + 1}" aria-label="Next">
+                                        <a class="page-link" href="/admin/bills?page=${currentPage + 1}&status=${param.status}" aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
-                                            <span class="sr-only">Next</span>
                                         </a>
                                     </li>
                                 </ul>

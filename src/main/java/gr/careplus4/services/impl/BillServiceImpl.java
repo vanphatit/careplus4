@@ -5,9 +5,11 @@ import gr.careplus4.models.RevenueRecordModel;
 import gr.careplus4.repositories.*;
 import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.IBillService;
+import gr.careplus4.services.specification.BillSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -45,6 +47,9 @@ public class BillServiceImpl implements IBillService {
     @Autowired
     private ImportRepository importRepository;
 
+    @Autowired
+    private MedicineCopyImpl medicineCopy;
+
     @Override
     public Page<Bill> fetchAllBills(Pageable pageable) {
         return billRepository.findAll(pageable);
@@ -53,6 +58,19 @@ public class BillServiceImpl implements IBillService {
     @Override
     public Page<Bill> fetchBillsByUser(User user, Pageable pageable) {
         return this.billRepository.findAllBillsByUser(user, pageable);
+    }
+
+    @Override
+    public Page<Bill> fetchProductsWithSpec(Pageable page, String status) {
+
+        Specification<Bill> combinedSpec = Specification.where(null);
+
+        if (status != null) {
+            Specification<Bill> currentSpecs = BillSpecification.statusEquals(status);
+            combinedSpec = combinedSpec.and(currentSpecs);
+        }
+
+        return this.billRepository.findAll(combinedSpec, page);
     }
 
     @Override
@@ -156,6 +174,9 @@ public class BillServiceImpl implements IBillService {
                     orderDetail.setQuantity(cd.getQuantity());
                     orderDetail.setSubTotal(cd.getSubTotal());
                     this.billDetailRepository.save(orderDetail);
+
+                    // copy from ord -> medicine copy
+                    this.medicineCopy.copyMedicineFromBillDetails(cd.getMedicine(), orderDetail);
                 }
 
                 BigDecimal sum = order.getTotalAmount();

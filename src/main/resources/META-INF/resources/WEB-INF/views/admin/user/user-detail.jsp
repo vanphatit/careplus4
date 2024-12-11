@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:url value="/" var="URL"></c:url>
 
 <div id="layoutSidenav">
@@ -8,7 +9,7 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Quản lý người dùng</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/admin/">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="/admin/users">Quản lý người dùng</a></li>
                     <li class="breadcrumb-item active">Chi tiết "${userGet.name}"</li>
                 </ol>
@@ -31,9 +32,6 @@
                     <div class="row">
                         <div class="col-12 mx-auto">
                             <div class="card">
-                                <div class="card-header text-white" style="background-color: rgb(0, 28, 64);">
-                                    <h3>Chi tiết người dùng</h3>
-                                </div>
                                 <div class="card-body">
                                     <table class="table table-bordered">
                                         <tr>
@@ -65,9 +63,9 @@
                                             <th>Quyền</th>
                                             <td>
                                                 <c:choose>
-                                                    <c:when test="${userGet.role.name == 'ADMIN'}">Admin</c:when>
-                                                    <c:when test="${userGet.role.name == 'VENDOR'}">Vendor</c:when>
-                                                    <c:when test="${userGet.role.name == 'USER'}">User</c:when>
+                                                    <c:when test="${userGet.role.name == 'ADMIN'}">Quản trị viên</c:when>
+                                                    <c:when test="${userGet.role.name == 'VENDOR'}">Người bán</c:when>
+                                                    <c:when test="${userGet.role.name == 'USER'}">Người dùng</c:when>
                                                 </c:choose>
                                             </td>
                                         </tr>
@@ -87,6 +85,14 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Ngày tạo</th>
+                                            <td><fmt:formatDate value="${userGet.createdAt}" pattern="dd/MM/yyyy HH:mm:ss"/></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Ngày cập nhật</th>
+                                            <td><fmt:formatDate value="${userGet.updatedAt}" pattern="dd/MM/yyyy HH:mm:ss"/></td>
                                         </tr>
                                     </table>
                                 </div>

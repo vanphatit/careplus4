@@ -2,6 +2,7 @@ package gr.careplus4.controllers.admin.bill;
 
 import gr.careplus4.entities.Bill;
 import gr.careplus4.services.impl.BillServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -30,14 +32,18 @@ public class BillManagementController {
     private BillServiceImpl billService;
 
     @GetMapping("/bills")
-    public String getBills(Model model, @RequestParam(defaultValue = "1") int page) {
-        int pageSize = 5;
-        Pageable pageable = PageRequest.of(page - 1, pageSize);
-        Page<Bill> billPage = this.billService.fetchAllBills(pageable);
-        List<Bill> bills = billPage.getContent();
-        int numberPages = this.billService.getNumberOfPage(pageSize);
+    public String getProductPage(Model model, @RequestParam(value = "status", required = false) String status,
+                                 @RequestParam(defaultValue = "1") int page) {
+
+        Pageable pageable = PageRequest.of(page - 1, 5, Sort.by(Sort.Order.desc("date")));
+
+        Page<Bill> prs = this.billService.fetchProductsWithSpec(pageable, status);
+
+        List<Bill> bills = prs.getContent().size() > 0 ? prs.getContent()
+                : new ArrayList<Bill>();
+
         model.addAttribute("bills", bills);
-        model.addAttribute("pageNo", numberPages);
+        model.addAttribute("pageNo", prs.getTotalPages());
         model.addAttribute("currentPage", page);
 
         return "admin/bill/bill-list";
@@ -90,7 +96,7 @@ public class BillManagementController {
                                          @RequestParam(defaultValue = "1") int page){
         int pageSize = 5;
 
-        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by("id"));
+        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("date")));
 
         Page<Bill> resultPage;
         if (StringUtils.hasText(id)) {
