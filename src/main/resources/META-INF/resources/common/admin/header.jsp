@@ -68,13 +68,13 @@
                 </a>
             </li>
             <li>
-                <a class="app-menu__item" href="<c:url value='/admin/bill' />">
+                <a class="app-menu__item" href="<c:url value='/admin/bills' />">
                     <i class='app-menu__icon bx bx-receipt'></i>
                     <span class="app-menu__label">Quản lý bán hàng</span>
                 </a>
             </li>
             <li>
-                <a class="app-menu__item" href="<c:url value='/admin/user' />">
+                <a class="app-menu__item" href="<c:url value='/admin/users' />">
                     <i class='app-menu__icon bx bx-user'></i>
                     <span class="app-menu__label">Quản lý người dùng</span>
                 </a>
@@ -84,13 +84,13 @@
         <!-- Các thẻ dành cho VENDOR -->
         <c:if test="${user.role.name=='ADMIN' || user.role.name == 'VENDOR'}">
             <li>
-                <a class="app-menu__item" href="<c:url value='/vendor/medicine' />">
+                <a class="app-menu__item" href="<c:url value='/vendor/medicines' />">
                     <i class='app-menu__icon bx bx-capsule'></i>
                     <span class="app-menu__label">Quản lý thuốc</span>
                 </a>
             </li>
             <li>
-                <a class="app-menu__item" href="<c:url value='/vendor/review' />">
+                <a class="app-menu__item" href="<c:url value='/vendor/reviews' />">
                     <i class='app-menu__icon bx bx-message-rounded-dots'></i>
                     <span class="app-menu__label">Quản lý review</span>
                 </a>
@@ -108,7 +108,7 @@
                 </a>
             </li>
             <li>
-                <a class="app-menu__item" href="<c:url value='/vendor/manufacturer' />">
+                <a class="app-menu__item" href="<c:url value='/vendor/manufacturers' />">
                     <i class='app-menu__icon bx bx-user-check'></i>
                     <span class="app-menu__label">Quản lý nhà sản xuất</span>
                 </a>
@@ -122,7 +122,7 @@
                 </a>
             </li>
             <li>
-                <a class="app-menu__item" href="<c:url value='/admin/unit' />">
+                <a class="app-menu__item" href="<c:url value='/admin/units' />">
                     <i class='app-menu__icon bx bx-purchase-tag-alt'></i>
                     <span class="app-menu__label">Quản lý đơn vị</span>
                 </a>
