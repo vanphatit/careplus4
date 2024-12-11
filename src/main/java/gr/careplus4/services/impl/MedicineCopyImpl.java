@@ -32,4 +32,14 @@ public class MedicineCopyImpl implements iMedicineCopy {
         saveMedicine.setBillDetail(billDetails);
         this.medicineCopyRepository.save(saveMedicine);
     }
+
+    @Override
+    public MedicineCopy findMedicineCopyByBillDetail_Id(long billDetailId) {
+        return medicineCopyRepository.findMedicineCopyByBillDetail_Id(billDetailId);
+    }
+
+    @Override
+    public MedicineCopy findMedicineCopyById(long id) {
+        return medicineCopyRepository.findMedicineCopyById(id);
+    }
 }

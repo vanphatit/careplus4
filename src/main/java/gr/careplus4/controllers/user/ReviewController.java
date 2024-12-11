@@ -1,7 +1,6 @@
 package gr.careplus4.controllers.user;
 
 import gr.careplus4.entities.*;
-import gr.careplus4.models.ReviewDetailModel;
 import gr.careplus4.services.impl.*;
 import gr.careplus4.services.security.JwtCookies;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,6 +36,9 @@ public class ReviewController {
 
     @Autowired
     private MedicineServicesImpl medicineService;
+
+    @Autowired
+    private MedicineCopyImpl medicineCopyImpl;
 
     @Autowired
     private UserServiceImpl userServiceImpl;
@@ -334,10 +336,15 @@ public class ReviewController {
                 .collect(Collectors.toList());
 
         // Lọc ra các sản phẩm chưa được đánh giá
-        List<Medicine> medicinesNotReviewed = billDetails.stream()
-                .map(BillDetail::getMedicine)
-                .filter(medicine -> !reviewedMedicineIds.contains(medicine.getId()))
+        List<BillDetail> notReviewedBillDetails = billDetails.stream()
+                .filter(bd -> !reviewedMedicineIds.contains(bd.getMedicine().getId()))
                 .collect(Collectors.toList());
+
+        List<MedicineCopy> medicinesNotReviewed = new ArrayList<>();
+        for (BillDetail bd : notReviewedBillDetails) {
+            MedicineCopy medicineCopy = medicineCopyImpl.findMedicineCopyByBillDetail_Id(bd.getId());
+            medicinesNotReviewed.add(medicineCopy);
+        }
 
         // Kiểm tra xem bill đã được review chưa
         if (medicinesNotReviewed.isEmpty() || medicinesNotReviewed == null) {
@@ -355,7 +362,9 @@ public class ReviewController {
     @PostMapping("/user/review/{billId}")
     public ModelAndView saveReview(HttpServletRequest request,
                                    @PathVariable("billId") String billId,
-                                   @ModelAttribute("reviewDetails") ReviewDetailModel model) {
+                                   @RequestParam("medicineId") long medicineId,
+                                   @RequestParam("rating") BigDecimal rating,
+                                   @RequestParam("comment") String comment) {
         String id = jwtCookies.getUserPhoneFromJwt(request);
         User user = userServiceImpl.findByPhoneNumber(id).orElseThrow(() -> new IllegalArgumentException("Invalid User"));
         Bill bill = billService.findById(billId).orElseThrow(() -> new IllegalArgumentException("Invalid Bill"));
@@ -371,23 +380,25 @@ public class ReviewController {
             reviewService.save(review);
         }
 
-        // Kiểm tra nếu sản phẩm đã được đánh giá
-        boolean alreadyReviewed = reviewDetailService.existsReviewDetailByReviewAndMedicine_Id(review, model.getMedicineId());
-        if (alreadyReviewed) {
-            throw new IllegalArgumentException("Product already reviewed!");
-        }
+        MedicineCopy medicineCopy = medicineCopyImpl.findMedicineCopyById(medicineId);
 
-        Medicine medicine = medicineService.findById(model.getMedicineId()).orElseThrow(() -> new IllegalArgumentException("Invalid Medicine"));
+        Medicine medicine = medicineService.getMedicineByNameAndExpiryDateAndManufacturer_NameAndImportDate(
+                medicineCopy.getName(),
+                medicineCopy.getExpiryDate(),
+                medicineCopy.getManufacturerName(),
+                medicineCopy.getImportDate()
+        ).get();
 
         // Tạo chi tiết review mới
         ReviewDetail reviewDetail = new ReviewDetail();
         reviewDetail.setReview(review);
         reviewDetail.setMedicine(medicine);
-        reviewDetail.setRating(model.getRating());
-        reviewDetail.setText(model.getComment());
+        reviewDetail.setMedicineName(medicine.getName());
+        reviewDetail.setRating(rating);
+        reviewDetail.setText(comment);
         reviewDetailService.save(reviewDetail);
 
-        medicineService.updateTotalRatingForMedicine(medicine.getName(), medicine.getManufacturer().getName(), model.getRating());
+        medicineService.updateTotalRatingForMedicine(medicine.getName(), medicine.getManufacturer().getName(), rating);
 
         return new ModelAndView("redirect:/user/review/" + bill.getId());
     }
