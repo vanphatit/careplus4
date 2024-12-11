@@ -649,6 +649,9 @@
                 document.querySelector('#transactionTable').innerHTML = newTable.innerHTML;
                 document.querySelector('#totalShippingStatus').textContent = totalShippingStatus;
 
+                // Navigate
+                navigateToPage(1);
+
                 // Cập nhật lại số
                 formatNumber();
 
