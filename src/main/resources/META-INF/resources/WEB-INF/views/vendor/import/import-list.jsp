@@ -12,15 +12,15 @@
 </head>
 <body class="bg-light">
 <div class="container mt-5">
-    <h1 class="mb-4">Danh sách phiếu nhập</h1>
+    <!-- Breadcrumb Section -->
+    <h1 class="mt-4">Quản lý Phiếu nhập</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">Danh sách phiếu nhập</li>
+    </ol>
 
-    <!-- Thông báo lỗi hoặc thành công -->
-    <c:if test="${not empty error}">
-        <div class="alert alert-danger">${error}</div>
-    </c:if>
-    <c:if test="${not empty message}">
-        <div class="alert alert-success">${message}</div>
-    </c:if>
+    <h3 class="mb-4">Danh sách phiếu nhập</h3>
+
     <!-- Form tìm kiếm -->
     <form action="/vendor/import/searchpaginated" method="get">
     <div class="d-flex align-items-center gap-2 mb-3">
@@ -32,7 +32,7 @@
                 value="${param.id}"
                 style="width: 250px;"
         />
-        <button type="submit" class="btn btn-warning">
+        <button type="submit" class="btn btn-warning" style="margin: 0 10px">
             <i class="fas fa-search"></i> Tìm kiếm
         </button>
     </div>
@@ -68,16 +68,12 @@
                         <a href="/vendor/import/show/${imp.id}" class="btn btn-info btn-sm">
                             <i class="fas fa-eye"></i> Chi tiết
                         </a>
-                        <a href="/vendor/import/edit/${imp.id}" class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i> Sửa
-                        </a>
-                        <a href="/vendor/import/delete/${imp.id}" class="btn btn-danger btn-sm"
-                           onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                        <button class="btn btn-danger btn-sm" onclick="confirmDelete('${imp.id}');">
                             <i class="fas fa-trash"></i> Xóa
-                        </a>
-                        <a href="/vendor/import-detail/add-detail/${imp.id}" class="btn btn-success btn-sm">
-                            <i class="fas fa-plus"></i> Thêm chi tiết
-                        </a>
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="confirmEdit('${imp.id}');">
+                            <i class="fas fa-edit"></i> Thêm chi tiết
+                        </button>
                     </td>
                 </tr>
             </c:forEach>
@@ -107,5 +103,64 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Kiểm tra nếu có message
+    <c:if test="${not empty message}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: '${message}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+
+    // Kiểm tra nếu có error
+    <c:if test="${not empty error}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: '${error}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+</script>
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn xóa phiếu nhập ' + id + '?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Chuyển hướng tới URL xóa
+                window.location.href = `/vendor/import/delete/` + id;
+            }
+        });
+    }
+
+    function confirmEdit(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn thêm chi tiết cho phiếu nhập ' + id + '?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Thêm chi tiết',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Chuyển hướng tới URL sửa
+                window.location.href = `/vendor/import-detail/add-detail/` + id;
+            }
+        });
+    }
+</script>
 </body>
 </html>

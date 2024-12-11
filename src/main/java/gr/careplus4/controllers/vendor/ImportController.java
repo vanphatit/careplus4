@@ -54,7 +54,9 @@ public class ImportController {
         return providerService.findAll(); // Lấy danh sách providers
     }
     @RequestMapping("")
-    public String all(Model model, @RequestParam("page") Optional<Integer> page,
+    public ModelAndView all(ModelMap model, @RequestParam("page") Optional<Integer> page,
+                      @RequestParam(value = "error", required = false) String error,
+                      @RequestParam(value = "message", required = false) String message,
                       @RequestParam("size") Optional<Integer> size) {
         int currentPage = page.orElse(1);
         int pageSize = 10;
@@ -72,7 +74,9 @@ public class ImportController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "vendor/import/import-list";
+        model.addAttribute("error", error);
+        model.addAttribute("message", message);
+        return new ModelAndView("vendor/import/import-list", model);
     }
 
     @InitBinder
@@ -135,7 +139,7 @@ public class ImportController {
         entity.setProvider(provider); // Gán thực thể Provider vào Import
 
         importService.save(entity); // Lưu Import
-        model.addAttribute("message", "Import added successfully");
+        model.addAttribute("message", "Đã lưu Import thành công!");
         return new ModelAndView("redirect:/vendor/import", model);
     }
 
@@ -155,29 +159,35 @@ public class ImportController {
             model.addAttribute("imp", imp);
             return new ModelAndView("vendor/import/import-add", model);
         }
-        model.addAttribute("mess", "Import not found");
+        model.addAttribute("error", "Không tìm thấy Import!");
         return new ModelAndView("forward:/vendor/import/import-list", model);
     }
 
     @GetMapping("/delete/{id}")
-    public String confirmDelete(Model model, @PathVariable("id") String id) {
+    public ModelAndView confirmDelete(ModelMap model, @PathVariable("id") String id) {
         Optional<Import> optionalImport = importService.findById(id);
         if (optionalImport.isPresent()) {
             model.addAttribute("imp", optionalImport.get());
             Boolean hasImportDetail = importDetailService.existsImportDetailByImportId(id);
+            if (hasImportDetail) {
+                model.addAttribute("error", "Không thể xóa Import đã có chi tiết Import!");
+                return new ModelAndView("redirect:/vendor/import", model);
+            }
             model.addAttribute("hasImportDetail", hasImportDetail);
-            return "vendor/import/import-delete"; // Hiển thị trang xác nhận xóa
+            return new ModelAndView("vendor/import/import-delete", model);
         }
-        return "redirect:/vendor/import";
+        return new ModelAndView("redirect:/vendor/import", model);
     }
 
     @PostMapping("/delete/{id}")
-    public String delete(ModelMap model,@PathVariable("id") String id) {
+    public ModelAndView delete(ModelMap model,@PathVariable("id") String id) {
         if (importDetailService.existsImportDetailByImportId(id)) {
-           importDetailService.deleteByImportId(id);
+            model.addAttribute("error", "Không thể xóa Import đã có chi tiết Import!");
+            return new ModelAndView("redirect:/vendor/import", model);
         }
         importService.deleteById(id);
-        return "redirect:/vendor/import";
+        model.addAttribute("message", "Đã xóa Import thành công!");
+        return new ModelAndView("redirect:/vendor/import", model);
     }
 
     @RequestMapping("/searchpaginated")

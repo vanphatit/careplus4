@@ -13,7 +13,15 @@
 </head>
 <body class="bg-light">
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Một số thông tin về phiếu nhập</h1>
+    <!-- Breadcrumb Section -->
+    <h1 class="mt-4">Quản lý Phiếu nhập</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active"><a href="/vendor/import">Quản lý Phiếu nhập</a></li>
+        <li class="breadcrumb-item active">Chi tiết Phiếu nhập</li>
+    </ol>
+
+    <h3 class="text-center mb-4">Một số thông tin về phiếu nhập</h3>
 
     <!-- Hiển thị thông tin chung về Import -->
     <c:choose>
