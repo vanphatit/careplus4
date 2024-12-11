@@ -48,8 +48,13 @@ public class UserServiceImpl implements iUserService {
     }
 
     @Override
-    public Page<User> findByRoleName(String roleName, Pageable pageable) {
-        return userRepository.findByRoleName(roleName, pageable);
+    public Page<User> findUsersByStatusAndRole_Name(boolean status, String roleName, Pageable pageable) {
+        return userRepository.findUsersByStatusAndRole_Name(status, roleName, pageable);
+    }
+
+    @Override
+    public Page<User> findUsersByRole_Name(String roleName, Pageable pageable) {
+        return userRepository.findUsersByRole_Name(roleName, pageable);
     }
 
     @Override
@@ -70,6 +75,11 @@ public class UserServiceImpl implements iUserService {
     @Override
     public Page<User> findByNameContaining(String name, Pageable pageable) {
         return userRepository.findByNameContaining(name, pageable);
+    }
+
+    @Override
+    public Page<User> findUsersByStatus(boolean status, Pageable pageable) {
+        return userRepository.findUsersByStatus(status, pageable);
     }
 
     @Override
