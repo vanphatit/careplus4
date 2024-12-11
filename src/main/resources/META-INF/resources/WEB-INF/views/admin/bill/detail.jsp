@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,7 +18,7 @@
                 </ol>
                 <div class="container mt-5">
                     <div class="row">
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 mx-auto ">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h3>Hóa đơn chi tiết với mã: ${bill.id}</h3>
                                 <form method="POST" action="/admin/bill/update" class="row">
@@ -95,6 +96,91 @@
             </div>
         </main>
     </div>
+
+    <div class="container-fluid py-1">
+        <div class="container py-1">
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <!-- Nút ẩn/hiện -->
+                <button type="button" id="toggleDetailsBtn" class="btn btn-outline-danger">Ẩn chi tiết hóa đơn</button>
+                <!-- -->
+
+                <table class="table" id="billDetails">
+                    <!-- Header của bảng -->
+                    <thead>
+                    <tr>
+                        <th scope="col" class="text-primary fw-bold">Sản phẩm</th>
+                        <th scope="col" class="text-primary fw-bold">Tên</th>
+                        <th scope="col" class="text-primary fw-bold">Giá cả</th>
+                        <th scope="col" class="text-primary fw-bold">Số lượng</th>
+                        <th scope="col" class="text-primary fw-bold">Thành tiền</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <!-- Thông tin mã hóa đơn -->
+                    <tr>
+                        <td colspan="2">Mã hóa đơn: ${bill.id}</td>
+                        <td colspan="1">
+                            <fmt:formatNumber type="number" value="${bill.totalAmount}" /> đ
+                        </td>
+                    </tr>
+
+                    <!-- Lặp qua danh sách chi tiết hóa đơn -->
+                    <c:forEach var="billDetail" items="${bill.bilDetails}">
+                        <tr>
+                            <!-- Hình ảnh sản phẩm -->
+                            <th scope="row">
+                                <div class="d-flex align-items-center">
+                                    <img
+                                            src="${pageContext.request.contextPath}/images/image?fileName=${billDetail.medicineCopy.image}"
+                                            class="img-fluid"
+                                            style="width: 60px; height: 60px;"
+                                            alt="${billDetail.medicineCopy.image}"
+                                    >
+                                </div>
+                            </th>
+
+                            <!-- Tên sản phẩm -->
+                            <td>
+                                <p class="mb-0 mt-4">
+                                    <a href="/user/medicine/${billDetail.medicine.id}" target="_blank">
+                                            ${billDetail.medicineCopy.name}
+                                    </a>
+                                </p>
+                            </td>
+
+                            <!-- Giá của sản phẩm -->
+                            <td>
+                                <p class="mb-0 mt-4">
+                                    <fmt:formatNumber type="number" value="${billDetail.unitCost}" /> đ
+                                </p>
+                            </td>
+
+                            <!-- Số lượng của sản phẩm -->
+                            <td>
+                                <div class="mt-4">
+                                    <span class="text-center">
+                                            ${billDetail.quantity}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <!-- Thành tiền của sản phẩm -->
+                            <td>
+                                <p class="mb-0 mt-4" data-cart-detail-id="${cartDetail.id}">
+                                    <fmt:formatNumber
+                                            type="number"
+                                            value="${billDetail.unitCost * billDetail.quantity}"/> đ
+                                </p>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div> <!-- Kết thúc table-responsive -->
+        </div> <!-- Kết thúc container -->
+    </div>
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
@@ -161,6 +247,22 @@
         });
     });
 </script>
+
+<script>
+    $(document).ready(function() {
+        $('#toggleDetailsBtn').on('click', function() {
+            var details = $('#billDetails');
+            if (details.is(':visible')) {
+                details.hide();
+                $(this).text('Hiện chi tiết hóa đơn');
+            } else {
+                details.show();
+                $(this).text('Ẩn chi tiết hóa đơn');
+            }
+        });
+    });
+</script>
+
 </body>
 
 </html>

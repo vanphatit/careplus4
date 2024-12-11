@@ -97,7 +97,7 @@
                                     <tr>
                                         <th scope="row">
                                             <div class="d-flex align-items-center">
-                                                <img src="${pageContext.request.contextPath}/images/image?fileName=${billDetail.medicine.image}"
+                                                <img src="${pageContext.request.contextPath}/images/image?fileName=${billDetail.medicineCopy.image}"
                                                      class="img-fluid me-5 rounded-circle"
                                                      style="width: 80px; height: 80px;" alt="">
                                             </div>
@@ -105,14 +105,13 @@
                                         <td>
                                             <p class="mb-0 mt-4">
                                                 <a href="/user/medicine/${billDetail.medicine.id}" target="_blank">
-                                                        ${billDetail.medicine.name}
+                                                        ${billDetail.medicineCopy.name}
                                                 </a>
                                             </p>
                                         </td>
                                         <td>
                                             <p class="mb-0 mt-4">
-                                                <fmt:formatNumber type="number" value="${billDetail.unitCost}" />
-                                                đ
+                                                <fmt:formatNumber type="number" value="${billDetail.unitCost}" /> đ
                                             </p>
                                         </td>
                                         <td>
