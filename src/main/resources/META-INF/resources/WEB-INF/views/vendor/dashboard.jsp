@@ -310,7 +310,7 @@
                     <th>Tên Người Nhận</th>
                     <th>Tổng Tiền</th>
                     <th>Ngày Đặt</th>
-                    <th>Ngày Giao</th>
+                    <th>Ngày Cập Nhật Trạng Thái</th>
                     <th>Trạng Thái</th>
                 </tr>
                 </thead>
