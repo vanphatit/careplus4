@@ -70,5 +70,14 @@ public class StatisticsServiceImpl implements iStatisticsService {
         return billService.getRevenueRecordForSeason();
     }
 
+    @Override
+    public int getTotalBillIsStatusAwaiting() {
+        return billService.countBillIsStatusAwaiting();
+    }
+
+    @Override
+    public int getTotalBillIsStatusShipping() {
+        return billService.countBillIsStatusShipping();
+    }
 
 }
