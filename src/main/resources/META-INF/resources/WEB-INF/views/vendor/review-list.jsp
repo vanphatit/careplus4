@@ -119,7 +119,7 @@
                                                 <td>
                                                     <a href="/vendor/medicine/${detail.medicine.id}" style="color: #0d1214 !important;"
                                                        class="text-decoration-none text-primary">
-                                                        <strong>${detail.medicine.name}</strong>
+                                                        <strong>${detail.medicineName}</strong>
                                                     </a>
                                                 </td>
                                                 <td>
