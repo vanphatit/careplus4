@@ -11,4 +11,5 @@ public class CategoryModel {
     private String id;
     private String name;
     private String parentCategoryId; // ID của danh mục cha nếu có
+    private Boolean status;
 }

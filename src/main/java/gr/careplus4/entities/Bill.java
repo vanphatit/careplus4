@@ -7,10 +7,13 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -23,13 +26,26 @@ public class Bill implements Serializable {
     @Column(name = "ID", length = 7)
     private String id;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "UserPhone", nullable = false)
+    @ToString.Exclude
     private User user;
+
+    @Column(name = "ReceiverName", length = 255, nullable = false)
+    @NotEmpty(message = "Receiver name is required")
+    private String name;
+
+    @Column(name = "Address", length = 255)
+    @NotEmpty(message = "Receiver address is required")
+    private String address;
 
     @Column(name = "Date")
     @Temporal(TemporalType.DATE)
     private Date date;
+
+    @Column(name = "UpdateDate")
+    @Temporal(TemporalType.DATE)
+    private Date updateDate;
 
     @Column(name = "TotalAmount", precision = 10, scale = 2, nullable = false)
     @DecimalMin("0.01")
@@ -39,6 +55,7 @@ public class Bill implements Serializable {
     private String method;
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "IDEvent")
     private Event event;
 
@@ -49,4 +66,8 @@ public class Bill implements Serializable {
     @Column(name = "Status", columnDefinition = "NVARCHAR(255)", nullable = false)
     @NotEmpty(message = "Status is required")
     private String status;
+
+    @OneToMany(mappedBy = "bill")
+    @ToString.Exclude
+    private List<BillDetail> bilDetails;
 }

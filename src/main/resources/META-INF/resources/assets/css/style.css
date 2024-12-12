@@ -609,10 +609,10 @@ h6 {
 .btn-primary.focus,
 .btn-primary:focus,
 .btn-primary:hover {
-    border-color: #3d464d;
-    background: #3d464d;
-    color: #fff;
-    fill: #fff
+    border-color: #ffd333;
+    background: #ffd333;
+    color: #546069;
+    fill: #546069
 }
 
 .btn-primary.focus .fake-svg-icon,
@@ -647,9 +647,9 @@ h6 {
 .btn-primary,
 .btn-primary.disabled,
 .btn-primary:disabled {
-    border-color: #ffd333;
-    background: #ffd333;
-    color: #3d464d;
+    border-color: #0077b6;
+    background: #0077b6;
+    color: #ffffff;
     fill: #3d464d
 }
 
@@ -670,8 +670,8 @@ h6 {
 .btn-secondary.focus,
 .btn-secondary:focus,
 .btn-secondary:hover {
-    border-color: #3d464d;
-    background: #3d464d;
+    border-color: #ffd333;
+    background: #ffd333;
     color: #fff;
     fill: #fff
 }
@@ -3905,9 +3905,9 @@ screen and (-ms-high-contrast:active) {
 }
 
 .mobile-header__panel {
-    background: #ffd333;
+    background: #0077b6;
     box-shadow: 0 1px rgba(0, 0, 0, .04), inset 0 -1px rgba(0, 0, 0, .04);
-    color: #3d464d;
+    color: #ffffff;
     position: relative
 }
 
@@ -3930,7 +3930,7 @@ screen and (-ms-high-contrast:active) {
     height: 36px;
     border-radius: 2px;
     background: transparent;
-    fill: #3d464d;
+    fill: #ffffff;
     border: none;
     padding: 0;
     margin: 0;
@@ -5400,7 +5400,7 @@ screen and (-ms-high-contrast:active) {
 }
 
 .checkout__totals-footer {
-    font-size: 24px
+    font-size: 20px
 }
 
 .checkout__totals-footer th {
@@ -10824,3 +10824,599 @@ screen and (-ms-high-contrast:active) {
     border-radius: 2px;
     padding: 28px
 }
+
+/* Bộ lọc nằm trên cùng */
+.filter-container {
+    margin-bottom: 20px;
+}
+
+/* Cấu trúc danh sách thuốc */
+.medicine-list .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Tạo khoảng cách đều giữa các thẻ */
+    gap: 20px; /* Khoảng cách giữa các thẻ */
+}
+
+.col-md-2 {
+    flex: 0 0 18%; /* Đảm bảo mỗi thẻ chiếm khoảng 18% chiều rộng */
+    display: flex;
+    justify-content: center; /* Căn giữa mỗi thẻ */
+    margin-bottom: 20px; /* Khoảng cách dưới mỗi thẻ */
+}
+
+/* Cấu trúc thẻ thuốc */
+.medicine-card {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.medicine-card img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: contain;
+}
+
+.medicine-card h5 a {
+    display: block;
+    height: 3em; /* Giới hạn chiều cao */
+    line-height: 1.5em; /* Dòng cách */
+    overflow: hidden; /* Ẩn nội dung tràn */
+    text-overflow: ellipsis; /* Dấu "..." khi nội dung quá dài */
+    white-space: normal; /* Cho phép xuống dòng */
+    text-align: center; /* Căn giữa nội dung */
+}
+
+.card-body {
+    margin-top: 10px;
+}
+
+.card-body h5 {
+    font-size: 1.1em;
+}
+
+.card-body p {
+    margin: 5px 0;
+}
+
+.rating-stars {
+    display: inline-block;
+    position: relative;
+    font-size: 1.5rem;
+    color: #e4e5e9; /* Màu sao rỗng */
+}
+
+.rating-stars::before {
+    content: "★★★★★"; /* Nền đầy sao */
+    color: #e4e5e9; /* Màu sao rỗng */
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* Mặc định full width */
+}
+
+.rating-stars span {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    color: #ffc107; /* Màu sao đầy */
+}
+
+/* Cấu trúc dòng thuốc, sử dụng flex để căn giữa và phân phối đều */
+.row {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các thẻ thuốc xuống dòng nếu không đủ không gian */
+    justify-content: space-between; /* Các thẻ thuốc sẽ cách đều nhau */
+}
+
+/* Mỗi thẻ thuốc sẽ chiếm 1/3 chiều rộng của container */
+.col-md-4 {
+    width: 32%; /* Thay vì 30%, tăng thêm chút để tạo không gian giữa các thẻ thuốc */
+    margin-bottom: 20px; /* Khoảng cách dưới mỗi thẻ thuốc */
+    box-sizing: border-box;
+}
+
+/* Đảm bảo các thẻ thuốc có chiều cao giống nhau */
+.medicine-card {
+    display: flex;
+    flex-direction: column; /* Đảm bảo chiều cao thẻ thuốc được phân phối hợp lý */
+    height: 100%; /* Các thẻ thuốc sẽ có chiều cao giống nhau */
+    justify-content: space-between; /* Phân bố đều nội dung trong thẻ thuốc */
+    text-align: center; /* Căn giữa văn bản trong thẻ */
+    border: 1px solid #ddd;
+    padding: 15px;
+    background: #fff; /* Cải thiện màu nền của thẻ */
+    border-radius: 8px; /* Làm tròn các góc của thẻ thuốc */
+}
+
+/* Cải thiện hiển thị hình ảnh thuốc */
+.medicine-card img {
+    width: 100%; /* Làm cho hình ảnh chiếm hết chiều rộng của thẻ */
+    height: 200px;
+    object-fit: contain; /* Hoặc dùng cover tùy vào yêu cầu */
+    border-radius: 10px; /* Bo góc ảnh để trông đẹp hơn */
+}
+
+/* Đảm bảo phần nội dung bên trong thẻ thuốc được căn đều */
+.medicine-card .card-body {
+    flex-grow: 1; /* Nội dung trong thẻ thuốc chiếm hết không gian còn lại */
+}
+
+/* Các nút Mua ngay */
+.medicine-card .btn {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Flexbox layout để căn giữa và không bị lệch */
+.medicine-card .card-body div {
+    flex-grow: 1; /* Đảm bảo phần tử không bị chật khi có text dài */
+}
+
+.medicine-card .card-body .rating-stars {
+    display: flex;
+    justify-content: center;
+}
+
+.medicine-card .card-body .rating-stars span {
+    margin-right: 5px;
+}
+
+/* Đảm bảo chiều cao đồng đều cho các thẻ thuốc */
+.medicine-card .card-body .rating-stars,
+.medicine-card .card-body p {
+    margin-bottom: 10px;
+}
+
+/* Flexbox layout để căn giữa và không bị lệch */
+.medicine-card .card-body .rating-stars {
+    display: flex;
+    justify-content: center;
+}
+
+.medicine-card .card-body .manufacturer-name {
+    white-space: nowrap;          /* Không cho phép xuống dòng */
+    overflow: hidden;             /* Ẩn phần văn bản bị tràn */
+    text-overflow: ellipsis;      /* Hiển thị dấu '...' khi quá dài */
+    width: 100%;                  /* Đảm bảo chiếm hết chiều rộng thẻ */
+    text-align: center;             /* Căn chỉnh văn bản bên trái */
+}
+
+.rating-stars {
+    display: inline-block;
+    position: relative;
+    font-size: 1.2rem;
+    color: #f5c518; /* Màu vàng */
+}
+
+.empty-stars {
+    color: #e4e5e9; /* Màu sao rỗng */
+}
+
+.filled-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #f5c518; /* Màu sao đầy */
+    overflow: hidden;
+}
+
+.review-item {
+    margin-bottom: 15px;
+}
+
+hr {
+    margin-top: 10px;
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Thiết kế nút Previous và Next */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 25%;
+    height: 100%;
+    background-color: #fff; /* Màu trắng */
+    border: 2px solid #FFFFFF;
+    color: #007bff; /* Màu mặc định */
+    border-radius: 0; /* Hình vuông */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    position: absolute;
+    bottom: -60px; /* Đưa nút xuống dưới sản phẩm */
+    transition: all 0.3s ease;
+}
+
+/* Hiệu ứng hover */
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background-color: #007bff; /* Nền vàng khi hover */
+    color: #fff; /* Màu biểu tượng chuyển thành trắng */
+}
+
+/* Định vị trí nút Previous và Next */
+.carousel-control-prev {
+    left: calc(50% - 80px); /* Căn chỉnh nút bên trái */
+}
+
+.carousel-control-next {
+    right: calc(50% - 80px); /* Căn chỉnh nút bên phải */
+}
+
+/* Container của carousel */
+#related-products-carousel {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    padding: 20px 0;
+    border-radius: 10px;
+    width: 100%;
+    overflow-x: hidden; /* Ẩn phần tràn ngoài */
+}
+
+/* Các sản phẩm trong carousel */
+.carousel-inner {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    gap: 20px;
+}
+
+.carousel-item {
+    flex: 0 0 100%; /* Mỗi item chiếm toàn bộ chiều rộng carousel */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* Đảm bảo các sản phẩm xuống dòng nếu cần */
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 150px; /* Điều chỉnh chiều cao hình ảnh */
+    object-fit: contain; /* Đảm bảo ảnh không bị méo */
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* Tiêu đề sản phẩm trong carousel */
+.carousel-item p {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Nút điều khiển carousel */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #fff;
+    border-radius: 50%;
+    padding: 5px;
+}
+
+/* Hiệu ứng hover trên sản phẩm */
+.carousel-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Đảm bảo lưới sản phẩm hiển thị đẹp */
+.carousel-inner .row {
+    gap: 20px; /* Tăng khoảng cách giữa các sản phẩm */
+}
+
+.product-card {
+     background-color: #fff;
+     padding: 20px;
+     border-radius: 10px;
+     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+     text-align: center;
+     height: 100%;
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between;
+     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Thêm hiệu ứng hover */
+ }
+
+.product-card img {
+    width: 100%;
+    height: 150px; /* Tăng chiều cao ảnh */
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.product-card p {
+    font-size: 16px; /* Tăng kích thước chữ */
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.product-card h5 {
+    font-size: 1rem;
+    text-align: center; /* Căn giữa tiêu đề */
+    min-height: 60px; /* Đặt chiều cao tối thiểu để đồng đều */
+    overflow: hidden; /* Ngăn tràn */
+    text-overflow: ellipsis; /* Hiện dấu ba chấm nếu tiêu đề quá dài */
+    white-space: normal; /* Cho phép xuống dòng */
+}
+
+/* Thêm hiệu ứng hover */
+.product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.product-card h5 {
+    font-size: 1rem;
+    text-align: center; /* Căn giữa tiêu đề */
+    min-height: 60px; /* Đặt chiều cao tối thiểu để đồng đều */
+    overflow: hidden; /* Ngăn tràn */
+    text-overflow: ellipsis; /* Hiện dấu ba chấm nếu tiêu đề quá dài */
+    white-space: normal; /* Cho phép xuống dòng */
+}
+
+/* Đảm bảo lưới sản phẩm hiển thị đẹp */
+.carousel-inner .row {
+    gap: 20px; /* Tăng khoảng cách giữa các sản phẩm */
+}
+
+#event-carousel {
+    position: relative;
+}
+
+.outside-control {
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.carousel-control-prev.outside-control {
+    left: -50px; /* Đưa nút Previous ra bên ngoài */
+}
+
+.carousel-control-next.outside-control {
+    right: -50px; /* Đưa nút Next ra bên ngoài */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #0d6efd;
+    border-radius: 50%;
+    padding: 10px;
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+    background-color: #0056b3;
+}
+
+/* Phân trang */
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pagination .page-item {
+    list-style: none;
+}
+
+.pagination .page-link {
+    padding: 10px 15px;
+    text-decoration: none;
+    border: 1px solid #007bff;
+    color: #007bff;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Điều chỉnh các sản phẩm khi hiển thị trên màn hình nhỏ */
+@media (max-width: 768px) {
+    .carousel-item {
+        width: 100%; /* Chiều rộng 100% trên màn hình nhỏ */
+    }
+
+    .carousel-inner {
+        gap: 10px; /* Giảm khoảng cách giữa các sản phẩm */
+    }
+}
+
+@media (max-width: 576px) {
+    .carousel-item img {
+        height: 120px; /* Giảm chiều cao hình ảnh trên màn hình nhỏ */
+    }
+}
+
+@media (max-width: 768px) {
+    .product-card {
+        height: 350px; /* Giảm chiều cao thẻ sản phẩm */
+    }
+
+    .product-card img {
+        height: 150px; /* Giảm chiều cao ảnh */
+    }
+
+    .product-card p {
+        font-size: 14px; /* Giảm kích thước chữ */
+    }
+
+    .product-card .btn {
+        font-size: 14px; /* Giảm kích thước nút */
+    }
+}
+
+.medicine-details {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.medicine-details h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.medicine-details img {
+    max-width: 100%; /* Đảm bảo ảnh không vượt quá kích thước vùng */
+    height: auto;
+    border-radius: 10px;
+}
+.back-link {
+    margin-top: 20px;
+}
+.back-link a {
+    text-decoration: none;
+}
+.medicine-img {
+    width: 100%; /* Đảm bảo ảnh co dãn theo vùng chứa */
+    max-width: 400px; /* Giới hạn chiều rộng tối đa */
+    height: 400px; /* Chiều cao cố định */
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .medicine-img {
+        width: 300px; /* Chiều rộng nhỏ hơn trên màn hình nhỏ */
+        height: 300px;
+    }
+}
+
+@media (max-width: 576px) {
+    .medicine-img {
+        width: 200px; /* Chiều rộng nhỏ hơn nữa */
+        height: 200px;
+    }
+}
+
+/* Đánh giá phần */
+.rating-stars {
+    font-size: 1.5rem;
+    color: #ffd700; /* Màu vàng cho sao */
+}
+
+.rating-stars .empty-stars {
+    color: #e4e5e9; /* Màu sao rỗng */
+}
+
+.quantity-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 5px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.input-group .btn {
+    border: none;
+    background: #f9f9f9;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+}
+
+.input-group .btn:hover {
+    background: #e2e6ea;
+}
+
+.input-group .form-control {
+    width: 60px;
+    text-align: center;
+    border: none;
+    box-shadow: none;
+}
+
+.banner-slide {
+    background-color: #f8f9fa; /* Nền sáng */
+    border: 1px solid #ddd; /* Viền nhẹ */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Bóng mờ */
+    padding: 30px;
+}
+
+.banner-slide h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+#event-carousel {
+    position: relative;
+}
+
+.outside-control {
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.carousel-control-prev.outside-control {
+    left: -50px; /* Đưa nút Previous ra bên ngoài */
+}
+
+.carousel-control-next.outside-control {
+    right: -50px; /* Đưa nút Next ra bên ngoài */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #0d6efd;
+    border-radius: 50%;
+    padding: 10px;
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+    background-color: #0056b3;
+}
+
+.carousel-item {
+    display: none; /* Ẩn tất cả các item ban đầu */
+    position: relative; /* Giữ vị trí cho nội dung */
+    -webkit-transition: transform 0.6s ease-in-out;
+    -o-transition: transform 0.6s ease-in-out;
+    transition: transform 0.6s ease-in-out;
+}
+
+.carousel-item.active {
+    display: block; /* Chỉ hiển thị item đang active */
+    position: relative;
+    z-index: 2;
+}
+

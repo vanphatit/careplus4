@@ -1,24 +1,34 @@
 package gr.careplus4.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "User")
-public class User implements Serializable {
+public class User implements UserDetails {
 
     @Id
+    @EqualsAndHashCode.Include
     @Column(name = "PhoneNumber", length = 10)
     @Pattern(regexp = "^\\d{10}$", message = "Phone number must be 10 digits")
     private String phoneNumber;
@@ -30,7 +40,7 @@ public class User implements Serializable {
     @Column(name = "Address", length = 255)
     private String address;
 
-    @Column(name = "Password", length = 32, nullable = false)
+    @Column(name = "Password", length = 255, nullable = false)
     @NotEmpty(message = "Password is required")
     private String password;
 
@@ -42,14 +52,58 @@ public class User implements Serializable {
     @Email(message = "Email should be valid")
     private String email;
 
+    @CreationTimestamp
+    @Column(name = "CreatedAt", updatable = false, nullable = false)
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "UpdatedAt", nullable = false)
+    private Date updatedAt;
+
     @ManyToOne
+    @ToString.Exclude
+    @JsonBackReference // Đánh dấu trường này để Jackson không chuyển đổi nó thành JSON và tránh recursion
     @JoinColumn(name = "IDRole", nullable = false)
     private Role role;
 
     @Column(name = "IsActive")
-    private boolean isActive;
+    private boolean status;
 
     @Column(name = "PointEarned")
     @Min(value = 0, message = "Points must be >= 0")
     private int pointEarned;
+
+    @OneToOne(mappedBy = "user")
+    @ToString.Exclude
+    private Cart cart;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(role.getName()));
+    }
+
+    @Override
+    public String getUsername() {
+        return phoneNumber;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // Có thể thêm logic kiểm tra nếu cần
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // Có thể thêm logic kiểm tra nếu cần
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // Có thể thêm logic kiểm tra nếu cần
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return status;
+    }
 }

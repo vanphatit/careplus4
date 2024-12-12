@@ -10,8 +10,10 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartDetailModel {
-    private String cartId;
+    private Long cartDetailId;
     private String medicineId;
+    private String image;
+    private String unitName;
     private int quantity;
     private BigDecimal unitCost;
     private BigDecimal subTotal;

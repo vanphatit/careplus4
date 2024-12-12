@@ -18,11 +18,13 @@ import java.math.BigDecimal;
 public class CartDetail implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
     @ManyToOne
     @JoinColumn(name = "IDCart", nullable = false)
     private Cart cart;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "IDMedicine", nullable = false)
     private Medicine medicine;
@@ -37,4 +39,10 @@ public class CartDetail implements Serializable {
 
     @Column(name = "SubTotal", precision = 10, scale = 2, nullable = false)
     private BigDecimal subTotal;
+
+    @PrePersist
+    @PreUpdate
+    private void calculateSubTotal() {
+        this.subTotal = this.unitCost.multiply(BigDecimal.valueOf(this.quantity));
+    }
 }

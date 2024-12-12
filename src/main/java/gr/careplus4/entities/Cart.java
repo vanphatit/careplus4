@@ -1,30 +1,40 @@
 package gr.careplus4.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "Cart")
 public class Cart implements Serializable {
 
     @Id
     @Column(name = "ID", length = 7)
+    @EqualsAndHashCode.Include
     private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "UserPhone", nullable = false)
+    @OneToOne(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JoinColumn(name = "UserPhone", nullable = false, unique = true)
+
     private User user;
 
-    @Column(name = "TotalAmount", precision = 10, scale = 2, nullable = false)
-    @DecimalMin("0.01")
-    private BigDecimal totalAmount;
+    @Column(name = "ProductCount", nullable = false)
+    private int productCount;
+
+    @Column(name = "CouponCode", length = 7)
+    private String couponCode;
+
+    @Column(name = "UsedPoint", columnDefinition = "bit default 0")
+    private Boolean usedPoint;
+
+    @OneToMany(mappedBy = "cart")
+    @ToString.Exclude
+    private List<CartDetail> cartDetails;
 }

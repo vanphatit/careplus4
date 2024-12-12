@@ -2,7 +2,9 @@ package gr.careplus4.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,10 +30,12 @@ public class Event implements Serializable {
 
     @Column(name = "DateStart")
     @Temporal(TemporalType.DATE)
+//    @PastOrPresent
     private Date dateStart;
 
     @Column(name = "DateEnd")
     @Temporal(TemporalType.DATE)
+//    @FutureOrPresent
     private Date dateEnd;
 
     @Column(name = "Discount", precision = 5, scale = 2)

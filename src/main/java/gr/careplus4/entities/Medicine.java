@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -49,15 +50,26 @@ public class Medicine implements Serializable {
     @DecimalMax("5.0")
     private BigDecimal rating;
 
+    @Column(name = "ImportDate")
+    @Temporal(TemporalType.DATE)
+    private Date importDate;
+
+    @Column(name = "Image", length = 4086)
+    @NotEmpty(message = "Image is required")
+    private String image;
+
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "IDManufacture", nullable = false)
     private Manufacturer manufacturer;
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "IDCategory", nullable = false)
     private Category category;
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "IDUnit", nullable = false)
     private Unit unit;
 }
