@@ -10,7 +10,7 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Quản lý hóa đơn</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/admin/">Dashboard</a></li>
                     <li class="breadcrumb-item active">Hóa đơn</li>
                 </ol>
                 <div class="mt-3">
@@ -155,8 +155,8 @@
                                         <td>
                                             <a href="/vendor/bill/${bill.id}"
                                                class="btn btn-success">Chi tiết </a>
-                                            <a href="/vendor/bill/delete/${bill.id}"
-                                               class="btn btn-danger">Xóa</a>
+<%--                                            <a href="/vendor/bill/delete/${bill.id}"--%>
+<%--                                               class="btn btn-danger">Xóa</a>--%>
                                         </td>
                                     </tr>
 

@@ -599,11 +599,7 @@ public class MedicinesController {
         Set<MedicineForUserModel> uniqueList = new HashSet<>(list);
 
         // Chia nhóm sản phẩm (5 sản phẩm mỗi nhóm)
-        List<List<MedicineForUserModel>> groupedProducts = splitList(uniqueList, 3);
-
-        for (List<MedicineForUserModel> group : groupedProducts) {
-            System.out.println("======================================= Group: " + group);
-        }
+        List<List<MedicineForUserModel>> groupedProducts = splitList(uniqueList, 2);
 
         model.addAttribute("reviews", reviews);
         model.addAttribute("medicine", medicine.get());

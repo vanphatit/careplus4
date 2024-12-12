@@ -43,7 +43,7 @@
     </table>
 
     <div class="text-center mt-4">
-        <a href="/user/reviews" class="btn btn-secondary">Quay lại</a>
+        <a href="/user/order-history" class="btn btn-secondary">Quay lại</a>
     </div>
 </div>
 
