@@ -64,12 +64,6 @@ public class DashboardController {
         try {
             List<TransactionHistoryModel> transactionHistory = packageService.findAllTransactionHistory();
 
-            System.out.println("============================================================= Transaction History From API");
-            for (TransactionHistoryModel transaction : transactionHistory) {
-                System.out.println(transaction);
-            }
-
-            System.out.println("============================================================= Update Date For Bill");
             for (TransactionHistoryModel transaction : transactionHistory) {
                 Optional<Bill> bill = billService.findById(transaction.getIdBill());
                 if (bill.isPresent()) {
@@ -85,9 +79,6 @@ public class DashboardController {
             Page<Bill> bills = billService.findAll(pageable);
             int totalShippingStatus = billService.countAllStatus(status);
 
-            System.out.println("status: " + status);
-            System.out.println("totalShippingStatus: " + totalShippingStatus);
-
             if (!status.isEmpty()) {
                 bills = billService.findBillsByStatus(status, pageable);
             }
@@ -98,14 +89,6 @@ public class DashboardController {
                         .boxed()
                         .collect(Collectors.toList());
                 model.addAttribute("pageNumbers", pageNumbers);
-            }
-
-            System.out.println("============================================================= Bill 40");
-            for (Bill bill : bills) {
-                if (bill.getId().equals("B000040")) {
-                    System.out.println(bill);
-                    break;
-                }
             }
 
             Page<TransactionHistoryModel> transactionHistoryPage = bills.map(bill -> {
@@ -122,10 +105,7 @@ public class DashboardController {
             });
 
             List<TransactionHistoryModel> transactionHistoryList = transactionHistoryPage.getContent();
-            System.out.println("============================================================= Transaction History From Database");
-            for (TransactionHistoryModel transaction : transactionHistoryList) {
-                System.out.println(transaction);
-            }
+
             model.addAttribute("transactionHistory", transactionHistoryList);
             model.addAttribute("currentPage", currentPage);
             model.addAttribute("totalPages", totalPages);
