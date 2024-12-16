@@ -2,6 +2,16 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:url value="/" var="URL"></c:url>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>CarePlus4 - Quản lý người dùng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+<body>
 <div id="layoutSidenav">
     <div id="layoutSidenav_content">
         <main>
@@ -12,20 +22,6 @@
                     <li class="breadcrumb-item"><a href="/admin/users">Người dùng </a></li>
                     <li class="breadcrumb-item active">Cập nhật</li>
                 </ol>
-
-                <!-- Hiển thị thông báo -->
-                <c:if test="${not empty error}">
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            ${error}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                </c:if>
-                <c:if test="${not empty success}">
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            ${success}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                </c:if>
 
                 <div class="mt-5">
                     <div class="row">
@@ -82,3 +78,25 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <c:if test="${not empty success}">
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: '${success}',
+            confirmButtonText: 'OK'
+        });
+    </c:if>
+    <c:if test="${not empty error}">
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: '${error}',
+            confirmButtonText: 'OK'
+        });
+    </c:if>
+</script>
+</body>
+</html>
