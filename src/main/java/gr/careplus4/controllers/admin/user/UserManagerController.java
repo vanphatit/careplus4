@@ -282,9 +282,19 @@ public class UserManagerController {
     }
 
     @GetMapping("/user/{phoneNumber}")
-    public String editUser(@PathVariable("phoneNumber") String phoneNumber, Model model) {
+    public String editUser(@PathVariable("phoneNumber") String phoneNumber,
+                           @RequestParam(value = "error", required = false) String error,
+                           @RequestParam(value = "success", required = false) String success, Model model) {
         User user = userService.findByPhoneNumber(phoneNumber).get();
         model.addAttribute("userGet", user);
+
+        if (error != null){
+            model.addAttribute("error", error);
+        }
+        if (success != null){
+            model.addAttribute("success", success);
+        }
+
         return "admin/user/user-detail";
     }
 
@@ -293,10 +303,12 @@ public class UserManagerController {
                              @RequestParam(value = "error", required = false) String error,
                              @RequestParam(value = "success", required = false) String success,
                              Model model) {
-        if (error != null)
+        if (error != null){
             model.addAttribute("error", error);
-        if (success != null)
+        }
+        if (success != null){
             model.addAttribute("success", success);
+        }
 
         User user = userService.findByPhoneNumber(phoneNumber).get();
         model.addAttribute("userGet", user);
@@ -304,7 +316,7 @@ public class UserManagerController {
     }
 
     @PostMapping("/user/update/{phoneNumber}")
-    public ModelAndView updateUser(ModelMap model, @PathVariable("phoneNumber") String phoneNumber,
+    public ModelAndView updateUser(ModelMap model, @PathVariable("phoneNumber") String phoneNumber, HttpServletRequest request,
                                    @RequestParam("name") String name, @RequestParam("email") String email,
                                    @RequestParam("address") String address, @RequestParam("gender") String gender,
                                    @RequestParam("pointEarned") int pointEarned, @RequestParam("role") String roleName) {
@@ -314,7 +326,8 @@ public class UserManagerController {
             user1.setGender(gender);
             user1.setEmail(email);
 
-            if(user1.getRole().getName().equalsIgnoreCase("admin") && !roleName.equalsIgnoreCase("admin")) {
+            if(user1.getRole().getName().equalsIgnoreCase("admin")
+                    && jwtCookies.getUserPhoneFromJwt(request).equals(phoneNumber)) {
                 model.addAttribute("error", "Không thể chuyển quyền của bản thân từ admin thành quyền khác!");
                 return new ModelAndView("redirect:/admin/user/" + phoneNumber, model);
             }
