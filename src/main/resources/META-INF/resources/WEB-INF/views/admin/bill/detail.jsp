@@ -75,7 +75,13 @@
                                 <li class="list-group-item" id="receiver-name">Người nhận: <strong>${bill.name}</strong></li>
                                 <li class="list-group-item" id="user-phone">Số điện thoại: <strong>${bill.user.phoneNumber}</strong></li>
                                 <li class="list-group-item" id="address">Địa chỉ: <strong>${bill.address}</strong></li>
-                                <li class="list-group-item" id="total-amount">Tổng tiền: <strong>${bill.totalAmount}</strong></li>
+                                <li class="list-group-item" id="total-amount">Tổng tiền:
+                                    <strong>
+                                        <fmt:formatNumber
+                                                type="number"
+                                                value="${bill.totalAmount}"/> đ
+                                    </strong>
+                                </li>
                                 <li class="list-group-item">Ngày tạo: ${bill.date}</li>
                                 <li class="list-group-item">Thanh toán: ${bill.method}</li>
                                 <li class="list-group-item">Mã sự kiện(Nếu có): ${bill.event.id}</li>

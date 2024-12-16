@@ -40,11 +40,11 @@ public class Bill implements Serializable {
     private String address;
 
     @Column(name = "Date")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
     @Column(name = "UpdateDate")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updateDate;
 
     @Column(name = "TotalAmount", precision = 10, scale = 2, nullable = false)
