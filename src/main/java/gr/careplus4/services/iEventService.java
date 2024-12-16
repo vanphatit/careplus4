@@ -41,4 +41,6 @@ public interface iEventService {
     String generateEventId(String previousId);
 
     Event findTopByOrderByIdDesc ();
+
+    public boolean checkUsed(String id);
 }

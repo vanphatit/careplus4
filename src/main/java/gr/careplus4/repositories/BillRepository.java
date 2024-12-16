@@ -3,6 +3,7 @@ package gr.careplus4.repositories;
 import gr.careplus4.entities.Bill;
 import gr.careplus4.entities.Import;
 import gr.careplus4.entities.User;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,9 +29,19 @@ public interface BillRepository extends JpaRepository<Bill, String>, JpaSpecific
 
     List<Bill> findBillsByDate(Date date);
 
+    List<Bill> findBillsByUpdateDate(Date date);
+
     List<Bill> findBillsByDate(Date date, Pageable pageable);
 
     List<Bill> findBillsByDateBetween(Date startDate, Date endDate);
 
+    List<Bill> findBillsByUpdateDateBetween (Date startDate, Date endDate);
+
+    Boolean existsByEventId(String eventId);
+
     Page<Bill> findAll(Specification<Bill> spec, Pageable page);
+
+    List<Bill> findBillsByStatus(@NotEmpty(message = "Status is required") String status);
+
+    Page<Bill> findBillsByStatus(@NotEmpty(message = "Status is required") String status, Pageable pageable);
 }

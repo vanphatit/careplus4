@@ -23,14 +23,6 @@
             margin-bottom: 20px; /* Khoảng cách dưới */
         }
 
-        /*.filter-container h5 {*/
-        /*    font-size: 1.2rem;*/
-        /*    font-weight: bold;*/
-        /*    color: #007bff; !* Màu xanh nổi bật *!*/
-        /*    text-align: center;*/
-        /*    margin-bottom: 15px;*/
-        /*}*/
-
         .btn {
             border-radius: 5px;
         }
@@ -54,13 +46,6 @@
 
         .table td {
             vertical-align: middle;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            position: relative;
-            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
         }
 
         .alert-dismissible .btn-close {
@@ -141,11 +126,24 @@
         .filter-container .mb-3 {
             margin-bottom: 20px;
         }
+
+        /* Định dạng chung */
+        .stock-status {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
     </style>
 
 </head>
 <body>
 <div class="container mt-4">
+    <!-- Breadcrumb Section -->
+    <h1 class="mt-4">Quản lý thuốc</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">Quản lý thuốc</li>
+    </ol>
     <div class="row">
         <!-- Filter Section: 1/3 -->
         <div class="col-md-2">
@@ -238,7 +236,7 @@
             <!-- Table Section -->
             <div class="table-container">
                 <table class="table table-bordered table-striped">
-                    <thead class="table-light">
+                    <thead class="table-light" style="background: #b8e2de; color: black">
                     <tr>
                         <th>Mã thuốc</th>
                         <th>Tên thuốc</th>
@@ -256,13 +254,41 @@
                             <td>${medicine.name}</td>
                             <td>${medicine.category.name}</td>
                             <td>${medicine.manufacturer.name}</td>
-                            <td>${medicine.unitCost}</td>
-                            <td>${medicine.stockQuantity}</td>
                             <td>
-                                <div class="d-flex gap-2 justify-content-center">
-                                    <a href="${pageContext.request.contextPath}/vendor/medicine/${medicine.id}" class="btn btn-info btn-sm text-white">Xem</a>
-                                    <a href="${pageContext.request.contextPath}/vendor/medicine/edit/${medicine.id}" class="btn btn-warning btn-sm">Sửa</a>
-                                    <a href="${pageContext.request.contextPath}/vendor/medicine/delete/${medicine.id}" class="btn btn-danger btn-sm">Xóa</a>
+                                <div class="text-left">
+                                    <c:choose>
+                                        <c:when test="${medicine.unitCost == 0.00}">
+                                            <span class="badge bg-danger">Lỗi giá</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge bg-primary">${medicine.unitCost} VNĐ</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="stock-status text-left">
+                                    <c:choose>
+                                        <c:when test="${medicine.stockQuantity >= 10}">
+                                            <span class="badge bg-success">Còn hàng: <strong>${medicine.stockQuantity}</strong></span>
+                                        </c:when>
+                                        <c:when test="${medicine.stockQuantity > 0 && medicine.stockQuantity < 10}">
+                                            <span class="badge bg-warning text-dark">Còn ít: <strong>${medicine.stockQuantity}</strong></span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge bg-danger">Hết hàng</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-between align-items-center gap-2">
+                                    <a href="${pageContext.request.contextPath}/vendor/medicine/${medicine.id}" class="btn btn-info btn-sm text-white flex-grow-1 text-center" style="margin: 0 5px">Xem</a>
+                                    <a href="${pageContext.request.contextPath}/vendor/medicine/edit/${medicine.id}" class="btn btn-warning btn-sm flex-grow-1 text-center" style="margin: 0 5px">Sửa</a>
+                                    <a href="javascript:void(0);"
+                                       class="btn btn-danger btn-sm"
+                                       style="margin: 0 10px"
+                                       onclick="confirmDeleteWithSweetAlert('${medicine.id}', '${medicine.name}');">Xóa</a>
                                 </div>
                             </td>
                         </tr>
@@ -308,6 +334,26 @@
         confirmButtonText: 'OK'
     });
     </c:if>
+
+    function confirmDeleteWithSweetAlert(medicineId, medicineName) {
+        Swal.fire({
+            title: `Bạn có chắc chắn muốn xóa thuốc "` + medicineName + `" không?`,
+            text: "Hành động này không thể hoàn tác!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Xóa",
+            cancelButtonText: "Hủy",
+            allowOutsideClick: false, // Không cho phép đóng khi click ra ngoài
+            allowEscapeKey: false // Không cho phép đóng khi nhấn phím Escape
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Điều hướng đến URL xóa
+                window.location.href = `/vendor/medicine/delete/` + medicineId;
+            }
+        });
+    }
 </script>
 </body>
 </html>

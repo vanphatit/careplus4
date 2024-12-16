@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ReviewDetailModel {
     @NotNull
-    private String medicineId;
+    private long medicineId;
 
     @DecimalMin("0.0")
     @DecimalMax("5.0")

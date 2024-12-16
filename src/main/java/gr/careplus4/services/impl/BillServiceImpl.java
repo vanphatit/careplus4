@@ -269,8 +269,18 @@ public class BillServiceImpl implements IBillService {
     }
 
     @Override
+    public List<Bill> findBillsByUpdateDate(java.sql.Date date) {
+        return billRepository.findBillsByUpdateDate(date);
+    }
+
+    @Override
     public List<Bill> findBillsByDateBetween(Date startDate, Date endDate) {
         return billRepository.findBillsByDateBetween(startDate, endDate);
+    }
+
+    @Override
+    public List<Bill> findBillsByUpdateDateBetween(java.sql.Date startDate, java.sql.Date endDate) {
+        return billRepository.findBillsByUpdateDateBetween(startDate, endDate);
     }
 
     @Override
@@ -300,7 +310,9 @@ public class BillServiceImpl implements IBillService {
 
         BigDecimal revenue = new BigDecimal(0);
         for (Bill bill : bills) {
-            revenue = revenue.add(bill.getTotalAmount());
+            if (bill.getStatus().equals("SHIPPED")) {
+                revenue = revenue.add(bill.getTotalAmount());
+            }
         }
         return revenue;
     }
@@ -311,7 +323,7 @@ public class BillServiceImpl implements IBillService {
         LocalDate startDate = today.with(DayOfWeek.MONDAY);
         LocalDate endDate = today.with(DayOfWeek.SUNDAY);
 
-        List<Bill> bills = billRepository.findBillsByDateBetween(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
+        List<Bill> bills = findBillsByUpdateDateBetween(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
 
         if (bills.isEmpty()) {
             return new BigDecimal(0);
@@ -319,7 +331,9 @@ public class BillServiceImpl implements IBillService {
 
         BigDecimal revenue = new BigDecimal(0);
         for (Bill bill : bills) {
-            revenue = revenue.add(bill.getTotalAmount());
+            if (bill.getStatus().equals("SHIPPED")) {
+                revenue = revenue.add(bill.getTotalAmount());
+            }
         }
 
         return revenue;
@@ -331,7 +345,7 @@ public class BillServiceImpl implements IBillService {
         LocalDate startDate = today.withDayOfMonth(1);
         LocalDate endDate = today.withDayOfMonth(today.lengthOfMonth());
 
-        List<Bill> bills = billRepository.findBillsByDateBetween(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
+        List<Bill> bills = billRepository.findBillsByUpdateDateBetween(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
 
         if (bills.isEmpty()) {
             return new BigDecimal(0);
@@ -339,7 +353,9 @@ public class BillServiceImpl implements IBillService {
 
         BigDecimal revenue = new BigDecimal(0);
         for (Bill bill : bills) {
-            revenue = revenue.add(bill.getTotalAmount());
+            if (bill.getStatus().equals("SHIPPED")) {
+                revenue = revenue.add(bill.getTotalAmount());
+            }
         }
 
         return revenue;
@@ -354,7 +370,7 @@ public class BillServiceImpl implements IBillService {
         LocalDate startDate = today.withMonth((season - 1) * 3 + 1).withDayOfMonth(1);
         LocalDate endDate = today.withMonth(season * 3).withDayOfMonth(today.withMonth(season * 3).lengthOfMonth());
 
-        List<Bill> bills = billRepository.findBillsByDateBetween(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
+        List<Bill> bills = billRepository.findBillsByUpdateDateBetween(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
 
         if (bills.isEmpty()) {
             return new BigDecimal(0);
@@ -362,7 +378,9 @@ public class BillServiceImpl implements IBillService {
 
         BigDecimal revenue = new BigDecimal(0);
         for (Bill bill : bills) {
-            revenue = revenue.add(bill.getTotalAmount());
+            if (bill.getStatus().equals("SHIPPED")) {
+                revenue = revenue.add(bill.getTotalAmount());
+            }
         }
 
         return revenue;
@@ -370,7 +388,7 @@ public class BillServiceImpl implements IBillService {
 
     @Override
     public BigDecimal getRevenueForPeriod(java.sql.Date startDate, java.sql.Date endDate) {
-        List<Bill> bills = billRepository.findBillsByDateBetween(startDate, endDate);
+        List<Bill> bills = billRepository.findBillsByUpdateDateBetween(startDate, endDate);
 
         if (bills.isEmpty()) {
             return new BigDecimal(0);
@@ -378,7 +396,9 @@ public class BillServiceImpl implements IBillService {
 
         BigDecimal revenue = new BigDecimal(0);
         for (Bill bill : bills) {
-            revenue = revenue.add(bill.getTotalAmount());
+            if (bill.getStatus().equals("SHIPPED")) {
+                revenue = revenue.add(bill.getTotalAmount());
+            }
         }
 
         return revenue;
@@ -402,7 +422,7 @@ public class BillServiceImpl implements IBillService {
 
     @Override
     public BigDecimal getRevenueDaily(java.sql.Date date) {
-        List<Bill> bills = billRepository.findBillsByDate(date);
+        List<Bill> bills = billRepository.findBillsByUpdateDate(date);
 
         if (bills.isEmpty()) {
             return new BigDecimal(0);
@@ -410,7 +430,9 @@ public class BillServiceImpl implements IBillService {
 
         BigDecimal revenue = new BigDecimal(0);
         for (Bill bill : bills) {
-            revenue = revenue.add(bill.getTotalAmount());
+            if (bill.getStatus().equals("SHIPPED")) {
+                revenue = revenue.add(bill.getTotalAmount());
+            }
         }
         return revenue;
     }
@@ -548,5 +570,37 @@ public class BillServiceImpl implements IBillService {
         }
 
         return revenueRecords;
+    }
+
+    @Override
+    public int countBillIsStatusAwaiting() {
+        List<Bill> bills = billRepository.findBillsByStatus("AWAIT");
+        return bills.size();
+    }
+
+    @Override
+    public int countBillIsStatusShipping() {
+        List<Bill> bills = billRepository.findBillsByStatus("SHIPPING");
+        return bills.size();
+    }
+
+    @Override
+    public List<Bill> findALl() {
+        return billRepository.findAll();
+    }
+
+    @Override
+    public Page<Bill> findBillsByStatus(String status, Pageable pageable) {
+        return billRepository.findBillsByStatus(status, pageable);
+    }
+
+    @Override
+    public int countAllStatus(String status) {
+        if (status.isEmpty()) {
+            return (int) billRepository.count();
+        }
+
+        List<Bill> bills = billRepository.findBillsByStatus(status);
+        return bills.size();
     }
 }

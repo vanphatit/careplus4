@@ -31,6 +31,7 @@
     <h3 class="mb-4">Danh sách sự kiện</h3>
 
     <!-- Form tìm kiếm -->
+    <form action="/vendor/event/searchpaginated" method="get">
     <div class="d-flex align-items-center gap-2 mb-3">
         <input
                 type="text"
@@ -44,6 +45,7 @@
             <i class="fas fa-search"></i> Tìm kiếm
         </button>
     </div>
+    </form>
 
     <div class="mb-3">
         <a href="${pageContext.request.contextPath}/vendor/event/add" class="btn btn-success"><i class="fas fa-plus"></i> Thêm sự kiện mới
@@ -81,14 +83,16 @@
                             <td><fmt:formatDate value="${event.dateEnd}" pattern="yyyy-MM-dd" /></td>
                             <td>${event.discount}</td>
                             <td>
-                                <a href="${pageContext.request.contextPath}/vendor/event/edit/${event.id}" class="btn btn-warning btn-sm">
+                                <a href="${pageContext.request.contextPath}/vendor/event/edit/${event.id}"
+                                   onclick="confirmEdit(${event.id});"
+                                   class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i> Sửa
                                 </a>
-<%--                                <a href="${pageContext.request.contextPath}/vendor/event/delete/${event.id}"--%>
-<%--                                   onclick="return confirm('Are you sure you want to delete this event?');"--%>
-<%--                                   class="btn btn-danger btn-sm">--%>
-<%--                                    <i class="fas fa-trash"></i> Xóa--%>
-<%--                                </a>--%>
+                                <a href="${pageContext.request.contextPath}/vendor/event/delete/${event.id}"
+                                   onclick="confirmDelete(${event.id});"
+                                   class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </a>
                             </td>
                         </tr>
                     </c:forEach>
@@ -116,5 +120,64 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Kiểm tra nếu có message
+    <c:if test="${not empty message}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: '${message}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+
+    // Kiểm tra nếu có error
+    <c:if test="${not empty error}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: '${error}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+</script>
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Chuyển hướng tới URL xóa
+                window.location.href = `${pageContext.request.contextPath}/vendor/event/delete/` + id;
+            }
+        });
+    }
+
+    function confirmEdit(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sửa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Chuyển hướng tới URL sửa
+                window.location.href = `${pageContext.request.contextPath}/vendor/event/edit/` + id;
+            }
+        });
+    }
+</script>
 </body>
 </html>

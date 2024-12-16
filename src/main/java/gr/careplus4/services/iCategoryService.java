@@ -25,4 +25,6 @@ public interface iCategoryService {
     int getNumberOfPage(int pageSize);
     Page<Category> findAll(Pageable pageable);
     Page<Category> findByNameLike(String name, Pageable pageable);
+
+    List<Category> findAllSubCategories();
 }

@@ -11,15 +11,23 @@ import gr.careplus4.repositories.MedicineRepository;
 import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iMedicineServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -406,11 +414,6 @@ public class MedicineServicesImpl implements iMedicineServices {
     public Optional<MedicineForUserModel> findMedicineByIdForUser(String id) {
         // Lấy danh sách thuốc đã lọc theo ngày hết hạn gần nhất
         List<MedicineForUserModel> medicines = findNearestExpiryMedicines();
-
-        // Loại bỏ các thuốc có stockQuantity = 0
-        medicines = medicines.stream()
-                .filter(medicine -> medicine.getStockQuantity() > 0)
-                .toList();
 
         // Duyệt danh sách và tìm thuốc có ID khớp
         return medicines.stream()
@@ -912,6 +915,40 @@ public class MedicineServicesImpl implements iMedicineServices {
         return text.substring(0, 1).toUpperCase() + text.substring(1);
     }
 
+    @Override
+    public String generateFileName(String medicineName, String fileExtension) {
+        // Format: <medicine_name>_yyyyMMdd_HHmmss.<extension>
+        String timestamp = new java.text.SimpleDateFormat("yyyyMMdd_hhmmss").format(new java.util.Date());
+        String sanitizedMedicineName = medicineName.replaceAll("[^a-zA-Z0-9]", "_"); // Loại bỏ ký tự đặc biệt
+        return sanitizedMedicineName + "_" + timestamp + "." + fileExtension.toLowerCase();
+    }
 
+    @Override
+    public String handleSaveUploadImage(MultipartFile image, String uploadDir, String medicineName) {
+        if (image != null && !image.isEmpty()) {
+            try {
+                // Kiểm tra và tạo thư mục nếu chưa tồn tại
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
 
+                // Xử lý tên file để tránh ký tự không hợp lệ
+                String sanitizedFileName = generateFileName(medicineName, "png");
+
+                // Đường dẫn đầy đủ của file
+                Path path = uploadPath.resolve(sanitizedFileName);
+
+                // Lưu file
+                Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+                return sanitizedFileName; // Trả về tên file đã lưu
+            } catch (Exception e) {
+                // Log lỗi để dễ dàng gỡ lỗi
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
+    }
 }

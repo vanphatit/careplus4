@@ -29,7 +29,15 @@
 </head>
 <body>
 <div class="container mt-5">
-    <h1 class="text-center mb-4">${imp.id == null ? 'Thêm phiếu nhập mới' : 'Chỉnh sửa phiếu nhập'}</h1>
+    <!-- Breadcrumb Section -->
+    <h1 class="mt-4">Quản lý Phiếu nhập</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active"><a href="${pageContext.request.contextPath}/vendor/import">Danh sách phiếu nhập</a></li>
+        <li class="breadcrumb-item active">${imp.id == null ? 'Thêm phiếu nhập mới ' : 'Chỉnh sửa phiếu nhập'}</li>
+    </ol>
+
+    <h3 class="text-center mb-4">${imp.id == null ? 'Thêm phiếu nhập mới' : 'Chỉnh sửa phiếu nhập'}</h3>
 
     <form method="post" action="${pageContext.request.contextPath}/vendor/import/save" class="shadow p-4 rounded bg-light">
         <!-- Import ID -->

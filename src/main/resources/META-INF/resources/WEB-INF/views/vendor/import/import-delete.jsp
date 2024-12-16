@@ -3,16 +3,17 @@
 
 <body class="bg-light">
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Xóa nhận xóa phiếu nhập</h1>
+    <!-- Breadcrumb Section -->
+    <h1 class="mt-4">Quản lý Phiếu nhập</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active"><a href="vendor/import">Danh sách phiếu nhập</a></li>
+        <li class="breadcrumb-item active">Xóa phiếu nhập</li>
+    </ol>
 
-<%--    <!-- Hiển thị lỗi nếu có -->--%>
-<%--    <c:if test="${not empty error}">--%>
-<%--        <div class="alert alert-danger" role="alert">--%>
-<%--                ${error}--%>
-<%--        </div>--%>
-<%--    </c:if>--%>
+    <h3 class="text-center mb-4">Xóa nhận xóa phiếu nhập</h3>
 
-    <p class="text-center">Bạn có muốn xóa phiếu nhập này không?</p>
+    <h3 class="text-center">Bạn có muốn xóa phiếu nhập này không?</h3>
 
     <!-- Hiển thị thông tin Import -->
     <div class="card shadow-sm mb-4">
@@ -56,4 +57,26 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Kiểm tra nếu có message
+    <c:if test="${not empty message}">
+    Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: '${message}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+
+    // Kiểm tra nếu có error
+    <c:if test="${not empty error}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: '${error}',
+        confirmButtonText: 'OK'
+    });
+    </c:if>
+</script>
 </body>

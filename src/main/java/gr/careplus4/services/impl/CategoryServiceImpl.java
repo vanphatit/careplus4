@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,5 +99,15 @@ public class CategoryServiceImpl implements iCategoryService {
     @Override
     public Page<Category> findByNameLike(String name, Pageable pageable) {
         return this.categoryRepository.findByNameLike(name, pageable);
+    }
+
+    @Override
+    public List<Category> findAllSubCategories() {
+        List<Category> categories = findRootCategoriesWithSubCategories();
+        List<Category> subCategories = new ArrayList<>();
+        for (Category category : categories) {
+            subCategories.addAll(category.getSubCategories());
+        }
+        return subCategories;
     }
 }

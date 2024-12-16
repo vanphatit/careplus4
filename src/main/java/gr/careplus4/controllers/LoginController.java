@@ -60,8 +60,8 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String login(@RequestParam(value = "errorMessage", required = false) String error,
-                        @RequestParam(value = "successMessage", required = false) String success,
+    public String login(@RequestParam(value = "error", required = false) String error,
+                        @RequestParam(value = "success", required = false) String success,
                         HttpServletRequest request, Model model) {
         // Kiểm tra JWT có tồn tại và hợp lệ
         if (jwtCookies.isJwtValid(request)) {
@@ -69,24 +69,24 @@ public class LoginController {
         }
 
         if (error != null) {
-            model.addAttribute("errorMessage", error);
+            model.addAttribute("error", error);
         }
         if (success != null) {
-            model.addAttribute("successMessage", success);
+            model.addAttribute("success", success);
         }
 
         return "guest/login";
     }
 
     @GetMapping("/forgot-password")
-    public String forgotPassword(@RequestParam(value = "errorMessage", required = false) String error,
-                                 @RequestParam(value = "successMessage", required = false) String success,
+    public String forgotPassword(@RequestParam(value = "error", required = false) String error,
+                                 @RequestParam(value = "success", required = false) String success,
                                  Model model) {
         if (error != null) {
-            model.addAttribute("errorMessage", error);
+            model.addAttribute("error", error);
         }
         if (success != null) {
-            model.addAttribute("successMessage", success);
+            model.addAttribute("success", success);
         }
         return "guest/forgot-password";
     }
@@ -94,27 +94,27 @@ public class LoginController {
     @PostMapping("/forgot-password")
     public ModelAndView forgotPassword(@RequestParam("email") String email,
                               @RequestParam("password") String password,
-                              @RequestParam("repassword") String rePassword, Model model) {
+                              @RequestParam("repassword") String rePassword, ModelMap model) {
         if (email.isEmpty() || password.isEmpty() || rePassword.isEmpty()) {
-            model.addAttribute("errorMessage", "Vui lòng điền đầy đủ thông tin.");
-            return new ModelAndView("redirect:/au/forgot-password");
+            model.addAttribute("error", "Vui lòng điền đầy đủ thông tin.");
+            return new ModelAndView("redirect:/au/forgot-password", model);
         }
 
         if (!password.equals(rePassword)) {
-            model.addAttribute("errorMessage", "Mật khẩu và xác nhận mật khẩu không khớp.");
-            return new ModelAndView("redirect:/au/forgot-password");
+            model.addAttribute("error", "Mật khẩu và xác nhận mật khẩu không khớp.");
+            return new ModelAndView("redirect:/au/forgot-password", model);
         }
 
         User user = userService.findByEmail(email).orElse(null);
         if (user == null) {
-            model.addAttribute("errorMessage", "Email không tồn tại.");
-            return new ModelAndView("redirect:/au/forgot-password");
+            model.addAttribute("error", "Email không tồn tại.");
+            return new ModelAndView("redirect:/au/forgot-password", model);
         }
 
         user.setPassword(passwordEncoder.encode(password));
         userService.save(user);
-        model.addAttribute("successMessage", "Đổi mật khẩu thành công! Bạn có thể đăng nhập ngay.");
-        return new ModelAndView("redirect:/au/login");
+        model.addAttribute("success", "Đổi mật khẩu thành công! Bạn có thể đăng nhập ngay.");
+        return new ModelAndView("redirect:/au/login", model);
     }
 
     @Autowired
@@ -123,7 +123,7 @@ public class LoginController {
     @PostMapping("/login/login-submit")
     public ModelAndView checkLogin(@ModelAttribute LoginUserModel loginUser, OAuth2AuthenticationToken oauth2Token,
                                    @RequestParam(value = "remember-me", required = false) String rememberMe,
-                                   HttpServletResponse response) {
+                                   HttpServletResponse response, ModelMap model) {
         try {
 
             // Xác thực người dùng
@@ -131,9 +131,8 @@ public class LoginController {
 
             // Kiểm tra email có đúng định dạng Gmail hay không
             if (!authenticatedUser.getEmail().matches("^[a-zA-Z0-9._%+-]+@gmail\\.com$") || authenticatedUser.getEmail().isEmpty()) {
-                ModelAndView mav = new ModelAndView("login");
-                mav.addObject("error", "Email must be a valid Gmail address (e.g., user@gmail.com)");
-                return mav;
+                model.addAttribute("error", "Email phải có dạng ....@gmail.com.");
+                return new ModelAndView("redirect:/au/login", model);
             }
 
             // Tạo JWT
@@ -143,21 +142,22 @@ public class LoginController {
             jwtCookies.setJwtToCookies(response, jwtToken, expiration);
 
             // Chuyển hướng về trang chủ
-            return new ModelAndView("redirect:/home");
+            model.addAttribute("success", "Đăng nhập thành công!");
+            return new ModelAndView("redirect:/home", model);
         } catch (AuthenticationException e) {
             // Trả về trang login với thông báo lỗi
-            ModelAndView mav = new ModelAndView("login");
-            mav.addObject("error", "Invalid username or password");
-            return mav;
+            model.addAttribute("error", "Đăng nhập thất bại! Vui lòng thử lại.");
+            return new ModelAndView("redirect:/au/login", model);
         }
     }
 
     @GetMapping("/login/oauth2Google-submit")
-    public ModelAndView oauth2GoogleSubmit(OAuth2AuthenticationToken oauth2Token, Model model, HttpServletResponse response) {
+    public ModelAndView oauth2GoogleSubmit(OAuth2AuthenticationToken oauth2Token, ModelMap model,
+                                           HttpServletResponse response) {
 
         if (oauth2Token == null || oauth2Token.getPrincipal() == null) {
-            model.addAttribute("errorMessage", "Đăng nhập thất bại! Vui lòng thử lại.");
-            return new ModelAndView("redirect:/au/login");
+            model.addAttribute("error", "Đăng nhập thất bại! Vui lòng thử lại.");
+            return new ModelAndView("redirect:/au/login", model);
         }
 
         // Lấy thông tin người dùng từ Google
@@ -165,8 +165,8 @@ public class LoginController {
         String name = oauth2Token.getPrincipal().getAttribute("name");
 
         if(email == null){
-            model.addAttribute("errorMessage", "Đăng nhập thất bại! Vui lòng thử lại.");
-            return new ModelAndView("redirect:/au/login");
+            model.addAttribute("error", "Đăng nhập thất bại! Vui lòng thử lại.");
+            return new ModelAndView("redirect:/au/login", model);
         }
 
         if(userService.findByEmail(email).isPresent()){
@@ -178,21 +178,23 @@ public class LoginController {
             // Lưu JWT vào Cookie
             jwtCookies.setJwtToCookies(response, jwtToken, expiration);
 
-            return new ModelAndView("redirect:/");
+            model.addAttribute("success", "Đăng nhập thành công!");
+            return new ModelAndView("redirect:/", model);
         } else {
             model.addAttribute("email", email);
             model.addAttribute("name", name);
-            return new ModelAndView("forward:/au/signup");
+            model.addAttribute("error", "Tài khoản chưa tồn tại! Vui lòng đăng ký.");
+            return new ModelAndView("forward:/au/signup", model);
         }
     }
 
     @GetMapping("/signup")
-    public String signup(@RequestParam(value = "errorMessage", required = false) String error,
+    public String signup(@RequestParam(value = "error", required = false) String error,
                          @RequestParam(value = "email", required = false) String email,
                          @RequestParam(value = "name", required = false) String name,
                          Model model) {
         if (error != null) {
-            model.addAttribute("errorMessage", error);
+            model.addAttribute("error", error);
         }
         if (email != null) {
             model.addAttribute("email", email);
@@ -216,32 +218,32 @@ public class LoginController {
 
         // Kiểm tra xác nhận mật khẩu
         if (!registerUser.getPassword().equals(registerUser.getRePassword())) {
-            model.addAttribute("errorMessage", "Mật khẩu và xác nhận mật khẩu không khớp.");
+            model.addAttribute("error", "Mật khẩu và xác nhận mật khẩu không khớp.");
             return new ModelAndView("redirect:/au/signup", model);
         }
 
         if(userService.findByPhoneNumber(registerUser.getPhone()).isPresent()){
-            model.addAttribute("errorMessage", "Số điện thoại đã tồn tại.");
+            model.addAttribute("error", "Số điện thoại đã tồn tại.");
             return new ModelAndView( "redirect:/au/signup", model);
         }
 
         if(userService.findByEmail(registerUser.getEmail()).isPresent()){
-            model.addAttribute("errorMessage", "Email đã tồn tại.");
+            model.addAttribute("error", "Email đã tồn tại.");
             return new ModelAndView( "redirect:/au/signup", model);
         }
 
         if(!registerUser.getEmail().matches("^[a-zA-Z0-9._%+-]+@gmail\\.com$") || registerUser.getEmail().isEmpty()){
-            model.addAttribute("errorMessage", "Email phải có dạng ....@gmail.com.");
+            model.addAttribute("error", "Email phải có dạng ....@gmail.com.");
             return new ModelAndView( "redirect:/au/signup", model);
         }
 
         registerUser.setIdRole(3);
 
         if(authenticationService.register(registerUser) != null){
-            model.addAttribute("successMessage", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");
+            model.addAttribute("success", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");
             return new ModelAndView("redirect:/au/login", model);
         }
-        model.addAttribute("errorMessage", "Đăng ký thất bại! Vui lòng thử lại.");
+        model.addAttribute("error", "Đăng ký thất bại! Vui lòng thử lại.");
         return new ModelAndView( "redirect:/au/signup", model);
     }
 }

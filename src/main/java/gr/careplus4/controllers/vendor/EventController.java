@@ -21,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -116,33 +117,54 @@ public class EventController {
     }
 
     @GetMapping("/edit/{id}")
-    public ModelAndView edit(ModelMap model, @PathVariable("id") String id) {
+    public ModelAndView edit(ModelMap model, @PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         Optional<Event> optionalEvent = eventService.findById(id);
         EventModel eve = new EventModel();
-        if (optionalEvent.isPresent()) {
-            Event entity = optionalEvent.get();
-            BeanUtils.copyProperties(entity, eve);
-            eve.setIsEdit(true);
-            model.addAttribute("eve", eve);
-            return new ModelAndView("vendor/event/event-add", model);
+        if (optionalEvent.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Sự kiên không tồn tại!");
+                return new ModelAndView("redirect:/vendor/event", model);
+        } else {
+            boolean checkUsed = eventService.checkUsed(id);
+            try {
+                if (checkUsed) {
+                    redirectAttributes.addFlashAttribute("error", "Sự kiện này đã được sử dụng. Không được sửa!");
+                    return new ModelAndView("redirect:/vendor/event", model);
+                } else {
+                    Event entity = optionalEvent.get();
+                    BeanUtils.copyProperties(entity, eve);
+                    eve.setIsEdit(true);
+                    model.addAttribute("eve", eve);
+                    return new ModelAndView("vendor/event/event-add", model);
+                }
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa sự kiện: " + e.getMessage());
+            }
         }
-        model.addAttribute("mess", "Event not found");
-        return new ModelAndView("forward:/vendor/event/event-list", model);
+        redirectAttributes.addFlashAttribute("message", "Chỉnh sửa sự kiện thành công!");
+        return new ModelAndView("redirect:/vendor/event", model);
     }
 
     @GetMapping("/delete/{id}")
-    public String confirmDelete(Model model, @PathVariable("id") String id) {
+    public String confirmDelete(Model model, @PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         Optional<Event> optionalEvent = eventService.findById(id);
-        if (optionalEvent.isPresent()) {
-            model.addAttribute("event", optionalEvent.get());
-            return "vendor/event/event-delete"; // Hiển thị trang xác nhận xóa
+        if (optionalEvent.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Sự kiên không tồn tại!");
+            return "redirect:/vendor/event";
+        } else {
+            boolean checkUsed = eventService.checkUsed(id);
+            try {
+                if (checkUsed) {
+                    redirectAttributes.addFlashAttribute("error", "Sự kiện này đã được sử dụng. Không được xóa!");
+                    return "redirect:/vendor/event";
+                }
+                else {
+                    eventService.deleteById(id);
+                    redirectAttributes.addFlashAttribute("message", "Xóa sự kiện thành công!");
+                }
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa sự kiện: " + e.getMessage());
+            }
         }
-        return "redirect:/vendor/event";
-    }
-
-    @PostMapping("/delete/{id}")
-    public String delete(@PathVariable("id") String id) {
-        eventService.deleteById(id);
         return "redirect:/vendor/event";
     }
 
