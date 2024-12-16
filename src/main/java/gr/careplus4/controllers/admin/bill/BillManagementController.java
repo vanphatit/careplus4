@@ -35,7 +35,8 @@ public class BillManagementController {
     public String getProductPage(Model model, @RequestParam(value = "status", required = false) String status,
                                  @RequestParam(defaultValue = "1") int page) {
 
-        Pageable pageable = PageRequest.of(page - 1, 5, Sort.by(Sort.Order.desc("date")));
+        Pageable pageable = PageRequest.of(page - 1, 10,
+                Sort.by(Sort.Order.desc("id")));
 
         Page<Bill> prs = this.billService.fetchProductsWithSpec(pageable, status);
 
@@ -94,9 +95,9 @@ public class BillManagementController {
     public String searchByIdOrProviderId(ModelMap model,
                                          @RequestParam(name = "id", required = false) String id,
                                          @RequestParam(defaultValue = "1") int page){
-        int pageSize = 5;
 
-        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("date")));
+        Pageable pageable = PageRequest.of(page - 1, 10,
+                Sort.by(Sort.Order.desc("id")));
 
         Page<Bill> resultPage;
         if (StringUtils.hasText(id)) {

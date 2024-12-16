@@ -120,10 +120,11 @@
                                     <th>Mã hóa đơn</th>
                                     <th>Người nhận</th>
                                     <th>Địa chỉ</th>
-                                    <th>Ngày tạo</th>
+                                    <th>Thời gian tạo</th>
+                                    <th>Thời gian cập nhật</th>
                                     <th>Thanh toán</th>
                                     <th>Trạng thái</th>
-                                    <th>Xử lý</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -133,6 +134,7 @@
                                         <td>${bill.name}</td>
                                         <td>${bill.address}</td>
                                         <td>${bill.date}</td>
+                                        <td>${bill.updateDate}</td>
                                         <td>${bill.method}</td>
                                         <td>
                                             <c:choose>
@@ -154,12 +156,9 @@
                                             </c:choose>
                                         </td>
                                         <td>
-                                            <a href="/admin/bill/${bill.id}"
-                                               class="btn btn-success">Chi tiết </a>
-                                            <a href="/admin/bill/update/${bill.id}"
-                                               class="btn btn-warning mx-2">Cập nhật</a>
-                                            <a href="/admin/bill/delete/${bill.id}"
-                                               class="btn btn-danger">Xóa</a>
+                                            <a href="/admin/bill/${bill.id}" class="btn btn-success">
+                                                <i class="fas fa-search"><strong>Chi tiết</strong></i>
+                                            </a>
                                         </td>
                                     </tr>
 
