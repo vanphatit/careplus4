@@ -1,18 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:url value="/" var="URL"></c:url>
-<%--<!DOCTYPE html>--%>
-<%--<html lang="en">--%>
-
-<%--<head>--%>
-<%--    <meta charset="UTF-8">--%>
-<%--    <meta name="viewport" content="width=device-width, initial-scale=1.0">--%>
-<%--    <title>Admin Dashboard</title>--%>
-<%--    <!-- CSS Link -->--%>
-<%--    <link rel="stylesheet" href="/static/css/main.css">--%>
-<%--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">--%>
-<%--</head>--%>
-
 
 <!-- Navbar -->
 <header class="app-header">
