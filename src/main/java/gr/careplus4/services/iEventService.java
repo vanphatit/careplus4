@@ -43,4 +43,6 @@ public interface iEventService {
     Event findTopByOrderByIdDesc ();
 
     public boolean checkUsed(String id);
+
+    Page<Event> findAllSorted(Pageable pageable);
 }

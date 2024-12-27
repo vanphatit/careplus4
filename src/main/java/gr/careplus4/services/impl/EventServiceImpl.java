@@ -7,12 +7,14 @@ import gr.careplus4.services.GeneratedId;
 import gr.careplus4.services.iEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EventServiceImpl implements iEventService {
@@ -105,4 +107,33 @@ public class EventServiceImpl implements iEventService {
         }
         return false;
     }
+
+    @Override
+    public Page<Event> findAllSorted(Pageable pageable) {
+        Date now = new Date(); // Lấy ngày hiện tại
+        List<Event> allEvents = eventRepository.findAll(); // Lấy toàn bộ sự kiện
+
+        List<Event> sortedEvents = allEvents.stream()
+                .sorted((e1, e2) -> {
+                    boolean e1Ongoing = now.after(e1.getDateStart()) && now.before(e1.getDateEnd());
+                    boolean e2Ongoing = now.after(e2.getDateStart()) && now.before(e2.getDateEnd());
+
+                    if (e1Ongoing && !e2Ongoing) {
+                        return -1; // e1 lên trước
+                    } else if (!e1Ongoing && e2Ongoing) {
+                        return 1; // e2 lên trước
+                    } else {
+                        return e1.getDateStart().compareTo(e2.getDateStart()); // Sắp xếp theo ngày bắt đầu
+                    }
+                })
+                .collect(Collectors.toList());
+
+        // Chuyển danh sách thành đối tượng Page
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), sortedEvents.size());
+        List<Event> pageContent = sortedEvents.subList(start, end);
+
+        return new PageImpl<>(pageContent, pageable, sortedEvents.size());
+    }
+
 }

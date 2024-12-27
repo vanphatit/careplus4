@@ -42,8 +42,8 @@ public class EventController {
         int currentPage = page.orElse(1);
         int pageSize = 10;
 
-        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("id")); // Thay đổi nếu cần
-        Page<Event> eventPage = eventService.findAll(pageable); // Lấy đối tượng Page<Event>
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize); // Thay đổi nếu cần
+        Page<Event> eventPage = eventService.findAllSorted(pageable); // Lấy đối tượng Page<Event>
 
         model.addAttribute("eventPage", eventPage); // Truyền eventPage vào model
         model.addAttribute("events", eventPage.getContent());
